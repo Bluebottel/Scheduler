@@ -1,0 +1,22 @@
+
+#sideContainer {
+    display: flex;
+    flex-direction: column;
+    width: 18%;
+    margin-left: 5px;
+}
+
+#calendar {
+    height: 85vh;
+    width: 80%;
+}
+
+#container {
+    display: flex;
+    padding: 5px;
+}
+
+.pickerBox {
+    border: 1px solid #ddd;
+    padding: 5px;
+}

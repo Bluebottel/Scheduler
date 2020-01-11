@@ -29,19 +29,16 @@ function App() {
 	  startAccessor="start"
 	  events={eventList}
 	  endAccessor="end"
-	  style={{
-	    height: "800px",
-	    width: "1000px",
-	    padding: "5px"
-	  }}
 	  defaultView="month"
 	/>	
       </div>
-      <div className="pickerBox">
-	Pass
-      </div>
-      <div className="pickerBox">
-	Personer
+      <div id="sideContainer">
+	<div className="pickerBox">
+	  Pass
+	</div>
+	<div className="pickerBox">
+	  Personer
+	</div>
       </div>
     </div>
   )
