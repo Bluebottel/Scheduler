@@ -9,18 +9,26 @@ import "react-big-calendar/lib/addons/dragAndDrop/styles.css"
 // changing locale doesn't work without this
 import 'moment/locale/sv'
 
-// Setup the localizer by providing the moment (or globalize) Object
-// to the correct localizer.
-
 moment.locale('sv')
 const localizer = momentLocalizer(moment)
 
-// this one has to be capitalized(?!)
+// this one has to be capitalized(?)
 const DragCalendar = withDragAndDrop(Calendar)
 
 function App() {
 
-  const eventList = []
+  const now = new Date()
+  const eventList = [
+    { title: "KIM, EM",
+      start: new Date(),
+      end: now },
+    { title: "OLO, EM",
+      start: new Date(),
+      end: now },
+    { title: "SOF, N",
+      start: new Date(),
+      end: new Date(new Date().getTime()+14*1000*3600) }
+  ]
   return (
     <div id="container">
       <div id="calendar">
@@ -30,7 +38,7 @@ function App() {
 	  events={eventList}
 	  endAccessor="end"
 	  defaultView="month"
-	/>	
+	/>
       </div>
       <div id="sideContainer">
 	<div className="pickerBox">
