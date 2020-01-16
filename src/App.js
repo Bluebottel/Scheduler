@@ -22,20 +22,24 @@ function getEventProp(event, start, end, isSelected) {
 }
 
 const eventList = [
-  { title: 'KIM, EM',
+  {
+    title: 'KIM, EM',
     start: new Date(),
     end: new Date(),
     allDay: false,
     id: 0,
-    resource: 'person1',
+    resource: '0',
   },
-  { title: 'OLO, EM',
+  {
+    title: 'OLO, EM',
     start: new Date(),
     end: new Date(),
-    id: 1},
-  { title: 'SOF, N',
+    id: 1
+  },
+  {
+    title: 'SOF, N',
     start: new Date(),
-    end: new Date(new Date().getTime()+14*1000*3600),
+    end: new Date(new Date().getTime()+20*1000*3600),
     id: 2
   }
 ]
@@ -68,9 +72,7 @@ class App extends Component {
     const nextEvents = [...events]
     nextEvents.splice(idx, 1, updatedEvent)
 
-    this.setState({
-      events: nextEvents,
-    })
+    this.setState({ events: nextEvents })
 
     // alert(`${event.title} was dropped onto ${updatedEvent.start}`)
   }
@@ -91,14 +93,18 @@ class App extends Component {
     //alert(`${event.title} was resized to ${start}-${end}`)
   }
 
-  newEvent() { }
+  newEvent() { console.log('new event trigger') }
+
+  // TODO: remove the event
+  onDoubleClickEvent(event, e) {
+    console.log('double clicked on ', event)
+  }
   
   render() {
     return (
       <div id="container">
 	<div id="calendar">
 	  <DragCalendar
-	    selectable
             localizer={localizer}
             events={this.state.events}
             onEventDrop={this.moveEvent}
@@ -109,17 +115,18 @@ class App extends Component {
             defaultView="month"
             defaultDate={new Date()}
 	    eventPropGetter={getEventProp}
+	    onDoubleClickEvent={this.onDoubleClickEvent}
 	  />
 	</div>
 	<div id="sideContainer">
-	  <div className="pickerBox">
-	    Pass
-	  </div>
-	  <div className="pickerBox">
-	    Personer
+	  <div className="boxLabel">Pass</div>
+	    <div className="pickerBox">
+	      Stuff inside
+	    </div>
+	    <div className="boxLabel">Personer</div>
+	    <div className="pickerBox">Stuff inside</div>
 	  </div>
 	</div>
-      </div>
     )
   }
 }
