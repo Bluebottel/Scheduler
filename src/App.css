@@ -33,3 +33,8 @@
     border: 1px solid #ddd;
     border-radius: 5px;
 }
+
+.option:hover {
+    background: #ededed;
+    cursor: pointer;
+}

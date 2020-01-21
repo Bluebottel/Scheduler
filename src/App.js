@@ -77,8 +77,9 @@ class App extends Component {
     // alert(`${event.title} was dropped onto ${updatedEvent.start}`)
   }
 
+  // Resizing doesn't make sense so keep it disabled
   resizeEvent = ({ event, start, end }) => {
-    const { events } = this.state
+    /*const { events } = this.state
 
     const nextEvents = events.map(existingEvent => {
       return existingEvent.id === event.id
@@ -89,6 +90,7 @@ class App extends Component {
     this.setState({
       events: nextEvents,
     })
+    */
 
     //alert(`${event.title} was resized to ${start}-${end}`)
   }
@@ -99,6 +101,11 @@ class App extends Component {
   onDoubleClickEvent(event, e) {
     console.log('double clicked on ', event)
   }
+
+  // TOOD: un-highlight the rest of them
+  highlight(event) {
+    event.target.style.background = "#c3bebe"
+  }
   
   render() {
     return (
@@ -108,8 +115,7 @@ class App extends Component {
             localizer={localizer}
             events={this.state.events}
             onEventDrop={this.moveEvent}
-            resizable
-            onEventResize={this.resizeEvent}
+            onEventResize={() => {}}
             onSelectSlot={this.newEvent}
             onDragStart={console.log}
             defaultView="month"
@@ -120,13 +126,19 @@ class App extends Component {
 	</div>
 	<div id="sideContainer">
 	  <div className="boxLabel">Pass</div>
-	    <div className="pickerBox">
+	  <div className="pickerBox">
+	    <div className="option">
 	      Stuff inside
 	    </div>
-	    <div className="boxLabel">Personer</div>
-	    <div className="pickerBox">Stuff inside</div>
+	  </div>
+	  <div className="boxLabel">Personer</div>
+	  <div className="pickerBox">
+	    <div className="option" onClick={this.highlight}>
+	      Stuff inside
+	    </div>
 	  </div>
 	</div>
+      </div>
     )
   }
 }
