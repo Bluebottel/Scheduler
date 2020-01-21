@@ -102,9 +102,17 @@ class App extends Component {
     console.log('double clicked on ', event)
   }
 
-  // TOOD: un-highlight the rest of them
+  // TODO: un-highlight the rest of them
   highlight(event) {
     event.target.style.background = "#c3bebe"
+  }
+
+  // TODO: make this display something other than just style
+  getDayProp = date => {
+    return {
+      className: 'special-day',
+      /* style: { background: 'white' } */
+    }
   }
   
   render() {
@@ -122,12 +130,14 @@ class App extends Component {
             defaultDate={new Date()}
 	    eventPropGetter={getEventProp}
 	    onDoubleClickEvent={this.onDoubleClickEvent}
+	    dayPropGetter={this.getDayProp}
+	    showMultiDayTimes
 	  />
 	</div>
 	<div id="sideContainer">
 	  <div className="boxLabel">Pass</div>
 	  <div className="pickerBox">
-	    <div className="option">
+	    <div className="option" onClick={this.highlight}>
 	      Stuff inside
 	    </div>
 	  </div>
