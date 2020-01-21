@@ -5,7 +5,7 @@ function loadResources() {
   let resourceList = window.localStorage.getItem('schedule_resources')
 
   try { resourceList = JSON.parse(resourceList) }
-  catch { return [] }
+  catch(_) { return [] }
 
   if (!resourceList instanceof Array) { return [] }
   else return resourceList
@@ -15,22 +15,28 @@ function loadEvents() {
   let eventList = window.localStorage.getItem('schedule_events')
 
   try { eventList = JSON.parse(eventList) }
-  catch { return [] }
+  catch(_) { return [] }
 
   if (!eventList instanceof Array) { return [] }
   else return eventList
 }
 
-// TODO
+
 function storeEvents(eventList) {
-  
+  window.localStorage
+    .setItem('schedule_events', JSON.stringify(eventList))
 }
-// TODO
+
 function storeResources(resourceList) {
-  
+  window.localStorage
+    .setItem('schedule_resources', JSON.stringify(resourceList))
 }
+
+
 
 export {
   loadResources,
   loadEvents,
+  storeResources,
+  storeEvents,
 }
