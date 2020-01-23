@@ -3,8 +3,12 @@ import './App.css'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop"
-import "react-big-calendar/lib/css/react-big-calendar.css"
-import "react-big-calendar/lib/addons/dragAndDrop/styles.css"
+import 'react-big-calendar/lib/css/react-big-calendar.css'
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
+
+import { loadResources, loadEvents,
+	 storeEvents, storeResources,
+	 storeShifts, loadShifts } from './storage'
 
 // changing locale doesn't work without this
 import 'moment/locale/sv'
@@ -44,11 +48,54 @@ const eventList = [
   }
 ]
 
+const resourceList = [
+  {
+    resourceIdAccessor: 0,
+    resourceTitleAccessor: 'Alice',    			    
+  },
+  {
+    resourceIdAccessor: 1,
+    resourceTitleAccessor: 'Bob',    			    
+  },
+  {
+    resourceIdAccessor: 0,
+    resourceTitleAccessor: 'Chloe',    			    
+  },  
+]
+
+const shifts = [
+  {
+    title: 'FM',
+    startHour: 7,
+    startMinute: 0,
+    minuteLength: 600,
+  },
+  {
+    title: 'EM',
+    startHour: 12,
+    startMinute: 30,
+    minuteLength: 540,
+  },
+  {
+    title: 'Natt',
+    startHour: 21,
+    startMinute: 30,
+    minuteLength: 570,
+  }
+]
+
 class App extends Component {
   constructor(props) {
     super(props)
+
+    const events = loadEvents()
+    const resources = loadResources()
+    const shifts = loadShifts()
+
     this.state = {
-      events: eventList,
+      events: events,
+      resources: resources,
+      shifts: shifts,
     }
 
     this.moveEvent = this.moveEvent.bind(this)
@@ -56,8 +103,8 @@ class App extends Component {
   }
 
   moveEvent({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
+    console.log('moveEvent start')
     const { events } = this.state
-
     const idx = events.indexOf(event)
     let allDay = event.allDay
 
@@ -74,28 +121,12 @@ class App extends Component {
 
     this.setState({ events: nextEvents })
 
-    // alert(`${event.title} was dropped onto ${updatedEvent.start}`)
+    //console.log(`${event.title} was dropped onto ${updatedEvent.start}`)
   }
 
-  // Resizing doesn't make sense so keep it disabled
-  resizeEvent = ({ event, start, end }) => {
-    /*const { events } = this.state
-
-    const nextEvents = events.map(existingEvent => {
-      return existingEvent.id === event.id
-           ? { ...existingEvent, start, end }
-           : existingEvent
-    })
-
-    this.setState({
-      events: nextEvents,
-    })
-    */
-
-    //alert(`${event.title} was resized to ${start}-${end}`)
+  newEvent(event) {
+    console.log('new event trigger ', event)
   }
-
-  newEvent() { console.log('new event trigger') }
 
   // TODO: remove the event
   onDoubleClickEvent(event, e) {
@@ -107,7 +138,8 @@ class App extends Component {
     event.target.style.background = "#c3bebe"
   }
 
-  // TODO: make this display something other than just style
+  // TODO: check if the event is a meta event and show
+  // total scheduled hours for that day instead
   getDayProp = date => {
     return {
       className: 'special-day',
@@ -125,27 +157,38 @@ class App extends Component {
             onEventDrop={this.moveEvent}
             onEventResize={() => {}}
             onSelectSlot={this.newEvent}
-            onDragStart={console.log}
             defaultView="month"
             defaultDate={new Date()}
 	    eventPropGetter={getEventProp}
 	    onDoubleClickEvent={this.onDoubleClickEvent}
 	    dayPropGetter={this.getDayProp}
-	    showMultiDayTimes
+	    selectable
 	  />
 	</div>
 	<div id="sideContainer">
 	  <div className="boxLabel">Pass</div>
 	  <div className="pickerBox">
-	    <div className="option" onClick={this.highlight}>
-	      Stuff inside
-	    </div>
+	    {
+	      this.state.shifts.map(res => {
+		return (
+		  <div className="option" onClick={this.highlight}>
+		    { res['title'] }
+		  </div>
+		)
+	      }) 
+	    }
 	  </div>
 	  <div className="boxLabel">Personer</div>
 	  <div className="pickerBox">
-	    <div className="option" onClick={this.highlight}>
-	      Stuff inside
-	    </div>
+	    {
+	      this.state.resources.map(res => {
+		return (
+		  <div className="option" onClick={this.highlight}>
+		    {res.resourceTitleAccessor}
+		  </div>
+		)
+	      }) 
+	    }
 	  </div>
 	</div>
       </div>
