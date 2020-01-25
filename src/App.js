@@ -10,6 +10,8 @@ import { loadResources, loadEvents,
 	 storeEvents, storeResources,
 	 storeShifts, loadShifts } from './storage'
 
+import { storeTestData } from './testdata'
+
 // changing locale doesn't work without this
 import 'moment/locale/sv'
 
@@ -25,69 +27,12 @@ function getEventProp(event, start, end, isSelected) {
   return { style: { background: 'red' }}
 }
 
-const eventList = [
-  {
-    title: 'KIM, EM',
-    start: new Date(),
-    end: new Date(),
-    allDay: false,
-    id: 0,
-    resource: '0',
-  },
-  {
-    title: 'OLO, EM',
-    start: new Date(),
-    end: new Date(),
-    id: 1
-  },
-  {
-    title: 'SOF, N',
-    start: new Date(),
-    end: new Date(new Date().getTime()+20*1000*3600),
-    id: 2
-  }
-]
-
-const resourceList = [
-  {
-    resourceIdAccessor: 0,
-    resourceTitleAccessor: 'Alice',    			    
-  },
-  {
-    resourceIdAccessor: 1,
-    resourceTitleAccessor: 'Bob',    			    
-  },
-  {
-    resourceIdAccessor: 0,
-    resourceTitleAccessor: 'Chloe',    			    
-  },  
-]
-
-const shifts = [
-  {
-    title: 'FM',
-    startHour: 7,
-    startMinute: 0,
-    minuteLength: 600,
-  },
-  {
-    title: 'EM',
-    startHour: 12,
-    startMinute: 30,
-    minuteLength: 540,
-  },
-  {
-    title: 'Natt',
-    startHour: 21,
-    startMinute: 30,
-    minuteLength: 570,
-  }
-]
-
 class App extends Component {
   constructor(props) {
     super(props)
 
+    storeTestData()
+    
     const events = loadEvents()
     const resources = loadResources()
     const shifts = loadShifts()
@@ -134,8 +79,11 @@ class App extends Component {
   }
 
   // TODO: un-highlight the rest of them
-  highlight(event) {
+  highlight(event, type) {
     event.target.style.background = "#c3bebe"
+
+    console.log('type is: ', type)
+    console.log('target: ', event.target.content)
   }
 
   // TODO: check if the event is a meta event and show
@@ -146,7 +94,11 @@ class App extends Component {
       /* style: { background: 'white' } */
     }
   }
-  
+
+  timePad(number)
+  { return (number < 10) ? "0" + number : number }
+
+  // TODO: make the shift times italics
   render() {
     return (
       <div id="container">
@@ -169,22 +121,34 @@ class App extends Component {
 	  <div className="boxLabel">Pass</div>
 	  <div className="pickerBox">
 	    {
-	      this.state.shifts.map(res => {
+	      this.state.shifts.map((res, i) => {
 		return (
-		  <div className="option" onClick={this.highlight}>
-		    { res['title'] }
+		  <div className="option"
+		    onClick={(e) => this.highlight(e, 'shifts')}
+		    key={i} >
+		    <div className="shiftTitle">{res.title}</div>
+		    <div className="shiftInfo">
+		      {
+			`${this.timePad(res.startHour)}` + 
+			`:${this.timePad(res.startMinute)} - `
+		      }
+		    </div>
 		  </div>
 		)
+		
 	      }) 
 	    }
 	  </div>
+	  
 	  <div className="boxLabel">Personer</div>
 	  <div className="pickerBox">
 	    {
-	      this.state.resources.map(res => {
+	      this.state.resources.map((res, i) => {
 		return (
-		  <div className="option" onClick={this.highlight}>
-		    {res.resourceTitleAccessor}
+		  <div className="option"
+		    onClick={(e) => this.highlight(e, 'resources')}
+		    key={i} >
+		    { res.resourceTitleAccessor }
 		  </div>
 		)
 	      }) 
