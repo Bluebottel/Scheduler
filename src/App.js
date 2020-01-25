@@ -64,6 +64,7 @@ class App extends Component {
     nextEvents.splice(idx, 1, updatedEvent)
 
     this.setState({ events: nextEvents })
+    storeEvents(this.state.events)
 
     //console.log(`${event.title} was dropped onto ${updatedEvent.start}`)
   }
@@ -77,14 +78,6 @@ class App extends Component {
     console.log('double clicked on ', event)
   }
 
-  // TODO: un-highlight the rest of them
-  highlight(event, type) {
-    event.target.style.background = "#c3bebe"
-
-    console.log('type is: ', type)
-    console.log('target: ', event.target.content)
-  }
-
   // TODO: check if the event is a meta event and show
   // total scheduled hours for that day instead
   getDayProp = date => {
@@ -96,19 +89,20 @@ class App extends Component {
 
   render() {
     return (
-      <div id="container">
-	<div id="calendar">
+      <div id = "container">
+	<div id = "calendar">
 	  <DragCalendar
-            localizer={localizer}
-            events={this.state.events}
-            onEventDrop={this.moveEvent}
-            onEventResize={() => {}}
-            onSelectSlot={this.newEvent}
-            defaultView="month"
-            defaultDate={new Date()}
-	    eventPropGetter={getEventProp}
-	    onDoubleClickEvent={this.onDoubleClickEvent}
-	    dayPropGetter={this.getDayProp}
+            localizer = { localizer }
+            events = { this.state.events }
+            onEventDrop = { this.moveEvent }
+            onEventResize = { () => {} }
+            onSelectSlot = { this.newEvent }
+	    onSelectEvent = { () => { console.log('kitten') } }
+            defaultView = "month"
+            defaultDate = { new Date() }
+	    eventPropGetter = { getEventProp }
+	    onDoubleClickEvent = { this.onDoubleClickEvent }
+	    dayPropGetter = { this.getDayProp }
 	    selectable
 	  />
 	</div>

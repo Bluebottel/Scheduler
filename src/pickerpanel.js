@@ -13,7 +13,7 @@ class PickerPanel extends Component {
       shifts: this.props.shifts,
       resources: this.props.resources,
       selected: {
-	shift: 0,
+	shift: -1,
 	resource: -1,
       }
     }
