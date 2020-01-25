@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import './App.css'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
+import PickerPanel from './pickerpanel'
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop"
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
@@ -31,8 +32,6 @@ class App extends Component {
   constructor(props) {
     super(props)
 
-    storeTestData()
-    
     const events = loadEvents()
     const resources = loadResources()
     const shifts = loadShifts()
@@ -95,10 +94,6 @@ class App extends Component {
     }
   }
 
-  timePad(number)
-  { return (number < 10) ? "0" + number : number }
-
-  // TODO: make the shift times italics
   render() {
     return (
       <div id="container">
@@ -117,44 +112,10 @@ class App extends Component {
 	    selectable
 	  />
 	</div>
-	<div id="sideContainer">
-	  <div className="boxLabel">Pass</div>
-	  <div className="pickerBox">
-	    {
-	      this.state.shifts.map((res, i) => {
-		return (
-		  <div className="option"
-		    onClick={(e) => this.highlight(e, 'shifts')}
-		    key={i} >
-		    <div className="shiftTitle">{res.title}</div>
-		    <div className="shiftInfo">
-		      {
-			`${this.timePad(res.startHour)}` + 
-			`:${this.timePad(res.startMinute)} - `
-		      }
-		    </div>
-		  </div>
-		)
-		
-	      }) 
-	    }
-	  </div>
-	  
-	  <div className="boxLabel">Personer</div>
-	  <div className="pickerBox">
-	    {
-	      this.state.resources.map((res, i) => {
-		return (
-		  <div className="option"
-		    onClick={(e) => this.highlight(e, 'resources')}
-		    key={i} >
-		    { res.resourceTitleAccessor }
-		  </div>
-		)
-	      }) 
-	    }
-	  </div>
-	</div>
+	<PickerPanel
+	  resources = {this.state.resources}
+	  shifts = {this.state.shifts}
+	/>
       </div>
     )
   }
