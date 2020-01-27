@@ -110,6 +110,7 @@ class App extends Component {
 	events: update(this.state.events, {$push: [newEvent]})
       })
 
+      storeEvents(this.state.events)
     }) 
   }
 
