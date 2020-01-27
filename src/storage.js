@@ -33,16 +33,7 @@ function loadEvents() {
 function loadShifts() {
   let shiftList = window.localStorage.getItem('schedule_shifts')
 
-  try {
-    shiftList = JSON.parse(shiftList)
-
-    // The dates get stored as strings and the parsing
-    // doesn't turn them back into date objects automatically
-    shiftList.forEach((shift, i) => {
-      shiftList[i].start = new Date(shift.start)
-      shiftList[i].end = new Date(shift.end)
-    })
-  }
+  try { shiftList = JSON.parse(shiftList) }
   catch(_) { return [] }
 
   if (!shiftList instanceof Array) { return [] }
