@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import update from 'immutability-helper'
+import moment from 'moment'
 
 function timePad(number)
 { return (number < 10) ? "0" + number : number }
@@ -42,16 +43,14 @@ class PickerPanel extends Component {
 		  }}
 		  key = { i } >
 		  <div className = "shiftTitle">{ shift.title }</div>
-		  <div className = "shiftInfo">
-		    {
-		      `${timePad(shift.startHour)}` + 
-		      `:${timePad(shift.startMinute)} - `
-		    }
-		  </div>
+		  <ShiftInfoBlock
+		    className = "shiftInfo"
+		    shift = { shift }
+		  />
 		</div>
 	      )
 	      
-	    })
+	  })
 	  }
       </div>
       
@@ -85,5 +84,25 @@ class PickerPanel extends Component {
     )
   }
 }
+
+function ShiftInfoBlock(props) {
+
+  console.log(props.shift)
+
+  let stop = new Date()
+  stop.setHours(props.shift.startHour, props.shift.startMinute, 0)
+  stop = moment(stop).add(props.shift.minuteLength, 'm').toDate()
+  const fromTo = timePad(props.shift.startHour) + ':' + 
+		 timePad(props.shift.startMinute) + ' - ' +
+		 timePad(stop.getHours()) + ':' +
+		 timePad(stop.getMinutes())
+  
+  return (
+    <div className = { props.className }>
+      { fromTo }
+    </div>
+  )
+}
+
 
 export default PickerPanel
