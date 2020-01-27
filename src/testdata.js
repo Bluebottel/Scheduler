@@ -27,15 +27,21 @@ function storeTestData() {
   const resources = [
     {
       resourceIdAccessor: 0,
-      resourceTitleAccessor: 'Alice',    			    
+      resourceTitleAccessor: 'Alice',
+      title: 'Alice',
+      id: 0,
     },
     {
       resourceIdAccessor: 1,
-      resourceTitleAccessor: 'Bob',    			    
+      resourceTitleAccessor: 'Bob',
+      title: 'Bob',
+      id: 1,
     },
     {
       resourceIdAccessor: 0,
-      resourceTitleAccessor: 'Chloe',    			    
+      resourceTitleAccessor: 'Chloe',
+      title: 'Chloe',
+      id: 2
     },  
   ]
 
@@ -45,18 +51,21 @@ function storeTestData() {
       startHour: 7,
       startMinute: 0,
       minuteLength: 600,
+      id: 0,
     },
     {
       title: 'EM',
       startHour: 12,
       startMinute: 30,
       minuteLength: 540,
+      id: 1,
     },
     {
       title: 'Natt',
       startHour: 21,
       startMinute: 30,
       minuteLength: 570,
+      id: 2,
     }
   ]
 

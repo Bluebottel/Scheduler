@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import update from 'immutability-helper'
 import './App.css'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
@@ -24,6 +25,8 @@ const DragCalendar = withDragAndDrop(Calendar)
 
 // TODO: make this return different colors depending on the
 // resource, ie person, attached. Make a map
+// TODO: check if the event is a meta event and show
+// total scheduled hours for that day instead
 function getEventProp(event, start, end, isSelected) {
   return { style: { background: 'red' }}
 }
@@ -40,14 +43,19 @@ class App extends Component {
       events: events,
       resources: resources,
       shifts: shifts,
+      selected: {
+	shift: shifts[0],
+	resource: resources[0],
+      }
     }
 
     this.moveEvent = this.moveEvent.bind(this)
     this.newEvent = this.newEvent.bind(this)
+    this.onDoubleClickEvent = this.onDoubleClickEvent.bind(this)
+    this.setSelected = this.setSelected.bind(this)
   }
 
   moveEvent({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
-    console.log('moveEvent start')
     const { events } = this.state
     const idx = events.indexOf(event)
     let allDay = event.allDay
@@ -69,22 +77,62 @@ class App extends Component {
     //console.log(`${event.title} was dropped onto ${updatedEvent.start}`)
   }
 
-  newEvent(event) {
-    console.log('new event trigger ', event)
+  newEvent(allSelected) {
+    
+    let newId = this.state.events[this.state.events.length-1].id + 1
+
+    allSelected.slots.forEach(slot => {
+      let selectedShift = this.state.selected.shift
+
+      // find the largest and then increment to guarantee a unique event ID
+      let eventId = 0
+      this.state.events.forEach(event => {
+	if (event.id > eventId)
+	  eventId = event.id
+      })
+      eventId++
+
+      let startDate = slot
+      startDate.setHours(selectedShift.startHour, selectedShift.startMinute, 0)
+      let stopDate = moment(startDate).add(selectedShift.minuteLength, 'm').toDate()
+      let newEvent = {
+	title: this.state.selected.resource.title + ', ' +
+	       this.state.selected.shift.title,
+	start: startDate,
+	end: stopDate,
+	allDay: false,
+	id: eventId,
+	resource: this.state.selected.resource.id,
+	
+      }
+
+      this.setState({
+	events: update(this.state.events, {$push: [newEvent]})
+      })
+
+    }) 
   }
 
-  // TODO: remove the event
-  onDoubleClickEvent(event, e) {
-    console.log('double clicked on ', event)
+  // double clicking an event removes it
+  // TODO: add a warning + confirmation before removing
+  onDoubleClickEvent(argEvent, e) {
+
+    let newEventList = this.state.events.filter(elem => elem.id !== argEvent.id)
+
+    this.setState({
+      events: update(this.state.events, {$set: newEventList})
+    })
+    storeEvents(newEventList)
   }
 
-  // TODO: check if the event is a meta event and show
-  // total scheduled hours for that day instead
-  getDayProp = date => {
-    return {
-      className: 'special-day',
-      /* style: { background: 'white' } */
-    }
+
+  setSelected({ shift, resource }) {
+    this.setState({
+      selected: {
+	shift: shift,
+	resource: resource,
+      }
+    })
   }
 
   render() {
@@ -107,8 +155,10 @@ class App extends Component {
 	  />
 	</div>
 	<PickerPanel
-	  resources = {this.state.resources}
-	  shifts = {this.state.shifts}
+	  resources = { this.state.resources }
+	  shifts = { this.state.shifts }
+	  selected = { this.state.selected }
+	  setSelected = { this.setSelected }
 	/>
       </div>
     )
