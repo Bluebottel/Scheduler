@@ -13,6 +13,7 @@ import { loadResources, loadEvents,
 	 storeShifts, loadShifts } from './storage'
 
 import { storeTestData } from './testdata'
+import colorMap from './colors'
 
 // changing locale doesn't work without this
 import 'moment/locale/sv'
@@ -22,14 +23,6 @@ const localizer = momentLocalizer(moment)
 
 // this one has to be capitalized(?)
 const DragCalendar = withDragAndDrop(Calendar)
-
-// TODO: make this return different colors depending on the
-// resource, ie person, attached. Make a map
-// TODO: check if the event is a meta event and show
-// total scheduled hours for that day instead
-function getEventProp(event, start, end, isSelected) {
-  return { style: { background: 'red' }}
-}
 
 class App extends Component {
   constructor(props) {
@@ -53,6 +46,7 @@ class App extends Component {
     this.newEvent = this.newEvent.bind(this)
     this.onDoubleClickEvent = this.onDoubleClickEvent.bind(this)
     this.setSelected = this.setSelected.bind(this)
+    this.getEventProp = this.getEventProp.bind(this)
   }
 
   moveEvent({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
@@ -74,7 +68,6 @@ class App extends Component {
     this.setState({ events: nextEvents })
     storeEvents(this.state.events)
 
-    //console.log(`${event.title} was dropped onto ${updatedEvent.start}`)
   }
 
   newEvent(allSelected) {
@@ -136,6 +129,29 @@ class App extends Component {
     })
   }
 
+  // TODO: make this return different colors depending on the
+  // resource, ie person, attached. Make a map
+  // TODO: check if the event is a meta event and show
+  // total scheduled hours for that day instead
+  // TODO: make and archive copy of all resources ever so events don't get broken
+  getEventProp(event, start, end, isSelected) {
+    const resource = this.state.resources.find(res => res.id === event.resource)
+
+    if (resource.title === "#META_INFO#") {
+      return {
+	style: {
+	  background: 'none',
+	  border: 'none',
+	}
+      }
+    }
+
+    return {
+      style: {
+	background: colorMap.get(resource.id % colorMap.size) }
+    }
+  }
+
   render() {
     return (
       <div id = "container">
@@ -149,7 +165,7 @@ class App extends Component {
 	    onSelectEvent = { () => { console.log('kitten') } }
             defaultView = "month"
             defaultDate = { new Date() }
-	    eventPropGetter = { getEventProp }
+	    eventPropGetter = { this.getEventProp }
 	    onDoubleClickEvent = { this.onDoubleClickEvent }
 	    dayPropGetter = { this.getDayProp }
 	    selectable
