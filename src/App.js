@@ -135,7 +135,14 @@ class App extends Component {
   // total scheduled hours for that day instead
   // TODO: make and archive copy of all resources ever so events don't get broken
   getEventProp(event, start, end, isSelected) {
+
     const resource = this.state.resources.find(res => res.id === event.resource)
+
+    if (!resource) {
+      console.log('no resource found: ', event, this.state.resources)
+      return
+    }
+    
 
     if (resource.title === "#META_INFO#") {
       return {
@@ -168,7 +175,9 @@ class App extends Component {
 	    eventPropGetter = { this.getEventProp }
 	    onDoubleClickEvent = { this.onDoubleClickEvent }
 	    dayPropGetter = { this.getDayProp }
-	    selectable
+	    selectable = { 'ignoreEvents' }
+	    showMultiDayTimes = { true }
+	    popup
 	  />
 	</div>
 	<PickerPanel

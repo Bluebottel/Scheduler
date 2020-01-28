@@ -14,13 +14,15 @@ function storeTestData() {
       title: 'Bob, EM',
       start: new Date(),
       end: new Date(),
-      id: 1
+      id: 1,
+      resource: 1,
     },
     {
       title: 'Chloe, Natt',
       start: new Date(),
       end: new Date(new Date().getTime()+20*1000*3600),
-      id: 2
+      id: 2,
+      resource: 2,
     }
   ]
 
@@ -38,11 +40,17 @@ function storeTestData() {
       id: 1,
     },
     {
-      resourceIdAccessor: 0,
+      resourceIdAccessor: 2,
       resourceTitleAccessor: 'Chloe',
       title: 'Chloe',
       id: 2
-    },  
+    },
+    {
+      resourceIdAccessor: 3,
+      resourceTitleAccessor: 'Dari',
+      title: 'Dari',
+      id: 3
+    },      
   ]
 
   const shifts = [
