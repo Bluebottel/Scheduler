@@ -80,6 +80,10 @@ class PickerPanel extends Component {
 	}) 
       }
       </div>
+      <button onClick = { () => this.props.setOptionsModal(true) }>
+	Options
+      </button>
+      
       </div>
     )
   }

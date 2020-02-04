@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import update from 'immutability-helper'
+import Modal from 'react-modal'
 import './App.css'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
@@ -14,6 +15,7 @@ import { loadResources, loadEvents,
 
 import { storeTestData } from './testdata'
 import colorMap from './colors'
+import ModalMenu from './modalmenu'
 
 // changing locale doesn't work without this
 import 'moment/locale/sv'
@@ -39,7 +41,8 @@ class App extends Component {
       selected: {
 	shift: shifts[0],
 	resource: resources[0],
-      }
+      },
+      optionsModalOpen: false,
     }
 
     this.moveEvent = this.moveEvent.bind(this)
@@ -47,6 +50,7 @@ class App extends Component {
     this.onDoubleClickEvent = this.onDoubleClickEvent.bind(this)
     this.setSelected = this.setSelected.bind(this)
     this.getEventProp = this.getEventProp.bind(this)
+    this.setOptionsModal = this.setOptionsModal.bind(this)
   }
 
   moveEvent({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
@@ -133,7 +137,7 @@ class App extends Component {
   // resource, ie person, attached. Make a map
   // TODO: check if the event is a meta event and show
   // total scheduled hours for that day instead
-  // TODO: make and archive copy of all resources ever so events don't get broken
+  // TODO: make and archive a copy of all resources ever so events don't get broken
   getEventProp(event, start, end, isSelected) {
 
     const resource = this.state.resources.find(res => res.id === event.resource)
@@ -159,9 +163,25 @@ class App extends Component {
     }
   }
 
+  setOptionsModal(value) {
+    this.setState({
+      optionsModalOpen: value,
+    })
+  }
+
   render() {
     return (
       <div id = "container">
+	<Modal
+	  isOpen = { this.state.optionsModalOpen }
+	  contentLabel = "Modal label"
+	  onRequestClose = { () => this.setState({ optionsModalOpen: false }) }
+	  shouldCloseOnOverlayClick = { false }
+	  className = "optionsModal"
+	  overlayClassName = "optionsModalOverlay"
+	>
+	  <ModalMenu />
+	</Modal>
 	<div id = "calendar">
 	  <DragCalendar
             localizer = { localizer }
@@ -185,6 +205,8 @@ class App extends Component {
 	  shifts = { this.state.shifts }
 	  selected = { this.state.selected }
 	  setSelected = { this.setSelected }
+	  optionsModalOpen = { this.state.optionsModalOpen }
+	  setOptionsModal = { this.setOptionsModal }
 	/>
       </div>
     )
