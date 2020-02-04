@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 
+import './modalmenu.css'
+
 class ModalMenu extends Component {
   constructor(props) {
     super(props)
@@ -16,14 +18,17 @@ class ModalMenu extends Component {
   render() {
     return (
       <React.Fragment>
+	<div className = "boxLabel">Resurser</div>
 	<div className = "pickerBox">
-	  Resurser
+	  [Resurslista]
 	</div>
+	<div className = "boxLabel">Pass</div>
 	<div className = "pickerBox">
-	  Pass
+	  [Passlista]
 	</div>
-	<div className = "FTP">
-	  FTP
+	<div className = "boxLabel">FTP</div>
+	<div className = "pickerBox">
+	  [FTPstuff]
 	</div>
       </React.Fragment>
     )
