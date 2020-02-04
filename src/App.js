@@ -50,7 +50,6 @@ class App extends Component {
     this.onDoubleClickEvent = this.onDoubleClickEvent.bind(this)
     this.setSelected = this.setSelected.bind(this)
     this.getEventProp = this.getEventProp.bind(this)
-    this.setOptionsModal = this.setOptionsModal.bind(this)
   }
 
   moveEvent({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
@@ -163,12 +162,8 @@ class App extends Component {
     }
   }
 
-  setOptionsModal(value) {
-    this.setState({
-      optionsModalOpen: value,
-    })
-  }
 
+  // TODO: make the background blurred when the modal is open
   render() {
     return (
       <div id = "container">
@@ -176,7 +171,7 @@ class App extends Component {
 	  isOpen = { this.state.optionsModalOpen }
 	  contentLabel = "Modal label"
 	  onRequestClose = { () => this.setState({ optionsModalOpen: false }) }
-	  shouldCloseOnOverlayClick = { false }
+	  shouldCloseOnOverlayClick = { true }
 	  className = "optionsModal"
 	  overlayClassName = "optionsModalOverlay"
 	>
@@ -206,7 +201,9 @@ class App extends Component {
 	  selected = { this.state.selected }
 	  setSelected = { this.setSelected }
 	  optionsModalOpen = { this.state.optionsModalOpen }
-	  setOptionsModal = { this.setOptionsModal }
+	  setOptionsModal = { (value) => this.setState({
+	      optionsModalOpen: value
+	  }) }
 	/>
       </div>
     )

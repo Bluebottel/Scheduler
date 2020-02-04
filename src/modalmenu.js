@@ -5,7 +5,9 @@ class ModalMenu extends Component {
     super(props)
 
     this.state = {
-      
+      events: this.props.events,
+      resources: this.props.resources,
+      shifts: this.props.shifts,
     }
 
   }
@@ -13,7 +15,7 @@ class ModalMenu extends Component {
 
   render() {
     return (
-      <div className = "modalContainer">
+      <React.Fragment>
 	<div className = "pickerBox">
 	  Resurser
 	</div>
@@ -23,7 +25,7 @@ class ModalMenu extends Component {
 	<div className = "FTP">
 	  FTP
 	</div>
-      </div>
+      </React.Fragment>
     )
   }
 }

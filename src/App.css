@@ -59,7 +59,11 @@
     left: 40px;
     right: 40px;
     bottom: 40px;
-    background-color: papayawhip;
+    background-color: white;
+    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    padding: 10px;
 }
 
 .optionsModalOverlay {
@@ -70,4 +74,9 @@
     bottom: 0;
     z-index: 100;
 }
+
+.optionsModal, .optionsModalOverlay:focus {
+    outline: none;
+}
+
 
