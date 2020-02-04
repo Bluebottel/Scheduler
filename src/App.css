@@ -32,6 +32,9 @@
     padding: 0 3px 0 3px;
     border: 1px solid #ddd;
     border-radius: 5px;
+
+    /* this, mysteriously, corrects the z-index issue in the modal */
+    position: relative;
 }
 
 .option:hover {
@@ -46,7 +49,6 @@
 .shiftInfo {
     float: right;
     font-style: italic;
-    display: inline;
 }
 
 .selected {
