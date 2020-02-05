@@ -49,14 +49,17 @@ class App extends Component {
 
     this.moveEvent = this.moveEvent.bind(this)
     this.newEvent = this.newEvent.bind(this)
-    this.onDoubleClickEvent = this.onDoubleClickEvent.bind(this)
+    this.removeEvent = this.removeEvent.bind(this)
     this.setSelected = this.setSelected.bind(this)
     this.getEventProp = this.getEventProp.bind(this)
   }
 
   moveEvent({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
+
+    console.log('moving event ', event)
+    
     const { events } = this.state
-    const idx = events.indexOf(event)
+    const idx = events.findIndex(elem => elem.id === event.id)
     let allDay = event.allDay
 
     if (!event.allDay && droppedOnAllDaySlot) {
@@ -123,8 +126,7 @@ class App extends Component {
 
   // double clicking an event removes it
   // TODO: add a warning + confirmation before removing
-  onDoubleClickEvent(argEvent, e) {
-
+  removeEvent(argEvent, e) {
     this.setState((state, _) => {
       
       const newEventList = state.events.filter(elem => elem.id !== argEvent.id)
@@ -176,13 +178,8 @@ class App extends Component {
   }
 
   eventInfo(event) {
-    console.log('state events: ', this.state.events)
+    console.log('event ID: ', event.id)
   }
-
-  dragStart(what) {
-    console.log(what)
-  }
-
 
   // TODO: make the background blurred when the modal is open
   render() {
@@ -212,12 +209,22 @@ class App extends Component {
             defaultView = "month"
             defaultDate = { new Date() }
 	    eventPropGetter = { this.getEventProp }
-	    onDoubleClickEvent = { this.onDoubleClickEvent }
 	    dayPropGetter = { this.getDayProp }
 	    selectable = { 'ignoreEvents' }
 	    showMultiDayTimes = { true }
 	    popup
-	    onDragStart = { this.dragStart }
+	    components = {{
+	      eventWrapper: ({event, children}) => (
+		<div
+		  onContextMenu = { e => {
+		      this.removeEvent(event, e)
+		      e.preventDefault()
+		  }}>
+		  
+		  { children }
+		</div>
+	      ),
+	    }}
 	  />
 	</div>
 	<PickerPanel
