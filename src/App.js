@@ -34,6 +34,8 @@ class App extends Component {
     const resources = loadResources()
     const shifts = loadShifts()
 
+    console.log('loaded events: ', events)
+
     this.state = {
       events: events,
       resources: resources,
@@ -74,20 +76,29 @@ class App extends Component {
   }
 
   newEvent(allSelected) {
+
+    //console.log(allSelected)
+    console.log('state events: ', this.state.events)
     
-    let newId = this.state.events[this.state.events.length-1].id + 1
-
+    if (allSelected.slots.length === 2 && allSelected.action === 'click') {
+      console.log('bugfix')
+    }
+    
+    // find the largest and then increment to guarantee a unique event ID
+    let eventId = 0
+    this.state.events.forEach(event => {
+      if (event.id > eventId)
+	eventId = event.id
+    })
+    
+    console.log('found eventID: ', eventId)
+    eventId += 1;
+    
     allSelected.slots.forEach(slot => {
+
+      console.log('using eventID ', eventId)
       let selectedShift = this.state.selected.shift
-
-      // find the largest and then increment to guarantee a unique event ID
-      let eventId = 0
-      this.state.events.forEach(event => {
-	if (event.id > eventId)
-	  eventId = event.id
-      })
-      eventId++
-
+      
       let startDate = slot
       startDate.setHours(selectedShift.startHour, selectedShift.startMinute, 0)
       let stopDate = moment(startDate).add(selectedShift.minuteLength, 'm').toDate()
@@ -98,8 +109,7 @@ class App extends Component {
 	end: stopDate,
 	allDay: false,
 	id: eventId,
-	resource: this.state.selected.resource.id,
-	
+	resource: this.state.selected.resource.id,	
       }
 
       this.setState({
@@ -107,19 +117,25 @@ class App extends Component {
       })
 
       storeEvents(this.state.events)
-    }) 
+      eventId++
+    })
   }
 
   // double clicking an event removes it
   // TODO: add a warning + confirmation before removing
   onDoubleClickEvent(argEvent, e) {
 
-    let newEventList = this.state.events.filter(elem => elem.id !== argEvent.id)
+    this.setState((state, _) => {
+      
+      const newEventList = state.events.filter(elem => elem.id !== argEvent.id)
+      storeEvents(newEventList)
 
-    this.setState({
-      events: update(this.state.events, {$set: newEventList})
+      console.log('event removed, new list: ', newEventList)
+      
+      return {
+	events: newEventList,
+      }
     })
-    storeEvents(newEventList)
   }
 
 
@@ -132,8 +148,6 @@ class App extends Component {
     })
   }
 
-  // TODO: make this return different colors depending on the
-  // resource, ie person, attached. Make a map
   // TODO: check if the event is a meta event and show
   // total scheduled hours for that day instead
   // TODO: make and archive a copy of all resources ever so events don't get broken
@@ -145,7 +159,6 @@ class App extends Component {
       console.log('no resource found: ', event, this.state.resources)
       return
     }
-    
 
     if (resource.title === "#META_INFO#") {
       return {
@@ -160,6 +173,14 @@ class App extends Component {
       style: {
 	background: colorMap.get(resource.id % colorMap.size) }
     }
+  }
+
+  eventInfo(event) {
+    console.log('state events: ', this.state.events)
+  }
+
+  dragStart(what) {
+    console.log(what)
   }
 
 
@@ -187,7 +208,7 @@ class App extends Component {
             onEventDrop = { this.moveEvent }
             onEventResize = { () => {} }
             onSelectSlot = { this.newEvent }
-	    onSelectEvent = { () => { console.log('kitten') } }
+	    onSelectEvent = { (q) => this.eventInfo(q) }
             defaultView = "month"
             defaultDate = { new Date() }
 	    eventPropGetter = { this.getEventProp }
@@ -196,6 +217,7 @@ class App extends Component {
 	    selectable = { 'ignoreEvents' }
 	    showMultiDayTimes = { true }
 	    popup
+	    onDragStart = { this.dragStart }
 	  />
 	</div>
 	<PickerPanel
