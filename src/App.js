@@ -34,6 +34,8 @@ class App extends Component {
     const resources = loadResources()
     const shifts = loadShifts()
 
+    console.log('loaded events: ', events)
+
     this.state = {
       events: events,
       resources: resources,
@@ -47,14 +49,17 @@ class App extends Component {
 
     this.moveEvent = this.moveEvent.bind(this)
     this.newEvent = this.newEvent.bind(this)
-    this.onDoubleClickEvent = this.onDoubleClickEvent.bind(this)
+    this.removeEvent = this.removeEvent.bind(this)
     this.setSelected = this.setSelected.bind(this)
     this.getEventProp = this.getEventProp.bind(this)
   }
 
   moveEvent({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
+
+    console.log('moving event ', event)
+    
     const { events } = this.state
-    const idx = events.indexOf(event)
+    const idx = events.findIndex(elem => elem.id === event.id)
     let allDay = event.allDay
 
     if (!event.allDay && droppedOnAllDaySlot) {
@@ -74,20 +79,29 @@ class App extends Component {
   }
 
   newEvent(allSelected) {
+
+    //console.log(allSelected)
+    console.log('state events: ', this.state.events)
     
-    let newId = this.state.events[this.state.events.length-1].id + 1
-
+    if (allSelected.slots.length === 2 && allSelected.action === 'click') {
+      console.log('bugfix')
+    }
+    
+    // find the largest and then increment to guarantee a unique event ID
+    let eventId = 0
+    this.state.events.forEach(event => {
+      if (event.id > eventId)
+	eventId = event.id
+    })
+    
+    console.log('found eventID: ', eventId)
+    eventId += 1;
+    
     allSelected.slots.forEach(slot => {
+
+      console.log('using eventID ', eventId)
       let selectedShift = this.state.selected.shift
-
-      // find the largest and then increment to guarantee a unique event ID
-      let eventId = 0
-      this.state.events.forEach(event => {
-	if (event.id > eventId)
-	  eventId = event.id
-      })
-      eventId++
-
+      
       let startDate = slot
       startDate.setHours(selectedShift.startHour, selectedShift.startMinute, 0)
       let stopDate = moment(startDate).add(selectedShift.minuteLength, 'm').toDate()
@@ -98,8 +112,7 @@ class App extends Component {
 	end: stopDate,
 	allDay: false,
 	id: eventId,
-	resource: this.state.selected.resource.id,
-	
+	resource: this.state.selected.resource.id,	
       }
 
       this.setState({
@@ -107,19 +120,24 @@ class App extends Component {
       })
 
       storeEvents(this.state.events)
-    }) 
+      eventId++
+    })
   }
 
   // double clicking an event removes it
   // TODO: add a warning + confirmation before removing
-  onDoubleClickEvent(argEvent, e) {
+  removeEvent(argEvent, e) {
+    this.setState((state, _) => {
+      
+      const newEventList = state.events.filter(elem => elem.id !== argEvent.id)
+      storeEvents(newEventList)
 
-    let newEventList = this.state.events.filter(elem => elem.id !== argEvent.id)
-
-    this.setState({
-      events: update(this.state.events, {$set: newEventList})
+      console.log('event removed, new list: ', newEventList)
+      
+      return {
+	events: newEventList,
+      }
     })
-    storeEvents(newEventList)
   }
 
 
@@ -132,8 +150,6 @@ class App extends Component {
     })
   }
 
-  // TODO: make this return different colors depending on the
-  // resource, ie person, attached. Make a map
   // TODO: check if the event is a meta event and show
   // total scheduled hours for that day instead
   // TODO: make and archive a copy of all resources ever so events don't get broken
@@ -145,7 +161,6 @@ class App extends Component {
       console.log('no resource found: ', event, this.state.resources)
       return
     }
-    
 
     if (resource.title === "#META_INFO#") {
       return {
@@ -162,6 +177,9 @@ class App extends Component {
     }
   }
 
+  eventInfo(event) {
+    console.log('event ID: ', event.id)
+  }
 
   // TODO: make the background blurred when the modal is open
   render() {
@@ -175,7 +193,10 @@ class App extends Component {
 	  className = "optionsModal"
 	  overlayClassName = "optionsModalOverlay"
 	>
-	  <ModalMenu />
+	  <ModalMenu
+	    resources = { this.state.resources }
+	    shifts = { this.state.shifts }
+	  />
 	</Modal>
 	<div id = "calendar">
 	  <DragCalendar
@@ -184,15 +205,26 @@ class App extends Component {
             onEventDrop = { this.moveEvent }
             onEventResize = { () => {} }
             onSelectSlot = { this.newEvent }
-	    onSelectEvent = { () => { console.log('kitten') } }
+	    onSelectEvent = { (q) => this.eventInfo(q) }
             defaultView = "month"
             defaultDate = { new Date() }
 	    eventPropGetter = { this.getEventProp }
-	    onDoubleClickEvent = { this.onDoubleClickEvent }
 	    dayPropGetter = { this.getDayProp }
 	    selectable = { 'ignoreEvents' }
 	    showMultiDayTimes = { true }
 	    popup
+	    components = {{
+	      eventWrapper: ({event, children}) => (
+		<div
+		  onContextMenu = { e => {
+		      this.removeEvent(event, e)
+		      e.preventDefault()
+		  }}>
+		  
+		  { children }
+		</div>
+	      ),
+	    }}
 	  />
 	</div>
 	<PickerPanel

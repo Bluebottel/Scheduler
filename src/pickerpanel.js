@@ -10,8 +10,6 @@ class PickerPanel extends Component {
   constructor(props) {
     super(props)
 
-    console.log('prop selected: ', this.props.selected)
-
     this.state = {
       shifts: this.props.shifts,
       resources: this.props.resources,
@@ -90,8 +88,6 @@ class PickerPanel extends Component {
 }
 
 function ShiftInfoBlock(props) {
-
-  console.log(props.shift)
 
   let stop = new Date()
   stop.setHours(props.shift.startHour, props.shift.startMinute, 0)
