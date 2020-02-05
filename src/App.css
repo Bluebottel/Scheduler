@@ -81,4 +81,18 @@
     outline: none;
 }
 
+.react-contextmenu {
+    background: whitesmoke;
+    border-radius: 5px;
+    padding: 5px;
+    border: 2px solid black;
+    z-index: 10;
+}
 
+.react-contextmenu-item {
+    z-index: 10;
+}
+.react-contextmenu-item:hover {
+    background: blue;
+    z-index: 10;
+}
