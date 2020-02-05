@@ -1,6 +1,11 @@
 import React, { Component } from 'react'
 
+import trashcan from './img/trashcan.png'
+import edit from './img/edit.png'
+
 import './modalmenu.css'
+
+import FTPPanel from './ftp'
 
 class ModalMenu extends Component {
   constructor(props) {
@@ -15,22 +20,62 @@ class ModalMenu extends Component {
   }
 
 
+  //TODO: add onClicks for the images (edit, delete)
+
   render() {
     return (
-      <React.Fragment>
-	<div className = "boxLabel">Resurser</div>
-	<div className = "pickerBox">
-	  [Resurslista]
+      <div style = {{ display: "flex" }}>
+	<div className = "modalPanel">
+	  <div className = "boxLabel">Resurser</div>
+	  <div className = "pickerBox">
+	    {
+	      this.state.resources.map((res, i) => {
+		return (
+		  <div className = "option" key = { i }>
+		    <div className = "optionMainPanel">
+		      { res.resourceTitleAccessor }
+		    </div>
+		    <div className = "optionSidePanel">
+		      <img src = { edit } />
+		      <img src = { trashcan } />
+		    </div>
+		  </div>
+		)
+	      })
+
+	    }
+	  </div>
 	</div>
-	<div className = "boxLabel">Pass</div>
-	<div className = "pickerBox">
-	  [Passlista]
+
+	<div className = "modalPanel">
+	  <div className = "boxLabel">Pass</div>
+	  <div className = "pickerBox">
+	    {
+	      this.state.shifts.map((shift, i) => {
+		return (
+		  <div className = "option" key = { i }>
+		    <div className = "optionMainPanel">
+		      { shift.title }
+		    </div>
+		    <div className = "optionSidePanel">
+		      <img src = { edit } />
+		      <img src = { trashcan } />
+		    </div>
+		  </div>
+		)
+	      })
+	    }
+	  </div>
 	</div>
-	<div className = "boxLabel">FTP</div>
-	<div className = "pickerBox">
-	  [FTPstuff]
+
+	<div className = "modalPanel">
+	  <div className = "boxLabel">FTP</div>
+	  <div className = "pickerBox">
+	    <FTPPanel />
+	  </div>
 	</div>
-      </React.Fragment>
+	
+      </div>
     )
   }
 }

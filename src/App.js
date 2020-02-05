@@ -175,7 +175,10 @@ class App extends Component {
 	  className = "optionsModal"
 	  overlayClassName = "optionsModalOverlay"
 	>
-	  <ModalMenu />
+	  <ModalMenu
+	    resources = { this.state.resources }
+	    shifts = { this.state.shifts }
+	  />
 	</Modal>
 	<div id = "calendar">
 	  <DragCalendar
