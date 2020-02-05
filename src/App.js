@@ -5,7 +5,7 @@ import './App.css'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import PickerPanel from './pickerpanel'
-import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop"
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 
@@ -34,8 +34,6 @@ class App extends Component {
     const resources = loadResources()
     const shifts = loadShifts()
 
-    console.log('loaded events: ', events)
-
     this.state = {
       events: events,
       resources: resources,
@@ -56,8 +54,6 @@ class App extends Component {
 
   moveEvent({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
 
-    console.log('moving event ', event)
-    
     const { events } = this.state
     const idx = events.findIndex(elem => elem.id === event.id)
     let allDay = event.allDay
@@ -80,9 +76,6 @@ class App extends Component {
 
   newEvent(allSelected) {
 
-    //console.log(allSelected)
-    console.log('state events: ', this.state.events)
-    
     if (allSelected.slots.length === 2 && allSelected.action === 'click') {
       console.log('bugfix')
     }
@@ -94,12 +87,9 @@ class App extends Component {
 	eventId = event.id
     })
     
-    console.log('found eventID: ', eventId)
     eventId += 1;
     
     allSelected.slots.forEach(slot => {
-
-      console.log('using eventID ', eventId)
       let selectedShift = this.state.selected.shift
       
       let startDate = slot
@@ -132,8 +122,6 @@ class App extends Component {
       const newEventList = state.events.filter(elem => elem.id !== argEvent.id)
       storeEvents(newEventList)
 
-      console.log('event removed, new list: ', newEventList)
-      
       return {
 	events: newEventList,
       }
