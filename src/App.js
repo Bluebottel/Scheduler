@@ -88,6 +88,8 @@ class App extends Component {
     })
     
     eventId += 1;
+
+    let newEvents = []
     
     allSelected.slots.forEach(slot => {
       let selectedShift = this.state.selected.shift
@@ -105,13 +107,21 @@ class App extends Component {
 	resource: this.state.selected.resource.id,	
       }
 
-      this.setState({
-	events: update(this.state.events, {$push: [newEvent]})
-      })
-
-      storeEvents(this.state.events)
-      eventId++
+      newEvents.push(newEvent)
+      eventId++;
     })
+
+    this.setState((state, _) => {
+      storeEvents(state.events.concat(newEvents))
+
+      return {
+	events: state.events.concat(newEvents)
+      }
+
+    })
+
+
+
   }
 
   // double clicking an event removes it
@@ -171,6 +181,7 @@ class App extends Component {
 
   // TODO: make the background blurred when the modal is open
   render() {
+
     return (
       <div id = "container">
 	<Modal
@@ -180,6 +191,7 @@ class App extends Component {
 	  shouldCloseOnOverlayClick = { true }
 	  className = "optionsModal"
 	  overlayClassName = "optionsModalOverlay"
+	  ariaHideApp = { false }
 	>
 	  <ModalMenu
 	    resources = { this.state.resources }
@@ -188,6 +200,8 @@ class App extends Component {
 	</Modal>
 	<div id = "calendar">
 	  <DragCalendar
+	    startAccessor = "start"
+	    endAccessor = "end"
             localizer = { localizer }
             events = { this.state.events }
             onEventDrop = { this.moveEvent }

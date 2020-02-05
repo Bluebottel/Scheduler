@@ -36,8 +36,14 @@ class ModalMenu extends Component {
 		      { res.resourceTitleAccessor }
 		    </div>
 		    <div className = "optionSidePanel">
-		      <img src = { edit } />
-		      <img src = { trashcan } />
+		      <img
+			src = { edit }
+			alt = "[Edit]"
+		      />
+		      <img
+			src = { trashcan }
+			alt = "[Delete]"
+		      />
 		    </div>
 		  </div>
 		)
@@ -58,8 +64,14 @@ class ModalMenu extends Component {
 		      { shift.title }
 		    </div>
 		    <div className = "optionSidePanel">
-		      <img src = { edit } />
-		      <img src = { trashcan } />
+		      <img
+			src = { edit }
+			alt = "[Edit]"
+		      />
+		      <img
+			src = { trashcan }
+			alt = "[Delete]"
+		      />
 		    </div>
 		  </div>
 		)
