@@ -8,8 +8,6 @@ import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 
-import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu"
-
 import { loadResources, loadEvents,
 	 storeEvents, storeResources,
 	 storeShifts, loadShifts } from './storage'
@@ -79,10 +77,6 @@ class App extends Component {
 
   newEvent(allSelected) {
 
-    if (allSelected.slots.length === 2 && allSelected.action === 'click') {
-      console.log('bugfix')
-    }
-    
     // find the largest and then increment to guarantee a unique event ID
     let eventId = 0
     this.state.events.forEach(event => {
@@ -91,7 +85,6 @@ class App extends Component {
     })
     
     eventId += 1;
-
     let newEvents = []
     
     allSelected.slots.forEach(slot => {
@@ -136,7 +129,6 @@ class App extends Component {
     })
   }
 
-
   setSelected({ shift, resource }) {
     this.setState({
       selected: {
@@ -177,17 +169,9 @@ class App extends Component {
     console.log('event ID: ', event.id)
   }
 
-  handleContext(e, data) {
-    console.log('context!')
-    e.stopPropagation()
-    e.preventDefault()
-    return false
-  }
-
   // TODO: make the background blurred when the modal is open
-  // TODO: disable underlying elements from trigger click event when context menu open
+  // TODO: add a context menu instead of removing the event straight away
   render() {
-
     return (
       <div id = "container">
 	<Modal
@@ -223,30 +207,12 @@ class App extends Component {
 	    popup
 	    components = {{
 	      eventWrapper: ({event, children}) => (
-		<div style={{zIndex: "10"}}>
-		  <ContextMenuTrigger id = "context">
-		    <div className = "well">		  
-		      { children }
-		    </div>
-		  </ContextMenuTrigger>
-
-		  <ContextMenu id = "context">
-		    <div className = "contextMenu">
-		      <MenuItem id = "2">Remove event?</MenuItem>
-		      <MenuItem dividier />
-		      
-		      <MenuItem
-			data = {{cat: 'meow'}}
-			onClickCapture = { this.handleContext }
-		      >
-			Remove
-		      </MenuItem>
-		      
-		      <MenuItem onClick = { (q, b) => {} }>
-			Cancel
-		      </MenuItem>
-		    </div>
-		  </ContextMenu>
+		<div
+		  onContextMenu = { e => {
+		      this.removeEvent(event, e)
+		      e.preventDefault()
+		  }}>
+		  { children }
 		</div>
 	      ),
 	    }}
