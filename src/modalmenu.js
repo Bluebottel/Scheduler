@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import update from 'immutability-helper'
+import EditableLabel from 'react-inline-editing'
 
 import trashcan from './img/trashcan.png'
 import edit from './img/edit.png'
@@ -17,11 +19,15 @@ class ModalMenu extends Component {
       shifts: this.props.shifts,
     }
 
+    this.updateTitle = this.updateTitle.bind(this)
   }
 
+  updateTitle(newElement, target) {
+    
+  }
 
   //TODO: add onClicks for the images (edit, delete)
-
+  // TODO: fix classname on wrapping div in editlabel
   render() {
     return (
       <div style = {{ display: "flex" }}>
@@ -32,9 +38,12 @@ class ModalMenu extends Component {
 	      this.state.resources.map((res, i) => {
 		return (
 		  <div className = "option" key = { i }>
-		    <div className = "optionMainPanel">
-		      { res.resourceTitleAccessor }
-		    </div>
+		      <EditableLabel
+			text = { res.resourceTitleAccessor  }
+			onFocusOut = { (text) => console.log(`out with ${text}`) }
+			labelClassName = { 'optionMainPanel' }
+			inputClassName = { 'optionMainPanel' }
+		      />
 		    <div className = "optionSidePanel">
 		      <img
 			src = { edit }

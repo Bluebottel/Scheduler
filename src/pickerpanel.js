@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import update from 'immutability-helper'
 import moment from 'moment'
+import EditableLabel from 'react-inline-editing'
 
 function timePad(number)
 { return (number < 10) ? "0" + number : number }
@@ -41,10 +42,7 @@ class PickerPanel extends Component {
 		  }}
 		  key = { i } >
 		  <div className = "shiftTitle">{ shift.title }</div>
-		  <ShiftInfoBlock
-		    className = "shiftInfo"
-		    shift = { shift }
-		  />
+		  <ShiftInfoBlock className = "shiftInfo" shift = { shift } />
 		</div>
 	      )
 	      

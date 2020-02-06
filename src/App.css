@@ -56,43 +56,30 @@
 }
 
 .optionsModal {
-    position: absolute;
-    top: 40px;
-    left: 40px;
-    right: 40px;
-    bottom: 40px;
     background-color: white;
     box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.3);
     border-radius: 10px;
     border: 1px solid #ddd;
     padding: 10px;
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+
+    width: 1000px;
+    height: 500px;
 }
 
 .optionsModalOverlay {
-    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     z-index: 100;
+    position: fixed;
 }
 
 .optionsModal, .optionsModalOverlay:focus {
     outline: none;
-}
-
-.react-contextmenu {
-    background: whitesmoke;
-    border-radius: 5px;
-    padding: 5px;
-    border: 2px solid black;
-    z-index: 10;
-}
-
-.react-contextmenu-item {
-    z-index: 10;
-}
-.react-contextmenu-item:hover {
-    background: blue;
-    z-index: 10;
 }
