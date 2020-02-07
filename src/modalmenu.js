@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import update from 'immutability-helper'
 import EditableLabel from 'react-inline-editing'
 
+import ColorPicker from 'rc-color-picker'
+import 'rc-color-picker/assets/index.css'
+
 import trashcan from './img/trashcan.png'
 import edit from './img/edit.png'
 
@@ -18,16 +21,9 @@ class ModalMenu extends Component {
       resources: this.props.resources,
       shifts: this.props.shifts,
     }
-
-    this.updateTitle = this.updateTitle.bind(this)
-  }
-
-  updateTitle(newElement, target) {
-    
   }
 
   //TODO: add onClicks for the images (edit, delete)
-  // TODO: fix classname on wrapping div in editlabel
   render() {
     return (
       <div style = {{ display: "flex" }}>
@@ -35,68 +31,89 @@ class ModalMenu extends Component {
 	  <div className = "boxLabel">Resurser</div>
 	  <div className = "pickerBox">
 	    {
-	      this.state.resources.map((res, i) => {
+	      this.state.resources.map((resource, i) => {
 		return (
 		  <div className = "option" key = { i }>
+		    <EditableLabel
+		      text = { resource.title  }
+		      onFocusOut = {
+			text => {
+			  
+			  resource.title = text
+			  
+			  // TODO: make this into a function instead
+			  resource.resourceTitleAccessor = text
+			  this.props.updateElement(resource, 'resources')
+			}}
+		    />
+		    <div className = "optionSidePanel">
+		      <div style={{ display: "inline-table" }}>
+			<ColorPicker
+			  animation = "slide-up"
+			  color = { resource.color }
+			  onClose = { color => {
+			      console.log(color)
+			  }}
+			  style = {{ height: "100px", width: "10px", display: "inline"  }}
+			  enableAlpha = { false }
+			/>
+		      </div>
+			<img
+			  src = { trashcan }
+			  alt = "[Delete]"
+			/>
+		      </div>
+		    </div>
+		)
+	      })
+
+	    }
+		  </div>
+	  </div>
+
+	  <div className = "modalPanel">
+	    <div className = "boxLabel">Pass</div>
+	    <div className = "pickerBox">
+	      {
+		this.state.shifts.map((shift, i) => {
+		  return (
+		    <div className = "option" key = { i }>
 		      <EditableLabel
-			text = { res.resourceTitleAccessor  }
-			onFocusOut = { (text) => console.log(`out with ${text}`) }
-			labelClassName = { 'optionMainPanel' }
-			inputClassName = { 'optionMainPanel' }
+			text = { shift.title }
+			onFocusOut = {
+			  text => {
+			    shift.title = text
+			    this.props.updateElement(shift, 'shifts')
+			  }}
 		      />
-		    <div className = "optionSidePanel">
-		      <img
-			src = { edit }
-			alt = "[Edit]"
+		      <EditableLabel
+			text = { `${shift.startHour}:${shift.startMinute}`}
+			onFocusOut = {
+			  text => {
+			    console.log('new text: ', text)
+			  }}
 		      />
-		      <img
-			src = { trashcan }
-			alt = "[Delete]"
-		      />
+		      <div className = "optionSidePanel">
+			<img
+			  src = { trashcan }
+			  alt = "[Delete]"
+			/>
+		      </div>
 		    </div>
-		  </div>
-		)
-	      })
-
-	    }
+		  )
+		})
+	      }
+	    </div>
 	  </div>
-	</div>
 
-	<div className = "modalPanel">
-	  <div className = "boxLabel">Pass</div>
-	  <div className = "pickerBox">
-	    {
-	      this.state.shifts.map((shift, i) => {
-		return (
-		  <div className = "option" key = { i }>
-		    <div className = "optionMainPanel">
-		      { shift.title }
-		    </div>
-		    <div className = "optionSidePanel">
-		      <img
-			src = { edit }
-			alt = "[Edit]"
-		      />
-		      <img
-			src = { trashcan }
-			alt = "[Delete]"
-		      />
-		    </div>
-		  </div>
-		)
-	      })
-	    }
+	  <div className = "modalPanel">
+	    <div className = "boxLabel">FTP</div>
+	    <div className = "pickerBox">
+	      <FTPPanel />
+	    </div>
 	  </div>
+	  
 	</div>
-
-	<div className = "modalPanel">
-	  <div className = "boxLabel">FTP</div>
-	  <div className = "pickerBox">
-	    <FTPPanel />
-	  </div>
-	</div>
-	
-      </div>
     )
   }
 }

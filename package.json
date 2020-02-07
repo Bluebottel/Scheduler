@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^7.2.1",
     "immutability-helper": "^3.0.1",
     "moment": "^2.24.0",
+    "rc-color-picker": "^1.2.6",
     "react": "^16.12.0",
     "react-big-calendar": "^0.23.0",
     "react-contexify": "^4.1.1",

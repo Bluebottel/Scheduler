@@ -1,3 +1,7 @@
+.option>* {
+    display: inline;
+}
+
 .optionSidePanel {
     float: right;
 }
@@ -5,6 +9,10 @@
 .optionSidePanel img {
     height: 17px;
     margin: -1px 2px 0 0;
+}
+
+.optionSidePangel>* {
+    display: inline-table;
 }
 
 .optionSidePanel img:last-child {
@@ -20,4 +28,8 @@
     margin: 5px;
 }
 
+.rc-color-picker-trigger {
+    height: 10px;
+    width: 10px;
+}
 

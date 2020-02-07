@@ -10,12 +10,6 @@ function timePad(number)
 class PickerPanel extends Component {
   constructor(props) {
     super(props)
-
-    this.state = {
-      shifts: this.props.shifts,
-      resources: this.props.resources,
-      selected: this.props.selected,
-    }
   }
 
   render() {
@@ -24,20 +18,20 @@ class PickerPanel extends Component {
 	<div className = "boxLabel">Pass</div>
 	<div className = "pickerBox">
 	  {
-	    this.state.shifts.map((shift, i) => {
+	    this.props.shifts.map((shift, i) => {
 	      return (
 		<div
 		  className =
-		  {`option${shift.id === this.state.selected.shift.id ? ' selected' : ''}`}
+		  {`option${shift.id === this.props.selected.shift.id ? ' selected' : ''}`}
 		  onClick = {() => {
 		      
 		      this.setState({
-			selected: update(this.state.selected, { shift: {$set: shift}})
+			selected: update(this.props.selected, { shift: {$set: shift}})
 		      })
 		      
 		      this.props.setSelected({
 			shift: shift,
-			resource: this.state.selected.resource
+			resource: this.props.selected.resource
 		      })
 		  }}
 		  key = { i } >
@@ -53,19 +47,19 @@ class PickerPanel extends Component {
       <div className = "boxLabel">Personer</div>
       <div className = "pickerBox">
       {
-	this.state.resources.map((res, i) => {
+	this.props.resources.map((res, i) => {
 	  return (
 	    <div
 	    className =
-	      {`option${res.id === this.state.selected.resource.id ? ' selected' : ''}`}
+	      {`option${res.id === this.props.selected.resource.id ? ' selected' : ''}`}
 	    
 	    onClick = {() => {
 	      this.setState({
-		selected: update(this.state.selected, { resource: {$set: res}})
+		selected: update(this.props.selected, { resource: {$set: res}})
 	      })
 
 	      this.props.setSelected({
-		shift: this.state.selected.shift,
+		shift: this.props.selected.shift,
 		resource: res,
 	      })
 	    }}

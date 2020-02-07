@@ -51,6 +51,8 @@ class App extends Component {
     this.removeEvent = this.removeEvent.bind(this)
     this.setSelected = this.setSelected.bind(this)
     this.getEventProp = this.getEventProp.bind(this)
+    this.updateElement = this.updateElement.bind(this)
+    this.createResource = this.createResource.bind(this)
   }
 
   moveEvent({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
@@ -141,6 +143,7 @@ class App extends Component {
   // TODO: check if the event is a meta event and show
   // total scheduled hours for that day instead
   // TODO: make and archive a copy of all resources ever so events don't get broken
+  // TODO: make the title dynamically built by a function instead (?)
   getEventProp(event, start, end, isSelected) {
 
     const resource = this.state.resources.find(res => res.id === event.resource)
@@ -169,6 +172,33 @@ class App extends Component {
     console.log('event ID: ', event.id)
   }
 
+  updateElement(newElement, type) {
+    const index = this.state[type].findIndex(elem => elem.id === newElement.id)
+    const newList = update(this.state[type], {$splice: [[index, true, newElement]]})
+
+    this.setState({ [type]: newList })
+
+    if (type === 'shifts') storeShifts(newList)
+    else if (type === 'resources') storeResources(newList)
+  }
+
+  createResource(title, color) {
+
+    // make sure that the new ID is unique by making it larger than every other ID
+    let newId = 0
+    this.state.resources.forEach(res => {if (res.id >= newId) { newId = res.id+1 }})
+    
+    const newResource = {
+      title: title,
+      id: newId,
+      color: color,
+      resourceTitleAccessor: () => this.title,
+      resourceIdAccessor: () => this.id,
+    }
+
+    return newResource
+  }
+
   // TODO: make the background blurred when the modal is open
   // TODO: add a context menu instead of removing the event straight away
   render() {
@@ -186,6 +216,7 @@ class App extends Component {
 	  <ModalMenu
 	    resources = { this.state.resources }
 	    shifts = { this.state.shifts }
+	    updateElement = { this.updateElement }
 	  />
 	</Modal>
 	<div id = "calendar">
