@@ -54,7 +54,6 @@ class ModalMenu extends Component {
 			  onClose = { color => {
 			      console.log(color)
 			  }}
-			  style = {{ height: "100px", width: "10px", display: "inline"  }}
 			  enableAlpha = { false }
 			/>
 		      </div>
