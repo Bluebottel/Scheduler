@@ -24,6 +24,7 @@ class ModalMenu extends Component {
   }
 
   //TODO: add onClicks for the images (edit, delete)
+  // TODO: use https://www.npmjs.com/package/react-editable-label instead
   render() {
     return (
       <div style = {{ display: "flex" }}>
@@ -38,11 +39,10 @@ class ModalMenu extends Component {
 		      text = { resource.title  }
 		      onFocusOut = {
 			text => {
+			  if (text.length === 0)
+			    return
 			  
 			  resource.title = text
-			  
-			  // TODO: make this into a function instead
-			  resource.resourceTitleAccessor = text
 			  this.props.updateElement(resource, 'resources')
 			}}
 		    />
@@ -58,62 +58,68 @@ class ModalMenu extends Component {
 			  enableAlpha = { false }
 			/>
 		      </div>
-			<img
-			  src = { trashcan }
-			  alt = "[Delete]"
-			/>
-		      </div>
+		      <img
+		      src = { trashcan }
+		      alt = "[Delete]"
+		      />
 		    </div>
+		  </div>
 		)
 	      })
 
 	    }
-		  </div>
 	  </div>
-
-	  <div className = "modalPanel">
-	    <div className = "boxLabel">Pass</div>
-	    <div className = "pickerBox">
-	      {
-		this.state.shifts.map((shift, i) => {
-		  return (
-		    <div className = "option" key = { i }>
-		      <EditableLabel
-			text = { shift.title }
-			onFocusOut = {
-			  text => {
-			    shift.title = text
-			    this.props.updateElement(shift, 'shifts')
-			  }}
-		      />
-		      <EditableLabel
-			text = { `${shift.startHour}:${shift.startMinute}`}
-			onFocusOut = {
-			  text => {
-			    console.log('new text: ', text)
-			  }}
-		      />
-		      <div className = "optionSidePanel">
-			<img
-			  src = { trashcan }
-			  alt = "[Delete]"
-			/>
-		      </div>
-		    </div>
-		  )
-		})
-	      }
-	    </div>
-	  </div>
-
-	  <div className = "modalPanel">
-	    <div className = "boxLabel">FTP</div>
-	    <div className = "pickerBox">
-	      <FTPPanel />
-	    </div>
-	  </div>
-	  
 	</div>
+
+	<div className = "modalPanel">
+	  <div className = "boxLabel">Pass</div>
+	  <div className = "pickerBox">
+	    {
+	      this.state.shifts.map((shift, i) => {
+		return (
+		  <div className = "option" key = { i }>
+		    <EditableLabel
+		      text = { shift.title }
+		      onFocusOut = {
+			text => {
+			  if (text.length === 0)
+			    return
+			  
+			  shift.title = text
+			  this.props.updateElement(shift, 'shifts')
+			}}
+		    />
+		    <EditableLabel
+		      text = { `${shift.startHour}:${shift.startMinute}`}
+		      onFocusOut = {
+			text => {
+			  if (text.length === 0)
+			    return
+			  
+			  console.log('new text: ', text)
+			}}
+		    />
+		    <div className = "optionSidePanel">
+		      <img
+		      src = { trashcan }
+		      alt = "[Delete]"
+		      />
+		    </div>
+		  </div>
+		)
+	      })
+	    }
+	  </div>
+	</div>
+
+	<div className = "modalPanel">
+	  <div className = "boxLabel">FTP</div>
+	  <div className = "pickerBox">
+	    <FTPPanel />
+	  </div>
+	</div>
+	
+      </div>
     )
   }
 }
