@@ -10,7 +10,8 @@ import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 
 import { loadResources, loadEvents,
 	 storeEvents, storeResources,
-	 storeShifts, loadShifts } from './storage'
+	 storeShifts, loadShifts,
+	 storeMetaData, loadMetaData } from './storage'
 
 import './App.css'
 import { storeTestData } from './testdata'
@@ -86,7 +87,7 @@ class App extends Component {
 	eventId = event.id
     })
     
-    eventId += 1;
+    eventId += 1
     let newEvents = []
     
     allSelected.slots.forEach(slot => {
@@ -95,14 +96,16 @@ class App extends Component {
       let startDate = slot
       startDate.setHours(selectedShift.startHour, selectedShift.startMinute, 0)
       let stopDate = moment(startDate).add(selectedShift.minuteLength, 'm').toDate()
-      let newEvent = {
-	title: this.state.selected.resource.title + ', ' +
-	       this.state.selected.shift.title,
+      let newEvent = { 
 	start: startDate,
 	end: stopDate,
 	allDay: false,
 	id: eventId,
-	resource: this.state.selected.resource.id,	
+	resource: this.state.selected.resource,
+	shift: this.state.selected.shift,
+	get title() {
+	  return this.resource.title + ', ' + this.shift.title
+	},
       }
 
       newEvents.push(newEvent)
@@ -146,14 +149,12 @@ class App extends Component {
   // TODO: make the title dynamically built by a function instead (?)
   getEventProp(event, start, end, isSelected) {
 
-    const resource = this.state.resources.find(res => res.id === event.resource)
-
-    if (!resource) {
+    if (!event.resource) {
       console.log('no resource found: ', event, this.state.resources)
       return
     }
 
-    if (resource.title === "#META_INFO#") {
+    if (event.resource.title === "#META_INFO#") {
       return {
 	style: {
 	  background: 'none',
@@ -163,8 +164,7 @@ class App extends Component {
     }
 
     return {
-      style: {
-	background: colorMap.get(resource.id % colorMap.size) }
+      style: { background: event.resource.color }
     }
   }
 
@@ -192,8 +192,8 @@ class App extends Component {
       title: title,
       id: newId,
       color: color,
-      resourceTitleAccessor: () => this.title,
-      resourceIdAccessor: () => this.id,
+      resourceTitleAccessor: () => title,
+      resourceIdAccessor: () => newId,
     }
 
     return newResource

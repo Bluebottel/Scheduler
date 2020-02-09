@@ -40,6 +40,15 @@ function loadShifts() {
   else return shiftList
 }
 
+function loadMetaData() {
+  let metaData = window.localStorage.getItem('schedule_metaData')
+
+  try { metaData = JSON.parse(metaData) }
+  catch(_) { return [] }
+
+  return metaData
+}
+
 function storeEvents(eventList) {
   window.localStorage
     .setItem('schedule_events', JSON.stringify(eventList))
@@ -55,13 +64,18 @@ function storeShifts(shiftList) {
     .setItem('schedule_shifts', JSON.stringify(shiftList))
 }
 
-
+function storeMetaData(metaData) {
+  window.localStorage
+    .setItem('schedule_metaData', JSON.stringify(metaData))
+}
 
 export {
   loadResources,
   loadEvents,
   loadShifts,
+  loadMetaData,
   storeResources,
   storeEvents,
-  storeShifts,  
+  storeShifts,
+  storeMetaData,
 }

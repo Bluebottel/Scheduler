@@ -1,55 +1,35 @@
 
 function storeTestData() {
 
-  const events = [
-    {
-      title: 'Alice, FM',
-      start: new Date(),
-      end: new Date(),
-      allDay: false,
-      id: 0,
-      resource: '0',
-    },
-    {
-      title: 'Bob, EM',
-      start: new Date(),
-      end: new Date(),
-      id: 1,
-      resource: 1,
-    },
-    {
-      title: 'Chloe, Natt',
-      start: new Date(),
-      end: new Date(new Date().getTime()+20*1000*3600),
-      id: 2,
-      resource: 2,
-    }
-  ]
 
   const resources = [
     {
-      resourceIdAccessor: 0,
-      resourceTitleAccessor: 'Alice',
+      get resourceIdAccessor() { return this.id },
+      get resourceTitleAccessor() { return this.title }, 
       title: 'Alice',
       id: 0,
+      color: '#8f90ff',
     },
     {
-      resourceIdAccessor: 1,
-      resourceTitleAccessor: 'Bob',
+      get resourceIdAccessor() { return this.id },
+      get resourceTitleAccessor() { return this.title },
       title: 'Bob',
       id: 1,
+      color: '#ff8e8e',
     },
     {
-      resourceIdAccessor: 2,
-      resourceTitleAccessor: 'Chloe',
+      get resourceIdAccessor() { return this.id },
+      get resourceTitleAccessor() { return this.title },
       title: 'Chloe',
-      id: 2
+      id: 2,
+      color: '#c866c2'
     },
     {
-      resourceIdAccessor: 3,
-      resourceTitleAccessor: 'Dari',
+      get resourceIdAccessor() { return this.id },
+      get resourceTitleAccessor() { return this.title },
       title: 'Dari',
-      id: 3
+      id: 3,
+      color: '#8ed979',
     },      
   ]
 
@@ -74,6 +54,37 @@ function storeTestData() {
       startMinute: 30,
       minuteLength: 570,
       id: 2,
+    }
+  ]
+
+  const events = [
+    {
+      get title() { return this.resource.title
+			 + ', ' + this.shift.title } ,
+      start: new Date(),
+      end: new Date(),
+      allDay: false,
+      id: 0,
+      resource: resources[0],
+      shift: shifts[0]
+    },
+    {
+      get title() { return this.resource.title
+			 + ', ' + this.shift.title } ,
+      start: new Date(),
+      end: new Date(),
+      id: 1,
+      resource: resources[1],
+      shift: shifts[1]
+    },
+    {
+      get title() { return this.resource.title
+			 + ', ' + this.shift.title } ,
+      start: new Date(),
+      end: new Date(new Date().getTime()+20*1000*3600),
+      id: 2,
+      resource: resources[2],
+      shift: shifts[2]
     }
   ]
 

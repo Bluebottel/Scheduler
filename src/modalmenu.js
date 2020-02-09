@@ -52,7 +52,8 @@ class ModalMenu extends Component {
 			  animation = "slide-up"
 			  color = { resource.color }
 			  onClose = { color => {
-			      console.log(color)
+			      resource.color = color.color
+			      this.props.updateElement(resource, 'resources')
 			  }}
 			  enableAlpha = { false }
 			/>
