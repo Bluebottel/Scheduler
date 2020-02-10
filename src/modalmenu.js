@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import update from 'immutability-helper'
-import EditableLabel from 'react-inline-editing'
+import EditableLabel from 'react-editable-label'
 
 import ColorPicker from 'rc-color-picker'
 import 'rc-color-picker/assets/index.css'
@@ -11,6 +11,9 @@ import edit from './img/edit.png'
 import './modalmenu.css'
 
 import FTPPanel from './ftp'
+
+function timePad(number)
+{ return (number < 10) ? "0" + number : number }
 
 class ModalMenu extends Component {
   constructor(props) {
@@ -36,12 +39,13 @@ class ModalMenu extends Component {
 		return (
 		  <div className = "option" key = { i }>
 		    <EditableLabel
-		      text = { resource.title  }
-		      onFocusOut = {
+		      initialValue = { resource.title  }
+		      save = {
 			text => {
 			  if (text.length === 0)
 			    return
-			  
+
+			  console.log('updating resource: ', resource)
 			  resource.title = text
 			  this.props.updateElement(resource, 'resources')
 			}}
@@ -59,8 +63,8 @@ class ModalMenu extends Component {
 			/>
 		      </div>
 		      <img
-		      src = { trashcan }
-		      alt = "[Delete]"
+			src = { trashcan }
+			alt = "[Delete]"
 		      />
 		    </div>
 		  </div>
@@ -78,33 +82,51 @@ class ModalMenu extends Component {
 	      this.state.shifts.map((shift, i) => {
 		return (
 		  <div className = "option" key = { i }>
-		    <EditableLabel
-		      text = { shift.title }
-		      onFocusOut = {
-			text => {
-			  if (text.length === 0)
-			    return
-			  
-			  shift.title = text
-			  this.props.updateElement(shift, 'shifts')
-			}}
-		    />
-		    <EditableLabel
-		      text = { `${shift.startHour}:${shift.startMinute}`}
-		      onFocusOut = {
-			text => {
-			  if (text.length === 0)
-			    return
-			  
-			  console.log('new text: ', text)
-			}}
-		    />
-		    <div className = "optionSidePanel">
-		      <img
-		      src = { trashcan }
-		      alt = "[Delete]"
-		      />
-		    </div>
+		    <table className = "panelTable">
+		      <tr>
+			<th>Namn</th>
+			<th>Start</th>
+			<th>Längd (min)</th>
+		      </tr>
+		      <tr>
+			<td>
+			  <EditableLabel
+			    initialValue = { shift.title }
+			    save = {
+			      text => {
+				if (text.length === 0)
+				  return
+				
+				shift.title = text
+				this.props.updateElement(shift, 'shifts')
+			      }}
+			  />
+			</td>
+
+			<td>
+			  <EditableLabel
+			    initialValue = { timePad(shift.startHour) + ':'
+					  + timePad(shift.startMinute) }
+			    save = {
+			      text => {
+				if (text.length === 0)
+				  return
+				
+				console.log('new text: ', text)
+			      }}
+			  />
+			</td>
+
+			<td>
+			  <div className = "optionSidePanel">
+			    <img
+			    src = { trashcan }
+			    alt = "[Delete]"
+			    />
+			  </div>
+			</td>
+		      </tr>
+		    </table>
 		  </div>
 		)
 	      })

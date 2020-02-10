@@ -64,7 +64,7 @@ class PickerPanel extends Component {
 	      })
 	    }}
 	    key = { i } >
-	    { res.resourceTitleAccessor }
+	    { res.title }
       </div>
 	  )
 	}) 

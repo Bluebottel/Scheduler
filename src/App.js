@@ -173,6 +173,8 @@ class App extends Component {
   }
 
   updateElement(newElement, type) {
+
+    console.log('updating event ', newElement, type)
     const index = this.state[type].findIndex(elem => elem.id === newElement.id)
     const newList = update(this.state[type], {$splice: [[index, true, newElement]]})
 
