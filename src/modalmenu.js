@@ -26,8 +26,7 @@ class ModalMenu extends Component {
     }
   }
 
-  //TODO: add onClicks for the images (edit, delete)
-  // TODO: use https://www.npmjs.com/package/react-editable-label instead
+  //TODO: add onClicks for the images (delete)
   render() {
     return (
       <div style = {{ display: "flex" }}>

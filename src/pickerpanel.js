@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import update from 'immutability-helper'
 import moment from 'moment'
-import EditableLabel from 'react-inline-editing'
 
 function timePad(number)
 { return (number < 10) ? "0" + number : number }

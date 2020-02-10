@@ -149,6 +149,8 @@ class App extends Component {
   // TODO: make the title dynamically built by a function instead (?)
   getEventProp(event, start, end, isSelected) {
 
+    //console.log(event)
+    
     if (!event.resource) {
       console.log('no resource found: ', event, this.state.resources)
       return
@@ -177,6 +179,8 @@ class App extends Component {
     console.log('updating event ', newElement, type)
     const index = this.state[type].findIndex(elem => elem.id === newElement.id)
     const newList = update(this.state[type], {$splice: [[index, true, newElement]]})
+
+    console.log('new list: ', newList)
 
     this.setState({ [type]: newList })
 
@@ -234,7 +238,6 @@ class App extends Component {
             defaultView = "month"
             defaultDate = { new Date() }
 	    eventPropGetter = { this.getEventProp }
-	    dayPropGetter = { this.getDayProp }
 	    selectable = { 'ignoreEvents' }
 	    showMultiDayTimes = { true }
 	    popup

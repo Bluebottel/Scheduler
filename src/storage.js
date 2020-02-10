@@ -1,10 +1,21 @@
+import update from 'immutability-helper'
+
 
 // A resource in this case is just a person
 function loadResources() {
 
   let resourceList = window.localStorage.getItem('schedule_resources')
 
-  try { resourceList = JSON.parse(resourceList) }
+  try {
+    resourceList = JSON.parse(resourceList)
+
+    resourceList.forEach((resource, i) => {
+      resourceList[i].resourceTitleAccessor = () => this.title
+      resourceList[i].resourceIdAccessor = () => this.id
+
+      console.log('made ', resourceList[i])
+    })
+  }
   catch(_) { return [] }
 
   if (!resourceList instanceof Array) { return [] }
@@ -22,8 +33,20 @@ function loadEvents() {
     eventList.forEach((event, i) => {
       eventList[i].start = new Date(event.start)
       eventList[i].end = new Date(event.end)
+      Object.defineProperty(
+	eventList[i], 'title',
+	{
+	  get: function () {
+	    return this.resource.title + ', '
+	      + this.shift.title
+	  }
+	}
+      )
+
+      console.log('created: ', eventList[i])
     })
   }
+			     
   catch(_) { return [] }
 
   if (!eventList instanceof Array) { return [] }

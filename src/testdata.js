@@ -4,29 +4,29 @@ function storeTestData() {
 
   const resources = [
     {
-      get resourceIdAccessor() { return this.id },
-      get resourceTitleAccessor() { return this.title }, 
+      resourceIdAccessor() { return this.id },
+      resourceTitleAccessor() { return this.title }, 
       title: 'Alice',
       id: 0,
       color: '#8f90ff',
     },
     {
-      get resourceIdAccessor() { return this.id },
-      get resourceTitleAccessor() { return this.title },
+      resourceIdAccessor() { return this.id },
+      resourceTitleAccessor() { return this.title },
       title: 'Bob',
       id: 1,
       color: '#ff8e8e',
     },
     {
-      get resourceIdAccessor() { return this.id },
-      get resourceTitleAccessor() { return this.title },
+      resourceIdAccessor() { return this.id },
+      resourceTitleAccessor() { return this.title },
       title: 'Chloe',
       id: 2,
       color: '#c866c2'
     },
     {
-      get resourceIdAccessor() { return this.id },
-      get resourceTitleAccessor() { return this.title },
+      resourceIdAccessor() { return this.id },
+      resourceTitleAccessor() { return this.title },
       title: 'Dari',
       id: 3,
       color: '#8ed979',
