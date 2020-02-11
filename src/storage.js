@@ -55,7 +55,15 @@ function loadShifts() {
 function loadMetaData() {
   let metaData = window.localStorage.getItem('schedule_metaData')
 
-  try { metaData = JSON.parse(metaData) }
+  try {
+    metaData = JSON.parse(metaData)
+
+    if (!metaData.nextResourceId)
+      metaData.nextResourceId = 0
+
+    if (!metaData.nextShiftId)
+      metaData.nextShiftId = 0
+  }
   catch(_) { return [] }
 
   return metaData
