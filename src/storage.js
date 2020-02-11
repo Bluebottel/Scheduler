@@ -12,8 +12,6 @@ function loadResources() {
     resourceList.forEach((resource, i) => {
       resourceList[i].resourceTitleAccessor = () => this.title
       resourceList[i].resourceIdAccessor = () => this.id
-
-      console.log('made ', resourceList[i])
     })
   }
   catch(_) { return [] }
@@ -33,22 +31,7 @@ function loadEvents() {
     eventList.map(event => {
       event.start = new Date(event.start)
       event.end = new Date(event.end)
-      event.titleAccessor = () => {
-	return this.resource.title + ', '
-	  + this.shift.title
-      }
-
-      Object.defineProperty(
-	event,
-	'title',
-	{
-	  get: function() {
-	    return this.resource.title + ', '
-	      + this.shift.title
-	  }
-	}
-      )
-      console.log('created: ', event)
+     
       return event
     })
   }
