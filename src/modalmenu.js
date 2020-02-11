@@ -44,7 +44,7 @@ class ModalMenu extends Component {
 			  if (text.length === 0)
 			    return
 
-			  console.log('updating resource: ', resource)
+			  console.log('updating resource: ', resource, 'with title: ', text)
 			  resource.title = text
 			  this.props.updateElement(resource, 'resources')
 			}}
@@ -82,49 +82,53 @@ class ModalMenu extends Component {
 		return (
 		  <div className = "option" key = { i }>
 		    <table className = "panelTable">
-		      <tr>
-			<th>Namn</th>
-			<th>Start</th>
-			<th>Längd (min)</th>
-		      </tr>
-		      <tr>
-			<td>
-			  <EditableLabel
-			    initialValue = { shift.title }
-			    save = {
-			      text => {
-				if (text.length === 0)
-				  return
-				
-				shift.title = text
-				this.props.updateElement(shift, 'shifts')
-			      }}
-			  />
-			</td>
-
-			<td>
-			  <EditableLabel
-			    initialValue = { timePad(shift.startHour) + ':'
-					  + timePad(shift.startMinute) }
-			    save = {
-			      text => {
-				if (text.length === 0)
-				  return
-				
-				console.log('new text: ', text)
-			      }}
-			  />
-			</td>
-
-			<td>
-			  <div className = "optionSidePanel">
-			    <img
-			    src = { trashcan }
-			    alt = "[Delete]"
+		      <thead>
+			<tr>
+			  <th>Namn</th>
+			  <th>Start</th>
+			  <th>Längd (min)</th>
+			</tr>
+		      </thead>
+		      <tbody>
+			<tr>
+			  <td>
+			    <EditableLabel
+			      initialValue = { shift.title }
+			      save = {
+				text => {
+				  if (text.length === 0)
+				    return
+				  
+				  shift.title = text
+				  this.props.updateElement(shift, 'shifts')
+				}}
 			    />
-			  </div>
-			</td>
-		      </tr>
+			  </td>
+
+			  <td>
+			    <EditableLabel
+			      initialValue = { timePad(shift.startHour) + ':'
+					    + timePad(shift.startMinute) }
+			      save = {
+				text => {
+				  if (text.length === 0)
+				    return
+				  
+				  console.log('new text: ', text)
+				}}
+			    />
+			  </td>
+
+			  <td>
+			    <div className = "optionSidePanel">
+			      <img
+				src = { trashcan }
+				alt = "[Delete]"
+			      />
+			    </div>
+			  </td>
+			</tr>
+		      </tbody>
 		    </table>
 		  </div>
 		)

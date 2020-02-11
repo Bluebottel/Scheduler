@@ -54,6 +54,7 @@ class App extends Component {
     this.getEventProp = this.getEventProp.bind(this)
     this.updateElement = this.updateElement.bind(this)
     this.createResource = this.createResource.bind(this)
+    this.eventRender = this.eventRender.bind(this)
   }
 
   moveEvent({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
@@ -101,11 +102,8 @@ class App extends Component {
 	end: stopDate,
 	allDay: false,
 	id: eventId,
-	resource: this.state.selected.resource,
-	shift: this.state.selected.shift,
-	get title() {
-	  return this.resource.title + ', ' + this.shift.title
-	},
+	resourceId: this.state.selected.resource.id,
+	shiftId: this.state.selected.shift.id,
       }
 
       newEvents.push(newEvent)
@@ -149,14 +147,9 @@ class App extends Component {
   // TODO: make the title dynamically built by a function instead (?)
   getEventProp(event, start, end, isSelected) {
 
-    //console.log(event)
+    const resource = this.state.resources.find(res => res.id === event.resourceId)
     
-    if (!event.resource) {
-      console.log('no resource found: ', event, this.state.resources)
-      return
-    }
-
-    if (event.resource.title === "#META_INFO#") {
+    if (resource.title === "#META_INFO#") {
       return {
 	style: {
 	  background: 'none',
@@ -166,26 +159,40 @@ class App extends Component {
     }
 
     return {
-      style: { background: event.resource.color }
+      style: { background: resource.color }
     }
   }
 
+  // TODO: check if the event is a meta event and show
+  // total scheduled hours for that day instead
+  // TODO: make and archive a copy of all resources ever so events don't get broken
+  eventRender({ event }) {
+
+    let resource = this.state.resources.find(res => res.id === event.resourceId)
+    let shift = this.state.shifts.find(sh => sh.id === event.shiftId)
+
+    return (
+      <div style = {{ background: event.color }}>
+	{ resource.title + ', ' + shift.title }
+      </div>
+    )
+  }
+
   eventInfo(event) {
-    console.log('event ID: ', event.id)
+    console.log('event: ', event)
+    console.log(this.state.resources.find(e => e.id === event.resource.id))
   }
 
   updateElement(newElement, type) {
 
-    console.log('updating event ', newElement, type)
     const index = this.state[type].findIndex(elem => elem.id === newElement.id)
     const newList = update(this.state[type], {$splice: [[index, true, newElement]]})
-
-    console.log('new list: ', newList)
 
     this.setState({ [type]: newList })
 
     if (type === 'shifts') storeShifts(newList)
     else if (type === 'resources') storeResources(newList)
+    
   }
 
   createResource(title, color) {
@@ -204,6 +211,7 @@ class App extends Component {
 
     return newResource
   }
+
 
   // TODO: make the background blurred when the modal is open
   // TODO: add a context menu instead of removing the event straight away
@@ -251,6 +259,7 @@ class App extends Component {
 		  { children }
 		</div>
 	      ),
+	      event: this.eventRender,
 	    }}
 	  />
 	</div>

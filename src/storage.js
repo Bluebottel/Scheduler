@@ -12,8 +12,6 @@ function loadResources() {
     resourceList.forEach((resource, i) => {
       resourceList[i].resourceTitleAccessor = () => this.title
       resourceList[i].resourceIdAccessor = () => this.id
-
-      console.log('made ', resourceList[i])
     })
   }
   catch(_) { return [] }
@@ -30,20 +28,11 @@ function loadEvents() {
 
     // The dates get stored as strings and the parsing
     // doesn't turn them back into date objects automatically
-    eventList.forEach((event, i) => {
-      eventList[i].start = new Date(event.start)
-      eventList[i].end = new Date(event.end)
-      Object.defineProperty(
-	eventList[i], 'title',
-	{
-	  get: function () {
-	    return this.resource.title + ', '
-	      + this.shift.title
-	  }
-	}
-      )
-
-      console.log('created: ', eventList[i])
+    eventList.map(event => {
+      event.start = new Date(event.start)
+      event.end = new Date(event.end)
+     
+      return event
     })
   }
 			     
