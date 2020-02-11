@@ -44,7 +44,7 @@ class ModalMenu extends Component {
 			  if (text.length === 0)
 			    return
 
-			  console.log('updating resource: ', resource)
+			  console.log('updating resource: ', resource, 'with title: ', text)
 			  resource.title = text
 			  this.props.updateElement(resource, 'resources')
 			}}

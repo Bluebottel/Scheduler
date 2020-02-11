@@ -30,20 +30,26 @@ function loadEvents() {
 
     // The dates get stored as strings and the parsing
     // doesn't turn them back into date objects automatically
-    eventList.forEach((event, i) => {
-      eventList[i].start = new Date(event.start)
-      eventList[i].end = new Date(event.end)
+    eventList.map(event => {
+      event.start = new Date(event.start)
+      event.end = new Date(event.end)
+      event.titleAccessor = () => {
+	return this.resource.title + ', '
+	  + this.shift.title
+      }
+
       Object.defineProperty(
-	eventList[i], 'title',
+	event,
+	'title',
 	{
-	  get: function () {
+	  get: function() {
 	    return this.resource.title + ', '
 	      + this.shift.title
 	  }
 	}
       )
-
-      console.log('created: ', eventList[i])
+      console.log('created: ', event)
+      return event
     })
   }
 			     

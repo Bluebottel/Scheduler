@@ -171,7 +171,8 @@ class App extends Component {
   }
 
   eventInfo(event) {
-    console.log('event ID: ', event.id)
+    console.log('event: ', event)
+    console.log(this.state.resources.find(e => e.id === event.resource.id))
   }
 
   updateElement(newElement, type) {
@@ -186,6 +187,7 @@ class App extends Component {
 
     if (type === 'shifts') storeShifts(newList)
     else if (type === 'resources') storeResources(newList)
+    
   }
 
   createResource(title, color) {
@@ -208,6 +210,7 @@ class App extends Component {
   // TODO: make the background blurred when the modal is open
   // TODO: add a context menu instead of removing the event straight away
   render() {
+    console.log('redraw', this.state.events)
     return (
       <div id = "container">
 	<Modal
