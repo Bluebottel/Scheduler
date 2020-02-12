@@ -9,7 +9,12 @@ function loadResources() {
   try {
     resourceList = JSON.parse(resourceList)
 
-    resourceList.forEach((resource, i) => {
+    console.log('storage: ', resourceList)
+
+    // in case there are no resources store at all
+    if (!resourceList) return []
+
+    resourceList.forEach((res, i) => {
       resourceList[i].resourceTitleAccessor = () => this.title
       resourceList[i].resourceIdAccessor = () => this.id
     })
@@ -44,6 +49,8 @@ function loadEvents() {
 
 function loadShifts() {
   let shiftList = window.localStorage.getItem('schedule_shifts')
+
+  if (!shiftList) return []
 
   try { shiftList = JSON.parse(shiftList) }
   catch(_) { return [] }
