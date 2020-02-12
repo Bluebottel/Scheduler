@@ -35,6 +35,10 @@ class ModalMenu extends Component {
   render() {   
     return (
       <div style = {{ display: "flex" }}>
+	<div id ="closeBubble">
+	  <div className = "arc">
+	  </div>
+	</div>
 	<div className = "modalPanel">
 	  <div className = "boxLabel">Resurser</div>
 	  <div className = "pickerBox">

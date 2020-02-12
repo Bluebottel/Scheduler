@@ -32,7 +32,7 @@ class App extends Component {
   constructor(props) {
     super(props)
 
-    //storeTestData()
+    storeTestData()
 
     const events = loadEvents()
     const resources = loadResources()
@@ -172,7 +172,10 @@ class App extends Component {
     }
 
     return {
-      style: { background: resource.color }
+      style: {
+	background: resource.color,
+	cursor: 'grab',
+      }
     }
   }
 
@@ -243,6 +246,11 @@ class App extends Component {
 	  className = "optionsModal"
 	  overlayClassName = "optionsModalOverlay"
 	  ariaHideApp = { false }
+	  onAfterOpen = { () => document.getElementById('root').style.filter = 'blur(2px)' }
+	  onRequestClose = { () => {
+	      document.getElementById('root').style.filter = ''
+	      this.setState({ optionsModalOpen: false })
+	  }}
 	>
 	  <ModalMenu
 	    resources = { this.state.resources }
@@ -256,7 +264,12 @@ class App extends Component {
 	    endAccessor = "end"
             localizer = { localizer }
             events = { this.state.events }
-            onEventDrop = { this.moveEvent }
+            onEventDrop = { (argEvent, e) => {
+		document.body.style.cursor = 'default'
+		this.moveEvent(argEvent, e)
+	    }}
+	  
+	    onDragStart = { () => document.body.style.cursor = 'grabbing' }
             onEventResize = { () => {} }
             onSelectSlot = { this.newEvent }
 	    onSelectEvent = { (q) => this.eventInfo(q) }
