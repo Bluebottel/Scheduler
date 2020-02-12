@@ -80,6 +80,9 @@ class App extends Component {
 
   newEvent = (allSelected) => {
 
+    if (!this.state.selected.resource || !this.state.selected.shift)
+      return
+
     // find the largest and then increment to guarantee a unique event ID
     let eventId = 0
     this.state.events.forEach(event => {
@@ -186,7 +189,7 @@ class App extends Component {
 
   eventInfo(event) {
     console.log('event: ', event)
-    console.log(this.state.resources.find(e => e.id === event.resource.id))
+    console.log(this.state.resources.find(e => e.id === event.resourceId))
   }
 
   updateElement = (newElement, type) => {
