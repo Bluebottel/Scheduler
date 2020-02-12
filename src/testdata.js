@@ -59,34 +59,44 @@ function storeTestData() {
 
   const events = [
     {
-      get title() { return this.resource.title
-			 + ', ' + this.shift.title } ,
+      title: '',
       start: new Date(),
       end: new Date(),
       allDay: false,
       id: 0,
-      resource: resources[0],
-      shift: shifts[0]
+      resourceId: 0,
+      shiftId: 0,
     },
     {
-      get title() { return this.resource.title
-			 + ', ' + this.shift.title } ,
+      title: '',
       start: new Date(),
       end: new Date(),
       id: 1,
-      resource: resources[1],
-      shift: shifts[1]
+      resourceId: 1,
+      shiftId: 1,
     },
     {
-      get title() { return this.resource.title
-			 + ', ' + this.shift.title } ,
+      title: '',
       start: new Date(),
       end: new Date(new Date().getTime()+20*1000*3600),
       id: 2,
-      resource: resources[2],
-      shift: shifts[2]
+      resourceId: 2,
+      shiftId: 2,
     }
   ]
+
+  const metaData = {
+    resourceArchive: [
+      {
+	resourceIdAccessor() { return this.id },
+	resourceTitleAccessor() { return this.title },
+	title: 'RemovedPerson',
+	id: 4,
+	color: '#5dde35'	
+      }
+    ],
+    username: 'catperson',
+  }
 
   console.log('resources: ', resources)
   console.log('shifts: ', shifts)
@@ -99,6 +109,9 @@ function storeTestData() {
 
   window.localStorage.setItem('schedule_events',
 			      JSON.stringify(events))
+
+  window.localStorage.setItem('schedule_metaData',
+			      JSON.stringify(metaData))
 
   console.log('wrote testdata to localstorage')
 
