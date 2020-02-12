@@ -16,7 +16,8 @@
     "react-easy-edit": "^1.8.1",
     "react-editable-label": "^1.1.0",
     "react-modal": "^3.11.1",
-    "react-scripts": "3.3.0"
+    "react-scripts": "3.3.0",
+    "react-time-picker": "^3.9.0"
   },
   "scripts": {
     "start": "react-scripts start",

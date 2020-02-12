@@ -49,4 +49,6 @@
     text-align: center;
 }
 
-
+.panelTable tbody>tr:hover {
+    background: #ededed;
+}

@@ -32,10 +32,14 @@ class App extends Component {
   constructor(props) {
     super(props)
 
+    storeTestData()
+
     const events = loadEvents()
     const resources = loadResources()
     const shifts = loadShifts()
     const metaData = loadMetaData()
+
+    console.log('app: ', resources, shifts)
 
     this.state = {
       events: events,
@@ -46,20 +50,13 @@ class App extends Component {
 	resource: resources[0],
       },
       optionsModalOpen: false,
-      metaData: metaData,
+      meta: metaData,
     }
 
-    this.moveEvent = this.moveEvent.bind(this)
-    this.newEvent = this.newEvent.bind(this)
-    this.removeEvent = this.removeEvent.bind(this)
-    this.setSelected = this.setSelected.bind(this)
-    this.getEventProp = this.getEventProp.bind(this)
-    this.updateElement = this.updateElement.bind(this)
-    this.createResource = this.createResource.bind(this)
-    this.eventRender = this.eventRender.bind(this)
+    console.log('state: ', this.state.resources, this.state.shifts)
   }
 
-  moveEvent({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
+  moveEvent = ({ event, start, end, isAllDay: droppedOnAllDaySlot }) => {
 
     const { events } = this.state
     const idx = events.findIndex(elem => elem.id === event.id)
@@ -81,7 +78,7 @@ class App extends Component {
 
   }
 
-  newEvent(allSelected) {
+  newEvent = (allSelected) => {
 
     // find the largest and then increment to guarantee a unique event ID
     let eventId = 0
@@ -122,7 +119,7 @@ class App extends Component {
   }
 
   // TODO: add a warning + confirmation before removing
-  removeEvent(argEvent, e) {
+  removeEvent = (argEvent, e) => {
     this.setState((state, _) => {
       
       const newEventList = state.events.filter(elem => elem.id !== argEvent.id)
@@ -134,7 +131,9 @@ class App extends Component {
     })
   }
 
-  setSelected({ shift, resource }) {
+  setSelected = ({ shift, resource }) => {
+
+    console.log('selecting ', shift, resource)
     this.setState({
       selected: {
 	shift: shift,
@@ -143,12 +142,21 @@ class App extends Component {
     })
   }
 
-  // TODO: check if the event is a meta event and show
-  // total scheduled hours for that day instead
+  // TODO: check if the event is a meta event and show total scheduled hours for
+  //       that day instead
   // TODO: make and archive a copy of all resources ever so events don't get broken
-  getEventProp(event, start, end, isSelected) {
+  // TODO: make a gradient background and let the rightmost part represent shift
+  //       and the rest of the resource
+  getEventProp = (event, start, end, isSelected) => {
 
     const resource = this.state.resources.find(res => res.id === event.resourceId)
+
+    if (!resource) {
+      console.log('no resource found: ', event)
+      console.log(this.state.resources)
+      return
+    }
+
     
     if (resource.title === "#META_INFO#") {
       return {
@@ -164,7 +172,7 @@ class App extends Component {
     }
   }
 
-  eventRender({ event }) {
+  eventRender = ({ event }) => {
 
     let resource = this.state.resources.find(res => res.id === event.resourceId)
     let shift = this.state.shifts.find(sh => sh.id === event.shiftId)
@@ -181,7 +189,7 @@ class App extends Component {
     console.log(this.state.resources.find(e => e.id === event.resource.id))
   }
 
-  updateElement(newElement, type) {
+  updateElement = (newElement, type) => {
 
     const index = this.state[type].findIndex(elem => elem.id === newElement.id)
     const newList = update(this.state[type], {$splice: [[index, true, newElement]]})
@@ -193,7 +201,7 @@ class App extends Component {
     
   }
 
-  createResource(title, color) {
+  createResource = (title, color) => {
 
     // make sure that the new ID is unique by making it larger than every other ID
     let newId = 0
@@ -208,6 +216,13 @@ class App extends Component {
     }
 
     return newResource
+  }
+
+  // archive resources instead of removing them in case a removed resource have
+  // scheduled events
+  archiveResource = (resource) => {
+    
+    
   }
 
 

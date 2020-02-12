@@ -39,6 +39,9 @@
 
 .option:hover {
     background: #ededed;
+}
+
+.clickable {
     cursor: pointer;
 }
 

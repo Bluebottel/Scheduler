@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import update from 'immutability-helper'
-import EditableLabel from 'react-editable-label'
+import EasyEdit from 'react-easy-edit'
+import TimePicker from 'react-time-picker'
 
 import ColorPicker from 'rc-color-picker'
 import 'rc-color-picker/assets/index.css'
@@ -23,11 +24,15 @@ class ModalMenu extends Component {
       events: this.props.events,
       resources: this.props.resources,
       shifts: this.props.shifts,
+      picked : {
+	hour: 0,
+	minute: 0,
+      },
     }
   }
 
   //TODO: add onClicks for the images (delete)
-  render() {
+  render() {   
     return (
       <div style = {{ display: "flex" }}>
 	<div className = "modalPanel">
@@ -37,17 +42,19 @@ class ModalMenu extends Component {
 	      this.state.resources.map((resource, i) => {
 		return (
 		  <div className = "option" key = { i }>
-		    <EditableLabel
-		      initialValue = { resource.title  }
-		      save = {
+		    <EasyEdit
+		      type = "text"
+		      value = { resource.title  }
+		      onSave = {
 			text => {
-			  if (text.length === 0)
-			    return
-
-			  console.log('updating resource: ', resource, 'with title: ', text)
 			  resource.title = text
 			  this.props.updateElement(resource, 'resources')
 			}}
+		      onValidate = { text => text.length > 0 }
+
+		      saveButtonLabel = "Spara"
+		      cancelButtonLabel = "Avbryt"
+		      onHoverCssClass = "clickable"
 		    />
 		    <div className = "optionSidePanel">
 		      <div style={{ display: "inline-table" }}>
@@ -92,50 +99,80 @@ class ModalMenu extends Component {
 		    return (
 		      <tr key = { i }>
 			<td>
-			  <EditableLabel
-			    initialValue = { shift.title }
-			    save = {
+			  <EasyEdit
+			    type = "text"
+			    value = { shift.title }
+			    onSave = {
 			      text => {
 				if (text.length === 0)
 				  return
 				
 				shift.title = text
 				this.props.updateElement(shift, 'shifts')
-			      }}
-			    buttonsPosition = { 'after' }
-			    validationMessage = { 'fail' }
-			    onValidate = { (input) => {
-				console.log('validation')
-				return false
-			    }}
+			      }
+			    }
+
+			    onValidate = { text => text.length > 0 }
+			    validationMessage = "Namnet kan inte vara tomt"
+
+			    saveButtonLabel = "Spara"
+			    cancelButtonLabel = "Avbryt"
+			    onHoverCssClass = "clickable"
 			  />
 			</td>
 
 			<td>
-			  <EditableLabel
-			    initialValue = { timePad(shift.startHour) + ':'
-					  + timePad(shift.startMinute) }
-			    save = {
+			  <EasyEdit
+			    type = "text"
+			    value = { timePad(shift.startHour) + ':'
+				   + timePad(shift.startMinute) }
+			    onSave = {
 			      text => {
-				if (text.length === 0)
-				  return
-				
-				console.log('new text: ', text)
+				shift.startHour = parseInt(this.state.picked.hour)
+				shift.startMinute = parseInt(this.state.picked.minute)
+				this.props.updateElement(shift, 'shifts')
 			      }}
+
+			    editComponent = {
+			      clock(shift,
+				    value => {
+				      this.setState({
+					picked: {
+					  hour: value.split(':')[0],
+					  minute: value.split(':')[1],
+					}
+				      })
+				    })
+			    }
+
+			    saveButtonLabel = "Spara"
+			    cancelButtonLabel = "Avbryt"
+			    onHoverCssClass = "clickable"
 			  />
 			</td>
 			
 			<td>
-			  <EditableLabel
-			    initialValue = { shift.minuteLength  }
-			    save = {
-			      text => {
-				if (text.length === 0)
-				  return
+			  <EasyEdit
+			    type = "number"
 
-				if (text.match('/^[a-z0-9]+$/i'))
-				  console.log('alpha')
+			    value = {
+			      // the component throws an error unless
+			      // supplied with a string
+			      shift.minuteLength.toString()
+			    }
+
+			    onSave = {
+			      value => {
+				shift.minuteLength = value
+				this.props.updateElement(shift, 'shifts')
 			      }}
+			  
+			    onValidate = { value => value > 0 }
+			    validationMessage = "Måste vara en siffra > 0"
+
+			    saveButtonLabel = "Spara"
+			    cancelButtonLabel = "Avbryt"
+			    onHoverCssClass = "clickable"
 			  />
 			</td>
 
@@ -168,6 +205,24 @@ class ModalMenu extends Component {
     )
   }
 
+}
+
+function clock({ startHour, startMinute }, changeCallback) {
+
+  return (
+    <React.Fragment>
+      <TimePicker
+	maxDetail = "minute"
+	isOpen = { true }
+	hourPlaceholder = { timePad(startHour) }
+	minutePlaceholder = { timePad(startMinute) }
+	locale = "sv-SE"
+	value = { `${timePad(startHour)}:${timePad(startMinute)}:00` }
+	onChange = { value => changeCallback(value) }
+	autoFocus
+      />
+    </React.Fragment>
+  )
 }
 
 export default ModalMenu
