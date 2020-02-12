@@ -62,8 +62,8 @@ class ModalMenu extends Component {
 			/>
 		      </div>
 		      <img
-			src = { trashcan }
-			alt = "[Delete]"
+		      src = { trashcan }
+		      alt = "[Delete]"
 		      />
 		    </div>
 		  </div>
@@ -77,63 +77,83 @@ class ModalMenu extends Component {
 	<div className = "modalPanel">
 	  <div className = "boxLabel">Pass</div>
 	  <div className = "pickerBox">
-	    {
-	      this.state.shifts.map((shift, i) => {
-		return (
-		  <div className = "option" key = { i }>
-		    <table className = "panelTable">
-		      <thead>
-			<tr>
-			  <th>Namn</th>
-			  <th>Start</th>
-			  <th>Längd (min)</th>
-			</tr>
-		      </thead>
-		      <tbody>
-			<tr>
-			  <td>
-			    <EditableLabel
-			      initialValue = { shift.title }
-			      save = {
-				text => {
-				  if (text.length === 0)
-				    return
-				  
-				  shift.title = text
-				  this.props.updateElement(shift, 'shifts')
-				}}
-			    />
-			  </td>
+	    <table className = "panelTable">
+	      <thead>
+		<tr>
+		  <th style = {{textAlign: "left" }}>Namn</th>
+		  <th style = {{textAlign: "center" }} >Start</th>
+		  <th>Längd (min)</th>
+		  <th></th>
+		</tr>
+	      </thead>
+	      <tbody>
+		{
+		  this.state.shifts.map((shift, i) => {
+		    return (
+		      <tr key = { i }>
+			<td>
+			  <EditableLabel
+			    initialValue = { shift.title }
+			    save = {
+			      text => {
+				if (text.length === 0)
+				  return
+				
+				shift.title = text
+				this.props.updateElement(shift, 'shifts')
+			      }}
+			    buttonsPosition = { 'after' }
+			    validationMessage = { 'fail' }
+			    onValidate = { (input) => {
+				console.log('validation')
+				return false
+			    }}
+			  />
+			</td>
 
-			  <td>
-			    <EditableLabel
-			      initialValue = { timePad(shift.startHour) + ':'
-					    + timePad(shift.startMinute) }
-			      save = {
-				text => {
-				  if (text.length === 0)
-				    return
-				  
-				  console.log('new text: ', text)
-				}}
-			    />
-			  </td>
+			<td>
+			  <EditableLabel
+			    initialValue = { timePad(shift.startHour) + ':'
+					  + timePad(shift.startMinute) }
+			    save = {
+			      text => {
+				if (text.length === 0)
+				  return
+				
+				console.log('new text: ', text)
+			      }}
+			  />
+			</td>
+			
+			<td>
+			  <EditableLabel
+			    initialValue = { shift.minuteLength  }
+			    save = {
+			      text => {
+				if (text.length === 0)
+				  return
 
-			  <td>
-			    <div className = "optionSidePanel">
-			      <img
-				src = { trashcan }
-				alt = "[Delete]"
-			      />
-			    </div>
-			  </td>
-			</tr>
-		      </tbody>
-		    </table>
-		  </div>
-		)
-	      })
-	    }
+				if (text.match('/^[a-z0-9]+$/i'))
+				  console.log('alpha')
+			      }}
+			  />
+			</td>
+
+			<td>
+			  <div className = "optionSidePanel">
+			    <img
+			      src = { trashcan }
+			      alt = "[Delete]"
+			    />
+			  </div>
+			</td>
+		      </tr>
+		    )
+		  })
+		}
+	      </tbody>
+	    </table>
+
 	  </div>
 	</div>
 
@@ -147,6 +167,7 @@ class ModalMenu extends Component {
       </div>
     )
   }
+
 }
 
 export default ModalMenu
