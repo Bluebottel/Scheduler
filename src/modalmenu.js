@@ -32,11 +32,14 @@ class ModalMenu extends Component {
   }
 
   //TODO: add onClicks for the images (delete)
+  // TODO: make a 75% border around the close bubble
+  // TODO: make a the entire modal cast one shadow using drop shadow filter
   render() {   
     return (
       <div style = {{ display: "flex" }}>
-	<div id ="closeBubble">
-	  <div className = "arc">
+	<div id ="closeBubble" onClick = { this.props.closeModal }>
+	  <div className = "__arc">
+	    X
 	  </div>
 	</div>
 	<div className = "modalPanel">

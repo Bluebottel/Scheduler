@@ -232,6 +232,11 @@ class App extends Component {
     
   }
 
+  closeModal = () => {
+    document.getElementById('root').style.filter = ''
+    this.setState({ optionsModalOpen: false })
+  }
+
 
   // TODO: make the background blurred when the modal is open
   // TODO: add a context menu instead of removing the event straight away
@@ -247,15 +252,13 @@ class App extends Component {
 	  overlayClassName = "optionsModalOverlay"
 	  ariaHideApp = { false }
 	  onAfterOpen = { () => document.getElementById('root').style.filter = 'blur(2px)' }
-	  onRequestClose = { () => {
-	      document.getElementById('root').style.filter = ''
-	      this.setState({ optionsModalOpen: false })
-	  }}
+	  onRequestClose = { this.closeModal }
 	>
 	  <ModalMenu
 	    resources = { this.state.resources }
 	    shifts = { this.state.shifts }
 	    updateElement = { this.updateElement }
+	    closeModal = { this.closeModal }
 	  />
 	</Modal>
 	<div id = "calendar">

@@ -65,6 +65,16 @@
     width: 50px;
     height: 50px;
     box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.3);
+    border: 2px solid #ddd;
+    cursor: pointer;
+}
+
+/* TODO: use arc to give a partial border */
+.__arc {
+    position: absolute;
+    text-align: center;
+    top: 15px;
+    right: 19px;
 }
 
 .arc {
