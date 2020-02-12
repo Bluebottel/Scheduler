@@ -32,7 +32,7 @@ class App extends Component {
   constructor(props) {
     super(props)
 
-    storeTestData()
+    //storeTestData()
 
     const events = loadEvents()
     const resources = loadResources()
@@ -80,6 +80,7 @@ class App extends Component {
 
   newEvent = (allSelected) => {
 
+    // in case of empty lists
     if (!this.state.selected.resource || !this.state.selected.shift)
       return
 

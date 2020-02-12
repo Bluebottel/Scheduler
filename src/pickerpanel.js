@@ -12,6 +12,18 @@ class PickerPanel extends Component {
   }
 
   renderShifts = () => {
+
+    if (!this.props.shifts || this.props.shifts.length === 0)
+      return (
+	<div style = {{ fontStyle: 'italic',
+			color: '#878787',
+			textAlign: 'center',
+			cursor: 'default', }}
+	>
+	  -- Inga skift tillagda --
+	</div>
+      )
+    
     return (
       this.props.shifts.map((shift, i) => {
 	return (
@@ -43,6 +55,18 @@ class PickerPanel extends Component {
   }
 
   renderResources = () => {
+
+    if (!this.props.resources || this.props.resources.length === 0)
+      return (
+	<div style = {{ fontStyle: 'italic',
+			color: '#878787',
+			textAlign: 'center',
+			cursor: 'default', }}
+	>
+	  -- Inga resurser tillagda --
+	</div>
+      )
+    
     return (
       this.props.resources.map((res, i) => {
 	return (
@@ -72,21 +96,22 @@ class PickerPanel extends Component {
   }
 
   render() {
+    
     return (
       <div id = "sideContainer">
 	<div className = "boxLabel">Pass</div>
 	<div className = "pickerBox">
 	  { this.renderShifts() }
-      </div>
-      
-      <div className = "boxLabel">Personer</div>
-      <div className = "pickerBox">
-	{ this.renderResources() }
-      </div>
-      <button onClick = { () => this.props.setOptionsModal(true) }>
-	Options
-      </button>
-      
+	</div>
+	
+	<div className = "boxLabel">Personer</div>
+	<div className = "pickerBox">
+	  { this.renderResources() }
+	</div>
+	<button onClick = { () => this.props.setOptionsModal(true) }>
+	  Options
+	</button>
+	
       </div>
     )
   }
