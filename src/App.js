@@ -175,7 +175,8 @@ class App extends Component {
       style: {
 	background: resource.color,
 	cursor: 'grab',
-      }
+      },
+      className: 'eventPanel',
     }
   }
 

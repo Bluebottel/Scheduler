@@ -60,7 +60,6 @@
 
 .optionsModal {
     background-color: white;
-    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.3);
     border-radius: 10px;
     border: 1px solid #ddd;
     padding: 10px;
@@ -71,6 +70,8 @@
 
     width: 1000px;
     height: 500px;
+
+    filter: drop-shadow(10px 10px 5px #9f9f9f);    
 }
 
 .optionsModalOverlay {
@@ -83,5 +84,9 @@
 }
 
 .optionsModal, .optionsModalOverlay:focus {
+    outline: none;
+}
+
+.eventPanel:focus {
     outline: none;
 }
