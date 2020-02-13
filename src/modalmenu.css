@@ -2,6 +2,10 @@
     display: inline;
 }
 
+.option {
+    height: 21px;
+}
+
 .optionSidePanel {
     float: right;
 }
