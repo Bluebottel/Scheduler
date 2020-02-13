@@ -24,7 +24,7 @@ class PickerPanel extends Component {
 	</div>
       )
     
-    return (
+    else return (
       this.props.shifts.map((shift, i) => {
 	return (
 	  <div

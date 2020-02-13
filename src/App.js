@@ -32,14 +32,12 @@ class App extends Component {
   constructor(props) {
     super(props)
 
-    storeTestData()
+    //storeTestData()
 
     const events = loadEvents()
     const resources = loadResources()
     const shifts = loadShifts()
     const metaData = loadMetaData()
-
-    console.log('app: ', resources, shifts)
 
     this.state = {
       events: events,
@@ -53,7 +51,8 @@ class App extends Component {
       meta: metaData,
     }
 
-    console.log('state: ', this.state.resources, this.state.shifts)
+    console.log('state: ', this.state.resources,
+		this.state.shifts, this.state.meta)
   }
 
   moveEvent = ({ event, start, end, isAllDay: droppedOnAllDaySlot }) => {
@@ -90,7 +89,7 @@ class App extends Component {
       if (event.id > eventId)
 	eventId = event.id
     })
-    
+
     eventId += 1
     let newEvents = []
     
@@ -123,6 +122,7 @@ class App extends Component {
   }
 
   // TODO: add a warning + confirmation before removing
+  
   removeEvent = (argEvent, e) => {
     this.setState((state, _) => {
       
@@ -136,8 +136,6 @@ class App extends Component {
   }
 
   setSelected = ({ shift, resource }) => {
-
-    console.log('selecting ', shift, resource)
     this.setState({
       selected: {
 	shift: shift,
@@ -153,12 +151,16 @@ class App extends Component {
   //       and the rest of the resource
   getEventProp = (event, start, end, isSelected) => {
 
-    const resource = this.state.resources.find(res => res.id === event.resourceId)
+    let resource = this.state.resources.find(res => res.id === event.resourceId)
+
+    // in case a resource has been removed
+    if (resource === undefined)
+      resource = this.state.meta.archive.resources.find(res => res.id === event.resourceId)
 
     if (!resource) {
       console.log('no resource found: ', event)
       console.log(this.state.resources)
-      return
+      return ''
     }
 
     
@@ -183,6 +185,9 @@ class App extends Component {
   eventRender = ({ event }) => {
 
     let resource = this.state.resources.find(res => res.id === event.resourceId)
+    if (resource === undefined)
+      resource = this.state.meta.archive.resources
+		      .find(res => res.id === event.resourceId)
     let shift = this.state.shifts.find(sh => sh.id === event.shiftId)
 
     return (
@@ -192,14 +197,12 @@ class App extends Component {
     )
   }
 
-  eventInfo(event) {
-    console.log('event: ', event)
-    console.log(this.state.resources.find(e => e.id === event.resourceId))
-  }
-
   updateElement = (newElement, type) => {
 
-    const index = this.state[type].findIndex(elem => elem.id === newElement.id)
+    let index = this.state[type].findIndex(elem => elem.id === newElement.id)
+    if (type === 'resources' && index === -1)
+      index = this.state.meta.archive.findIndex(res => res.id === newElement.id)
+    
     const newList = update(this.state[type], {$splice: [[index, true, newElement]]})
 
     this.setState({ [type]: newList })
@@ -210,10 +213,13 @@ class App extends Component {
   }
 
   createResource = (title, color) => {
-
     // make sure that the new ID is unique by making it larger than every other ID
+    // including removed resources since those can still have events tied to them
     let newId = 0
-    this.state.resources.forEach(res => {if (res.id >= newId) { newId = res.id+1 }})
+    this.state.resources.forEach(res => { if (res.id >= newId) { newId = res.id }})
+    this.state.meta.archive.resources
+	.forEach(res => { if (res.id >= newId) { newId = res.id }})
+    newId++;
     
     const newResource = {
       title: title,
@@ -223,43 +229,97 @@ class App extends Component {
       resourceIdAccessor: () => newId,
     }
 
+    this.setState((state, _) => {
+      const resourceList = update(state.resources,
+				  {$push: [ newResource ]})
+      storeResources(resourceList)
+      return {
+	resources: resourceList,
+      }
+    })
+
     return newResource
   }
 
-  // archive resources instead of removing them in case a removed resource have
-  // scheduled events
+  // archiving resource so their scheduled events don't break
   archiveResource = (resource) => {
+
+    // the resource is not archived already
+    if (!this.state.meta.archive.resources.
+	     find(res => res.id === resource.id)) {
+
+      const index = this.state.resources.findIndex(res => res.id === resource.id)
+      const newMeta = update(this.state.meta,
+			     { archive: { resources: { $push: [ resource ]}}})
+      
+
+      this.setState((state, _) => {
+	storeMetaData(newMeta)
+
+	return {
+	  meta: newMeta,
+	}
+      })
+
+      this.setState((state, _) => {
+	const newResourceList = update(state.resources,
+				       {$splice: [[index, 1]]})
+
+	console.log('new resourcelist: ', newResourceList)
+	storeResources(newResourceList)
+
+	return {
+	  resources: newResourceList,
+	}
+      })
+    }
     
+    // the resource is already archived
+    else {
+      const index = this.state.resources.findIndex(res => res.id === resource.id)
+      this.setState((state, _) => {
+	const newResourceList = update(state.resources,
+				       {$splice: [[index, 1]]})
+
+	console.log('new resourcelist: ', newResourceList)
+	storeResources(newResourceList)
+
+	return {
+	  resources: newResourceList,
+	}
+      })
+    }
     
   }
 
-  closeModal = () => {
-    document.getElementById('root').style.filter = ''
-    this.setState({ optionsModalOpen: false })
-  }
-
-
-  // TODO: make the background blurred when the modal is open
   // TODO: add a context menu instead of removing the event straight away
   render() {
+
     return (
       <div id = "container">
 	<Modal
 	  isOpen = { this.state.optionsModalOpen }
-	  contentLabel = "Modal label"
 	  onRequestClose = { () => this.setState({ optionsModalOpen: false }) }
 	  shouldCloseOnOverlayClick = { true }
 	  className = "optionsModal"
 	  overlayClassName = "optionsModalOverlay"
 	  ariaHideApp = { false }
 	  onAfterOpen = { () => document.getElementById('root').style.filter = 'blur(2px)' }
-	  onRequestClose = { this.closeModal }
+	  onRequestClose = { () => {
+	      document.getElementById('root').style.filter = ''
+	      this.setState({ optionsModalOpen: false })
+	  }}
 	>
 	  <ModalMenu
 	    resources = { this.state.resources }
 	    shifts = { this.state.shifts }
 	    updateElement = { this.updateElement }
-	    closeModal = { this.closeModal }
+	    closeModal = { () => {
+		document.getElementById('root').style.filter = ''
+		this.setState({ optionsModalOpen: false })
+	    }}
+	    archiveResource = { this.archiveResource }
+	    createResource = { this.createResource }
 	  />
 	</Modal>
 	<div id = "calendar">
@@ -276,7 +336,6 @@ class App extends Component {
 	    onDragStart = { () => document.body.style.cursor = 'grabbing' }
             onEventResize = { () => {} }
             onSelectSlot = { this.newEvent }
-	    onSelectEvent = { (q) => this.eventInfo(q) }
             defaultView = "month"
             defaultDate = { new Date() }
 	    eventPropGetter = { this.getEventProp }
