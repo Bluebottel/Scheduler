@@ -13,11 +13,17 @@ import { loadResources, loadEvents,
 	 storeShifts, loadShifts,
 	 storeMetaData, loadMetaData } from './storage'
 
+import { moveEvent, newEvent, removeEvent,
+	 eventRender, getEventProp } from './events'
+
+import { createResource, archiveResource } from './resources'
+import { createShift, archiveShift } from './shifts'
+
 import './App.css'
 import { storeTestData } from './testdata'
-import colorMap from './colors'
 import ModalMenu from './modalmenu'
 import PickerPanel from './pickerpanel'
+
 
 // changing locale doesn't work without this
 import 'moment/locale/sv'
@@ -51,88 +57,18 @@ class App extends Component {
       meta: metaData,
     }
 
-    console.log('state: ', this.state.resources,
-		this.state.shifts, this.state.meta)
-  }
+    // TODO: some better binding method
+    this.moveEvent = moveEvent.bind(this)
+    this.newEvent = newEvent.bind(this)
+    this.removeEvent = removeEvent.bind(this)
+    this.eventRender = eventRender.bind(this)
+    this.getEventProp = getEventProp.bind(this)
 
-  moveEvent = ({ event, start, end, isAllDay: droppedOnAllDaySlot }) => {
+    this.createResource = createResource.bind(this)
+    this.archiveResource = archiveResource.bind(this)
 
-    const { events } = this.state
-    const idx = events.findIndex(elem => elem.id === event.id)
-    let allDay = event.allDay
-
-    if (!event.allDay && droppedOnAllDaySlot) {
-      allDay = true
-    } else if (event.allDay && !droppedOnAllDaySlot) {
-      allDay = false
-    }
-
-    const updatedEvent = { ...event, start, end, allDay }
-
-    const nextEvents = [...events]
-    nextEvents.splice(idx, 1, updatedEvent)
-
-    this.setState({ events: nextEvents })
-    storeEvents(this.state.events)
-
-  }
-
-  newEvent = (allSelected) => {
-
-    // in case of empty lists
-    if (!this.state.selected.resource || !this.state.selected.shift)
-      return
-
-    // find the largest and then increment to guarantee a unique event ID
-    let eventId = 0
-    this.state.events.forEach(event => {
-      if (event.id > eventId)
-	eventId = event.id
-    })
-
-    eventId += 1
-    let newEvents = []
-    
-    allSelected.slots.forEach(slot => {
-      let selectedShift = this.state.selected.shift
-      
-      let startDate = slot
-      startDate.setHours(selectedShift.startHour, selectedShift.startMinute, 0)
-      let stopDate = moment(startDate).add(selectedShift.minuteLength, 'm').toDate()
-      let newEvent = { 
-	start: startDate,
-	end: stopDate,
-	allDay: false,
-	id: eventId,
-	resourceId: this.state.selected.resource.id,
-	shiftId: this.state.selected.shift.id,
-      }
-
-      newEvents.push(newEvent)
-      eventId++;
-    })
-
-    this.setState((state, _) => {
-      storeEvents(state.events.concat(newEvents))
-
-      return {
-	events: state.events.concat(newEvents)
-      }
-    })
-  }
-
-  // TODO: add a warning + confirmation before removing
-  
-  removeEvent = (argEvent, e) => {
-    this.setState((state, _) => {
-      
-      const newEventList = state.events.filter(elem => elem.id !== argEvent.id)
-      storeEvents(newEventList)
-
-      return {
-	events: newEventList,
-      }
-    })
+    this.createShift = createShift.bind(this)
+    this.archiveShift = archiveShift.bind(this)
   }
 
   setSelected = ({ shift, resource }) => {
@@ -142,59 +78,6 @@ class App extends Component {
 	resource: resource,
       }
     })
-  }
-
-  // TODO: check if the event is a meta event and show total scheduled hours for
-  //       that day instead
-  // TODO: make and archive a copy of all resources ever so events don't get broken
-  // TODO: make a gradient background and let the rightmost part represent shift
-  //       and the rest of the resource
-  getEventProp = (event, start, end, isSelected) => {
-
-    let resource = this.state.resources.find(res => res.id === event.resourceId)
-
-    // in case a resource has been removed
-    if (resource === undefined)
-      resource = this.state.meta.archive.resources.find(res => res.id === event.resourceId)
-
-    if (!resource) {
-      console.log('no resource found: ', event)
-      console.log(this.state.resources)
-      return ''
-    }
-
-    
-    if (resource.title === "#META_INFO#") {
-      return {
-	style: {
-	  background: 'none',
-	  border: 'none',
-	}
-      }
-    }
-
-    return {
-      style: {
-	background: resource.color,
-	cursor: 'grab',
-      },
-      className: 'eventPanel',
-    }
-  }
-
-  eventRender = ({ event }) => {
-
-    let resource = this.state.resources.find(res => res.id === event.resourceId)
-    if (resource === undefined)
-      resource = this.state.meta.archive.resources
-		      .find(res => res.id === event.resourceId)
-    let shift = this.state.shifts.find(sh => sh.id === event.shiftId)
-
-    return (
-      <div>
-	{ resource.title + ', ' + shift.title }
-      </div>
-    )
   }
 
   updateElement = (newElement, type) => {
@@ -209,92 +92,11 @@ class App extends Component {
 
     if (type === 'shifts') storeShifts(newList)
     else if (type === 'resources') storeResources(newList)
-    
   }
 
-  createResource = (title, color) => {
-    // make sure that the new ID is unique by making it larger than every other ID
-    // including removed resources since those can still have events tied to them
-    let newId = 0
-    this.state.resources.forEach(res => { if (res.id >= newId) { newId = res.id }})
-    this.state.meta.archive.resources
-	.forEach(res => { if (res.id >= newId) { newId = res.id }})
-    newId++;
-    
-    const newResource = {
-      title: title,
-      id: newId,
-      color: color,
-      resourceTitleAccessor: () => title,
-      resourceIdAccessor: () => newId,
-    }
-
-    this.setState((state, _) => {
-      const resourceList = update(state.resources,
-				  {$push: [ newResource ]})
-      storeResources(resourceList)
-      return {
-	resources: resourceList,
-      }
-    })
-
-    return newResource
-  }
-
-  // archiving resource so their scheduled events don't break
-  archiveResource = (resource) => {
-
-    // the resource is not archived already
-    if (!this.state.meta.archive.resources.
-	     find(res => res.id === resource.id)) {
-
-      const index = this.state.resources.findIndex(res => res.id === resource.id)
-      const newMeta = update(this.state.meta,
-			     { archive: { resources: { $push: [ resource ]}}})
-      
-
-      this.setState((state, _) => {
-	storeMetaData(newMeta)
-
-	return {
-	  meta: newMeta,
-	}
-      })
-
-      this.setState((state, _) => {
-	const newResourceList = update(state.resources,
-				       {$splice: [[index, 1]]})
-
-	console.log('new resourcelist: ', newResourceList)
-	storeResources(newResourceList)
-
-	return {
-	  resources: newResourceList,
-	}
-      })
-    }
-    
-    // the resource is already archived
-    else {
-      const index = this.state.resources.findIndex(res => res.id === resource.id)
-      this.setState((state, _) => {
-	const newResourceList = update(state.resources,
-				       {$splice: [[index, 1]]})
-
-	console.log('new resourcelist: ', newResourceList)
-	storeResources(newResourceList)
-
-	return {
-	  resources: newResourceList,
-	}
-      })
-    }
-    
-  }
-
+  
   // TODO: add a context menu instead of removing the event straight away
   render() {
-
     return (
       <div id = "container">
 	<Modal
@@ -304,7 +106,8 @@ class App extends Component {
 	  className = "optionsModal"
 	  overlayClassName = "optionsModalOverlay"
 	  ariaHideApp = { false }
-	  onAfterOpen = { () => document.getElementById('root').style.filter = 'blur(2px)' }
+	  onAfterOpen = { () => document.getElementById('root')
+					.style.filter = 'blur(2px)' }
 	  onRequestClose = { () => {
 	      document.getElementById('root').style.filter = ''
 	      this.setState({ optionsModalOpen: false })
@@ -320,6 +123,8 @@ class App extends Component {
 	    }}
 	    archiveResource = { this.archiveResource }
 	    createResource = { this.createResource }
+	    archiveShift = { this.archiveShift }
+	    createShift = { this.createShift }
 	  />
 	</Modal>
 	<div id = "calendar">

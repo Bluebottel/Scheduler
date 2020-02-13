@@ -67,7 +67,7 @@ class PickerPanel extends Component {
 	</div>
       )
     
-    return (
+    else return (
       this.props.resources.map((res, i) => {
 	return (
 	  <div
@@ -95,8 +95,8 @@ class PickerPanel extends Component {
     )
   }
 
-  render() {
-    
+  // TODO: make the options button a gear icon instead
+  render() {    
     return (
       <div id = "sideContainer">
 	<div className = "boxLabel">Pass</div>

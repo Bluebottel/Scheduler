@@ -14,6 +14,7 @@ import './modalmenu.css'
 
 import FTPPanel from './ftp'
 
+
 function timePad(number)
 { return (number < 10) ? "0" + number : number }
 
@@ -27,13 +28,13 @@ class ModalMenu extends Component {
 	minute: 0,
       },
     }
+
+    this.clock = clock.bind(this)
   }
 
   randomColor = () => { return "#"+((1<<24)*Math.random()|0).toString(16) }
 
-
   renderResources = () => {
-
     let optionsList = (
       this.props.resources.map((resource, i) => {
 	return (
@@ -77,7 +78,6 @@ class ModalMenu extends Component {
       })
     )
 
-    // TODO: make this a plus sign image instead
     const addResourceRow = (
       <div
 	style = {{ textAlign: 'center' }}
@@ -88,7 +88,7 @@ class ModalMenu extends Component {
 	<img
 	  src = { addBubble }
 	  alt = "Lägg till"
-	  style = {{ height: '25px' }}
+	  style = {{ height: '20px' }}
 	/>
       </div>
     )
@@ -98,8 +98,7 @@ class ModalMenu extends Component {
   }
 
   renderShifts = () => {
-
-    return (
+    let shiftOptions = (
       this.props.shifts.map((shift, i) => {
 	return (
 	  <tr key = { i }>
@@ -133,22 +132,12 @@ class ModalMenu extends Component {
 		       + timePad(shift.startMinute) }
 		onSave = {
 		  text => {
-		    shift.startHour = parseInt(this.state.picked.hour)
-		    shift.startMinute = parseInt(this.state.picked.minute)
+		    shift.startHour = parseInt(this.state.picked.split(':')[0])
+		    shift.startMinute = parseInt(this.state.picked.split(':')[1])
 		    this.props.updateElement(shift, 'shifts')
 		  }}
 
-		editComponent = {
-		  clock(shift,
-			value => {
-			  this.setState({
-			    picked: {
-			      hour: value.split(':')[0],
-			      minute: value.split(':')[1],
-			    }
-			  })
-			})
-		}
+		editComponent = { this.clock(shift) }
 
 		saveButtonLabel = "Spara"
 		cancelButtonLabel = "Avbryt"
@@ -186,6 +175,7 @@ class ModalMenu extends Component {
 		<img
 		  src = { trashcan }
 		  alt = "[Delete]"
+		  onClick = { () => this.props.archiveShift(shift) }
 		/>
 	      </div>
 	    </td>
@@ -193,10 +183,32 @@ class ModalMenu extends Component {
 	)
       })
     )
+
+    const addShiftRow = (
+      <div
+	style = {{ textAlign: 'center' }}
+	onClick = { () => this.props.createShift('RiktigtPass',
+						 13, 37, 420) }
+	className = "clickable"
+	key = { shiftOptions.length }
+      >
+	<img
+	  src = { addBubble }
+	  alt = "Lägg till"
+	  style = {{ height: '20px' }}
+	/>
+      </div>
+    )
+
+    return (
+      <React.Fragment>
+	{ shiftOptions }
+	{ addShiftRow }
+      </React.Fragment>
+    )
     
   }
 
-  // TODO: add onClicks for the images (delete)
   // TODO: make a 75% border around the close bubble
   render() {   
     return (
@@ -246,19 +258,19 @@ class ModalMenu extends Component {
 
 }
 
-function clock({ startHour, startMinute }, changeCallback) {
+function clock({ startHour, startMinute }) {
 
   return (
     <React.Fragment>
       <TimePicker
-      maxDetail = "minute"
-      isOpen = { true }
-      hourPlaceholder = { timePad(startHour).toString() }
-      minutePlaceholder = { timePad(startMinute).toString() }
-      locale = "sv-SE"
-      value = { `${timePad(startHour)}:${timePad(startMinute)}:00` }
-      onChange = { value => changeCallback(value) }
-      autoFocus
+	maxDetail = "minute"
+	isOpen = { true }
+	hourPlaceholder = { timePad(startHour).toString() }
+	minutePlaceholder = { timePad(startMinute).toString() }
+	locale = "sv-SE"
+	value = { `${timePad(startHour)}:${timePad(startMinute)}:00` }
+	onChange = { value => this.setState({ picked: value}) }
+
       />
     </React.Fragment>
   )

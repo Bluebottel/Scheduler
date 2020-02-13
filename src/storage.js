@@ -9,8 +9,6 @@ function loadResources() {
   try {
     resourceList = JSON.parse(resourceList)
 
-    console.log('storage resourcelist: ', resourceList)
-
     // in case there are no resources store at all
     if (!resourceList) return []
 
@@ -70,8 +68,6 @@ function loadMetaData() {
 
     if (!metaData.archive.shifts)
       metaData.archive.shifts = []
-
-    console.log('storage meta: ', metaData)
   }
   catch(_) {
     return {
