@@ -81,7 +81,11 @@ class ModalMenu extends Component {
     const addResourceRow = (
       <div
 	style = {{ textAlign: 'center' }}
-	onClick = { () => this.props.createResource('RiktigPerson', this.randomColor()) }
+	onClick = { () => {
+	    let created = this.props.createResource('RiktigPerson',
+						    this.randomColor())
+	    // TODO: set this one as selected!
+	}}
 	className = "clickable"
 	key = { optionsList.length }
       >
@@ -176,6 +180,7 @@ class ModalMenu extends Component {
 		  src = { trashcan }
 		  alt = "[Delete]"
 		  onClick = { () => this.props.archiveShift(shift) }
+		  className = "clickable"
 		/>
 	      </div>
 	    </td>
@@ -200,6 +205,7 @@ class ModalMenu extends Component {
       </div>
     )
 
+    // TODO: the addshiftrow is awkwardly placed, put it outside the table
     return (
       <React.Fragment>
 	{ shiftOptions }

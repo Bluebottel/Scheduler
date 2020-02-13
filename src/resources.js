@@ -65,7 +65,19 @@ function archiveResource (resource) {
 	resources: newResourceList,
       }
     })
+
+ /*   if (this.state.selected.resource.id === resource.id) {
+      const newSelected = this.state.resource
+	    .find(res => res.id !== resource.id)
+      
+      this.setState({
+	selected: update(this.state.selected,
+			 { resource: {$set: newSelected }})
+      })
+    }
+*/
   }
+      
   
   // the resource is already archived
   else {
@@ -74,12 +86,8 @@ function archiveResource (resource) {
       const newResourceList = update(state.resources,
 				     {$splice: [[index, 1]]})
 
-      console.log('new resourcelist: ', newResourceList)
       storeResources(newResourceList)
-
-      return {
-	resources: newResourceList,
-      }
+      return
     })
   }
   
