@@ -11,6 +11,15 @@ class PickerPanel extends Component {
     super(props)
   }
 
+  matchId(id, type) {
+    if (this.props.selected
+	&& this.props.selected[type]
+	&& this.props.selected[type].id !== undefined) {
+      return id === this.props.selected[type].id
+    }
+      
+  }
+  
   renderShifts = () => {
 
     if (!this.props.shifts || this.props.shifts.length === 0)
@@ -30,7 +39,7 @@ class PickerPanel extends Component {
 	  <div
 	    className =
 	    {
-	      `${shift.id === this.props.selected.shift.id ? ' selected' : ''}`
+	      `${this.matchId(shift.id, 'shift') ? ' selected' : ''}`
 	      + ' option clickable'
 	    }
 	    onClick = {() => {
@@ -73,7 +82,7 @@ class PickerPanel extends Component {
 	  <div
 	    className =
 	    {
-	      `${res.id === this.props.selected.resource.id ? ' selected' : ''}`
+	      `${this.matchId(res.id, 'resource') ? ' selected' : ''}`
 	      + ' option clickable'
 	    }
 	    

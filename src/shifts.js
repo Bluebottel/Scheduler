@@ -67,6 +67,21 @@ function archiveShift (shift) {
 	shifts: newShiftList,
       }
     })
+    
+    if (this.state.selected.shift === undefined)
+      return
+    
+    // if the currently selected one is removed then select
+    // another one if available
+    if (this.state.selected.shift.id === shift.id) {
+      const newSelected = this.state.shifts
+	    .find(res => res.id !== shift.id)
+
+      this.setState({
+	selected: update(this.state.selected,
+			 { shift: {$set: newSelected }})
+      })
+    }
   }
   
   // the shift is already archived

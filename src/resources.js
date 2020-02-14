@@ -59,6 +59,7 @@ function archiveResource (resource) {
 				     {$splice: [[index, 1]]})
 
       console.log('new resourcelist: ', newResourceList)
+      console.log('state: ', this.state.resources)
       storeResources(newResourceList)
 
       return {
@@ -66,16 +67,21 @@ function archiveResource (resource) {
       }
     })
 
- /*   if (this.state.selected.resource.id === resource.id) {
-      const newSelected = this.state.resource
+    if (this.state.selected.resource === undefined)
+      return
+
+    // if the currently selected one is removed then select
+    // another one if available
+    if (this.state.selected.resource.id === resource.id) {
+      const newSelected = this.state.resources
 	    .find(res => res.id !== resource.id)
-      
+
       this.setState({
 	selected: update(this.state.selected,
 			 { resource: {$set: newSelected }})
       })
     }
-*/
+
   }
       
   
