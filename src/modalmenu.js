@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import update from 'immutability-helper'
 import EasyEdit from 'react-easy-edit'
 import TimePicker from 'react-time-picker'
+import InlineConfirmButton from 'react-inline-confirm'
 
 import ColorPicker from 'rc-color-picker'
 import 'rc-color-picker/assets/index.css'
@@ -34,6 +35,7 @@ class ModalMenu extends Component {
 
   randomColor = () => { return "#"+((1<<24)*Math.random()|0).toString(16) }
 
+  // TODO: remove the focus outline from the inline confirm button
   renderResources = () => {
     let optionsList = (
       this.props.resources.map((resource, i) => {
@@ -66,12 +68,19 @@ class ModalMenu extends Component {
 		  enableAlpha = { false }
 		/>
 	      </div>
-	      <img
-		src = { trashcan }
-		alt = "[Delete]"
+
+	      <InlineConfirmButton
+		className = "confirmButton"
+		textValues = {['', 'Delete?', '']}
 		onClick = { () => this.props.archiveResource(resource) }
-		className = "clickable"
-	      />
+		showTimer
+	      >
+		<img
+		  src = { trashcan }
+		  alt = "[Delete]"
+		  className = "clickable"
+		/>
+	      </InlineConfirmButton>
 	    </div>
 	  </div>
 	)
@@ -108,80 +117,87 @@ class ModalMenu extends Component {
 	  <tr key = { i }>
 	    <td>
 	      <EasyEdit
-		type = "text"
-		value = { shift.title }
-		onSave = {
-		  text => {
-		    if (text.length === 0)
-		      return
-		    
-		    shift.title = text
-		    this.props.updateElement(shift, 'shifts')
-		  }
+	      type = "text"
+	      value = { shift.title }
+	      onSave = {
+		text => {
+		  if (text.length === 0)
+		    return
+		  
+		  shift.title = text
+		  this.props.updateElement(shift, 'shifts')
 		}
+	      }
 
-		onValidate = { text => text.length > 0 }
-		validationMessage = "Namnet kan inte vara tomt"
+	      onValidate = { text => text.length > 0 }
+	      validationMessage = "Namnet kan inte vara tomt"
 
-		saveButtonLabel = "Spara"
-		cancelButtonLabel = "Avbryt"
-		onHoverCssClass = "clickable"
+	      saveButtonLabel = "Spara"
+	      cancelButtonLabel = "Avbryt"
+	      onHoverCssClass = "clickable"
 	      />
 	    </td>
 
 	    <td>
 	      <EasyEdit
-		type = "text"
-		value = { timePad(shift.startHour) + ':'
-		       + timePad(shift.startMinute) }
-		onSave = {
-		  text => {
-		    shift.startHour = parseInt(this.state.picked.split(':')[0])
-		    shift.startMinute = parseInt(this.state.picked.split(':')[1])
-		    this.props.updateElement(shift, 'shifts')
-		  }}
+	      type = "text"
+	      value = { timePad(shift.startHour) + ':'
+		     + timePad(shift.startMinute) }
+	      onSave = {
+		text => {
+		  shift.startHour = parseInt(this.state.picked.split(':')[0])
+		  shift.startMinute = parseInt(this.state.picked.split(':')[1])
+		  this.props.updateElement(shift, 'shifts')
+		}}
 
-		editComponent = { this.clock(shift) }
+	      editComponent = { this.clock(shift) }
 
-		saveButtonLabel = "Spara"
-		cancelButtonLabel = "Avbryt"
-		onHoverCssClass = "clickable"
+	      saveButtonLabel = "Spara"
+	      cancelButtonLabel = "Avbryt"
+	      onHoverCssClass = "clickable"
 	      />
 	    </td>
 	    
 	    <td>
 	      <EasyEdit
-		type = "number"
+	      type = "number"
 
-		value = {
-		  // the component throws an error unless
-		  // supplied with a string
-		  shift.minuteLength.toString()
-		}
+	      value = {
+		// the component throws an error unless
+		// supplied with a string
+		shift.minuteLength.toString()
+	      }
 
-	      onSave = {
-		value => {
-		  shift.minuteLength = value
-		  this.props.updateElement(shift, 'shifts')
-		}}
+		onSave = {
+		  value => {
+		    shift.minuteLength = value
+		    this.props.updateElement(shift, 'shifts')
+		  }}
 	      
-		onValidate = { value => value > 0 }
-		validationMessage = "Måste vara en siffra > 0"
+	      onValidate = { value => value > 0 }
+	      validationMessage = "Måste vara en siffra > 0"
 
-		saveButtonLabel = "Spara"
-		cancelButtonLabel = "Avbryt"
-		onHoverCssClass = "clickable"
+	      saveButtonLabel = "Spara"
+	      cancelButtonLabel = "Avbryt"
+	      onHoverCssClass = "clickable"
 	      />
 	    </td>
 
 	    <td>
 	      <div className = "optionSidePanel">
-		<img
-		  src = { trashcan }
-		  alt = "[Delete]"
+		<InlineConfirmButton
+		  className = "confirmButton"
+		  textValues = {['', 'Delete?', '']}
 		  onClick = { () => this.props.archiveShift(shift) }
-		  className = "clickable"
-		/>
+		  showTimer
+		>
+		  <img
+		    src = { trashcan }
+		    alt = "[Delete]"
+		    className = "clickable"
+		  />
+		  
+		</InlineConfirmButton>
 	      </div>
 	    </td>
 	  </tr>
@@ -269,14 +285,14 @@ function clock({ startHour, startMinute }) {
   return (
     <React.Fragment>
       <TimePicker
-	maxDetail = "minute"
-	isOpen = { true }
-	hourPlaceholder = { timePad(startHour).toString() }
-	minutePlaceholder = { timePad(startMinute).toString() }
-	locale = "sv-SE"
-	value = { `${timePad(startHour)}:${timePad(startMinute)}:00` }
-	onChange = { value => this.setState({ picked: value}) }
-
+      maxDetail = "minute"
+      isOpen = { true }
+      hourPlaceholder = { timePad(startHour).toString() }
+      minutePlaceholder = { timePad(startMinute).toString() }
+      locale = "sv-SE"
+      value = { `${timePad(startHour)}:${timePad(startMinute)}:00` }
+      onChange = { value => this.setState({ picked: value}) }
+      autoFocus
       />
     </React.Fragment>
   )

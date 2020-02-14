@@ -107,3 +107,51 @@
     transform: skewX(-30deg);
     content: '';    
 }
+
+.confirmButton {
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
+}
+
+.confirmButton:focus {
+    outline: none;
+}
+
+.optionsModal {
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+
+    width: 1000px;
+    height: 500px;
+
+    filter: drop-shadow(10px 10px 5px #9f9f9f);    
+}
+
+.optionsModalOverlay {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    position: fixed;
+}
+
+.optionsModal, .optionsModalOverlay:focus {
+    outline: none;
+}
+
+.eventPanel:focus {
+    outline: none;
+}
+
+.btn-danger:focus {
+    outline: none;
+}
