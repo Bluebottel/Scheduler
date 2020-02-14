@@ -133,12 +133,7 @@ class App extends Component {
 	    endAccessor = "end"
             localizer = { localizer }
             events = { this.state.events }
-            onEventDrop = { (argEvent, e) => {
-		document.body.style.cursor = 'default'
-		this.moveEvent(argEvent, e)
-	    }}
-	  
-	    onDragStart = { () => document.body.style.cursor = 'grabbing' }
+            onEventDrop = { this.moveEvent }
             onEventResize = { () => {} }
             onSelectSlot = { this.newEvent }
             defaultView = "month"
