@@ -107,7 +107,8 @@ function getEventProp (event, start, end, isSelected) {
 
   // in case a resource has been removed
   if (resource === undefined)
-    resource = this.state.meta.archive.resources.find(res => res.id === event.resourceId)
+    resource = this.state.meta.archive
+    .resources.find(res => res.id === event.resourceId)
 
   if (!resource) {
     console.log('no resource found: ', event)

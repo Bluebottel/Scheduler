@@ -82,7 +82,7 @@ class ModalMenu extends Component {
       <div
 	style = {{ textAlign: 'center' }}
 	onClick = { () => {
-	    let created = this.props.createResource('RiktigPerson',
+	    let created = this.props.createResource('Person',
 						    this.randomColor())
 	    // TODO: set this one as selected!
 	}}
@@ -192,7 +192,7 @@ class ModalMenu extends Component {
     const addShiftRow = (
       <div
 	style = {{ textAlign: 'center' }}
-	onClick = { () => this.props.createShift('RiktigtPass',
+	onClick = { () => this.props.createShift('Pass',
 						 13, 37, 420) }
 	className = "clickable"
 	key = { shiftOptions.length }

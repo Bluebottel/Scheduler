@@ -60,7 +60,6 @@ function archiveShift (shift) {
       const newShiftList = update(state.shifts,
 			       {$splice: [[index, 1]]})
 
-      console.log('new shiftlist: ', newShiftList)
       storeShifts(newShiftList)
 
       return {
@@ -91,7 +90,6 @@ function archiveShift (shift) {
       const newShiftList = update(state.shifts,
 				  {$splice: [[index, 1]]})
 
-      console.log('new shiftlist: ', newShiftList)
       storeShifts(newShiftList)
 
       return {

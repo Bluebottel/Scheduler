@@ -58,8 +58,6 @@ function archiveResource (resource) {
       const newResourceList = update(state.resources,
 				     {$splice: [[index, 1]]})
 
-      console.log('new resourcelist: ', newResourceList)
-      console.log('state: ', this.state.resources)
       storeResources(newResourceList)
 
       return {
