@@ -24,8 +24,43 @@ function moveEvent ({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
 
 }
 
+// the calendar doesn't have an hooks for the specific views
+// (week etc.) so the only thing differentiating is the mix
+// of the number of slots, time between them and typ of action
+function customEventTrigger(selection, step) {
+
+  console.log('step: ', step)
+  if (selection.action !== 'select') return false
+  if (selection.slots.length < 2) return false
+
+  let first = moment(selection.slots[0])
+  let second = moment(selection.slots[1])
+
+  // the week view has increments of 30 minutes
+  if (moment.duration(
+      second.diff(first)).as('minutes') !== step) {
+    return false
+  }
+
+  //console.log(moment.duration(second.diff(first)).as('minutes') === 30)
+
+  return true
+}
+
 function newEvent (allSelected) {
 
+  if (customEventTrigger(allSelected, this.state.step)) {
+    console.log('custom event!', allSelected)
+
+    return
+  }
+  
+  // clicking a single slot in the week view generates
+  // two slots and should be ignored
+  if (allSelected.action === 'click'
+      && allSelected.slots.length > 1)
+    return
+  
   // in case of empty lists
   if (!this.state.selected.resource || !this.state.selected.shift)
     return
@@ -37,10 +72,15 @@ function newEvent (allSelected) {
       eventId = event.id
   })
 
+  if (allSelected.action === 'click')
+    console.log('click')
+
   eventId += 1
   let newEvents = []
   
   allSelected.slots.forEach(slot => {
+
+    console.log('slot: ', slot)
     let selectedShift = this.state.selected.shift
     
     let startDate = slot
@@ -89,9 +129,14 @@ function eventRender ({ event }) {
     .find(res => res.id === event.resourceId)
   let shift = this.state.shifts.find(sh => sh.id === event.shiftId)
 
+  let title = ''
+  if (!event.customTitle)
+    title = resource.title + ', ' + shift.title
+  else title = event.customTitle
+  
   return (
       <div>
-      { resource.title + ', ' + shift.title }
+      { title }
     </div>
   )
 }

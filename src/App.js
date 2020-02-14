@@ -55,6 +55,7 @@ class App extends Component {
       },
       optionsModalOpen: false,
       meta: metaData,
+      step: 15,
     }
 
     // TODO: some better binding method
@@ -101,23 +102,23 @@ class App extends Component {
       <div id = "container">
 	<Modal
 	  isOpen = { this.state.optionsModalOpen }
-	  onRequestClose = { () => this.setState({ optionsModalOpen: false }) }
 	  shouldCloseOnOverlayClick = { true }
 	  className = "optionsModal"
 	  overlayClassName = "optionsModalOverlay"
-	  ariaHideApp = { false }
 	  onAfterOpen = { () => document.getElementById('root')
 					.style.filter = 'blur(2px)' }
 	  onRequestClose = { () => {
 	      document.getElementById('root').style.filter = ''
 	      this.setState({ optionsModalOpen: false })
 	  }}
+	  ariaHideApp = { false }
 	>
 	  <ModalMenu
 	    resources = { this.state.resources }
 	    shifts = { this.state.shifts }
 	    updateElement = { this.updateElement }
 	    closeModal = { () => {
+		// remove blur
 		document.getElementById('root').style.filter = ''
 		this.setState({ optionsModalOpen: false })
 	    }}
@@ -127,6 +128,23 @@ class App extends Component {
 	    createShift = { this.createShift }
 	  />
 	</Modal>
+
+	<Modal
+	  isOpen = { this.state.customEventModalOpen }
+	  shouldCloseOnOverlayClick = { true }
+	  className = "customEventModal"
+	  overlayClassName = "customEventModalOverlay"
+	  onAfterOpen = { () => document.getElementById('root')
+					.style.filter = 'blur(2px)' }
+	  onRequestClose = { () => {
+	      document.getElementById('root').style.filter = ''
+	      this.setState({ customEventModalOpen: false })
+	  }}
+	  ariaHideApp = { false }
+	>
+	  <div> CustomEventModal </div>
+	</Modal>
+	
 	<div id = "calendar">
 	  <DragCalendar
 	    startAccessor = "start"
@@ -135,12 +153,14 @@ class App extends Component {
             events = { this.state.events }
             onEventDrop = { this.moveEvent }
             onEventResize = { () => {} }
+	    onDragStart = { console.log }
             onSelectSlot = { this.newEvent }
             defaultView = "month"
             defaultDate = { new Date() }
 	    eventPropGetter = { this.getEventProp }
 	    selectable = { 'ignoreEvents' }
 	    showMultiDayTimes = { true }
+	    step = { this.state.step }
 	    popup
 	    components = {{
 	      eventWrapper: ({event, children}) => (
