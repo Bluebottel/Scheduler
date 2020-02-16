@@ -23,6 +23,7 @@ import './App.css'
 import { storeTestData } from './testdata'
 import ModalMenu from './modalmenu'
 import PickerPanel from './pickerpanel'
+import CustomEventModal from './customeventmodal'
 
 
 // changing locale doesn't work without this
@@ -54,6 +55,7 @@ class App extends Component {
 	resource: resources[0],
       },
       optionsModalOpen: false,
+      customEventModalOpen: false,
       meta: metaData,
       step: 15,
     }
@@ -103,8 +105,8 @@ class App extends Component {
 	<Modal
 	  isOpen = { this.state.optionsModalOpen }
 	  shouldCloseOnOverlayClick = { true }
-	  className = "optionsModal"
-	  overlayClassName = "optionsModalOverlay"
+	  className = "modalCommon optionsMenuModal"
+	  overlayClassName = "modalOverlayCommon"
 	  onAfterOpen = { () => document.getElementById('root')
 					.style.filter = 'blur(2px)' }
 	  onRequestClose = { () => {
@@ -131,9 +133,9 @@ class App extends Component {
 
 	<Modal
 	  isOpen = { this.state.customEventModalOpen }
-	  shouldCloseOnOverlayClick = { true }
-	  className = "customEventModal"
-	  overlayClassName = "customEventModalOverlay"
+	  shouldCloseOnOverlayClick = { false }
+	  className = "modalCommon customEventModal"
+	  overlayClassName = "modalOverlayCommon"
 	  onAfterOpen = { () => document.getElementById('root')
 					.style.filter = 'blur(2px)' }
 	  onRequestClose = { () => {
@@ -142,7 +144,15 @@ class App extends Component {
 	  }}
 	  ariaHideApp = { false }
 	>
-	  <div> CustomEventModal </div>
+	  <CustomEventModal
+	    createEvent = { this.newEvent }
+	    event = {{ color: '#ddd', start: new Date(), end: new Date()}}
+	    closeModal = { () => {
+		// remove blur
+		document.getElementById('root').style.filter = ''
+		this.setState({ customEventModalOpen: false })
+	    }}
+	  />
 	</Modal>
 	
 	<div id = "calendar">
@@ -161,6 +171,7 @@ class App extends Component {
 	    selectable = { 'ignoreEvents' }
 	    showMultiDayTimes = { true }
 	    step = { this.state.step }
+	    views = { ['month', 'week']}
 	    popup
 	    components = {{
 	      eventWrapper: ({event, children}) => (

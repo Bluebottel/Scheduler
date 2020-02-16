@@ -2,10 +2,12 @@
   "name": "scheduler",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://bluebottel.github.io/scheduler",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.4.0",
     "@testing-library/user-event": "^7.2.1",
+    "gh-pages": "^2.2.0",
     "immutability-helper": "^3.0.1",
     "moment": "^2.24.0",
     "rc-color-picker": "^1.2.6",
@@ -24,7 +26,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"

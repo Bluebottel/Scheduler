@@ -1,0 +1,15 @@
+.customEventModal {
+    background: linear-gradient(0deg, white 75%, #dfdede 89%)
+}
+
+.customEventModal * {
+    margin: 3px 0 3px 0;
+}
+
+.customEventModal div:first-child {
+    margin: -6px 0 6px 0;
+}
+
+.customEventModal div:last-child {
+    margin: 3px 0 0 0;
+}

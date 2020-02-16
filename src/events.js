@@ -52,6 +52,23 @@ function newEvent (allSelected) {
   if (customEventTrigger(allSelected, this.state.step)) {
     console.log('custom event!', allSelected)
 
+    let eventId = 0
+    this.state.events.forEach(event => {
+      if (event.id > eventId)
+	eventId = event.id
+    })
+    eventId++;
+
+    this.setState({
+      customEventModalOpen: true,
+      customEvent: {
+	start: allSelected.slots[0].start,
+	end: allSelected.slots[allSelected.slots.length-1].end,
+	id: eventId,
+	allDay: false,
+      }
+    })
+
     return
   }
   
@@ -72,15 +89,10 @@ function newEvent (allSelected) {
       eventId = event.id
   })
 
-  if (allSelected.action === 'click')
-    console.log('click')
-
   eventId += 1
   let newEvents = []
   
   allSelected.slots.forEach(slot => {
-
-    console.log('slot: ', slot)
     let selectedShift = this.state.selected.shift
     
     let startDate = slot
