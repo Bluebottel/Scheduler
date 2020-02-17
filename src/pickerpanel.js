@@ -7,9 +7,6 @@ function timePad(number)
 
 
 class PickerPanel extends Component {
-  constructor(props) {
-    super(props)
-  }
 
   matchId(id, type) {
     if (this.props.selected

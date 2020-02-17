@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import update from 'immutability-helper'
+
 import EasyEdit from 'react-easy-edit'
 import TimePicker from 'react-time-picker'
 import InlineConfirmButton from 'react-inline-confirm'
@@ -72,8 +72,9 @@ class ModalMenu extends Component {
 	      <InlineConfirmButton
 		className = "confirmButton"
 		textValues = {['', 'Ta bort?', '']}
-		onClick = { () => this.props.archiveResource(resource) }
+		onClick = { () => this.props.archive(resource, 'resources') }
 		showTimer
+		isExecuting = { false }
 	      >
 		<img
 		  src = { trashcan }
@@ -94,8 +95,11 @@ class ModalMenu extends Component {
 	  marginTop: '5px',
 	}}
 	onClick = { () => {
-	    let created = this.props.createResource('Person',
-						    this.randomColor())
+	let created = this.props.create(
+	    {
+	      title: 'Person',
+	      color: this.randomColor(),
+	    }, 'resources')
 	    // TODO: set this one as selected!
 	}}
 	className = "clickable"
@@ -191,8 +195,9 @@ class ModalMenu extends Component {
 		<InlineConfirmButton
 		  className = "confirmButton"
 		  textValues = {['', 'Ta bort?', '']}
-		  onClick = { () => this.props.archiveShift(shift) }
+		  onClick = { () => this.props.archive(shift, 'shifts') }
 		  showTimer
+		  isExecuting = { false }
 		>
 		  <img
 		    src = { trashcan }
@@ -208,16 +213,29 @@ class ModalMenu extends Component {
       })
     )
 
-    const addShiftRow = (
+    return (
+      <React.Fragment>
+	{ shiftOptions }
+      </React.Fragment>
+    )
+  }
+
+  addShiftRow = () => {
+    return (
       <div
 	style = {{
 	  textAlign: 'center',
 	  marginTop: '5px',
 	}}
-	onClick = { () => this.props.createShift('Pass',
-						 13, 37, 420) }
+	onClick = { () => this.props.create(
+	    {
+	      title: 'Pass',
+	      startHour: 13,
+	      startMinute: 37,
+	      minuteLength: 420,
+	    }, 'shifts')
+	}
 	className = "clickable"
-	key = { shiftOptions.length }
       >
 	<img
 	  src = { addBubble }
@@ -226,15 +244,6 @@ class ModalMenu extends Component {
 	/>
       </div>
     )
-
-    // TODO: the addshiftrow is awkwardly placed, put it outside the table
-    return (
-      <React.Fragment>
-	{ shiftOptions }
-	{ addShiftRow }
-      </React.Fragment>
-    )
-    
   }
 
   // TODO: make a 75% border around the close bubble
@@ -269,6 +278,7 @@ class ModalMenu extends Component {
 		{ this.renderShifts() }
 	      </tbody>
 	    </table>
+	    { this.addShiftRow() }
 
 	  </div>
 	</div>

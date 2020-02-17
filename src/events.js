@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment'
-import { storeEvents } from './storage'
+import { storeData } from './storage'
 
 function moveEvent ({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
 
@@ -20,7 +20,7 @@ function moveEvent ({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
   nextEvents.splice(idx, 1, updatedEvent)
 
   this.setState({ events: nextEvents })
-  storeEvents(this.state.events)
+  storeData(this.state.events, 'events')
 
 }
 
@@ -60,7 +60,7 @@ function addEvents (allSelected) {
   })
 
   this.setState((state, _) => {
-    storeEvents(state.events.concat(newEvents))
+    storeData(state.events.concat(newEvents), 'events')
 
     return {
       events: state.events.concat(newEvents)
@@ -80,7 +80,7 @@ function addEvent(event) {
   event.id = eventId + 1
 
   this.setState((state, _) => {
-    storeEvents(state.events.concat(event))
+    storeData(state.events.concat(event), 'events')
 
     return {
       events: state.events.concat(event)
@@ -93,7 +93,7 @@ function removeEvent (argEvent, e) {
   this.setState((state, _) => {
     
     const newEventList = state.events.filter(elem => elem.id !== argEvent.id)
-    storeEvents(newEventList)
+    storeData(newEventList, 'events')
 
     return {
       events: newEventList,

@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 
-import TimePicker from 'react-time-picker'
 import ColorPicker from 'rc-color-picker'
 import 'rc-color-picker/assets/index.css'
 

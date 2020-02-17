@@ -1,5 +1,3 @@
-import update from 'immutability-helper'
-
 
 // A resource in this case is just a person
 function loadResources() {
@@ -81,24 +79,9 @@ function loadMetaData() {
   return metaData
 }
 
-function storeEvents(eventList) {
+function storeData(data, type) {
   window.localStorage
-    .setItem('schedule_events', JSON.stringify(eventList))
-}
-
-function storeResources(resourceList) {
-  window.localStorage
-    .setItem('schedule_resources', JSON.stringify(resourceList))
-}
-
-function storeShifts(shiftList) {
-  window.localStorage
-    .setItem('schedule_shifts', JSON.stringify(shiftList))
-}
-
-function storeMetaData(metaData) {
-  window.localStorage
-    .setItem('schedule_metaData', JSON.stringify(metaData))
+    .setItem(`schedule_${type}`, JSON.stringify(data))
 }
 
 export {
@@ -106,8 +89,5 @@ export {
   loadEvents,
   loadShifts,
   loadMetaData,
-  storeResources,
-  storeEvents,
-  storeShifts,
-  storeMetaData,
+  storeData,
 }

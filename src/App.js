@@ -8,16 +8,13 @@ import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 
-import { loadResources, loadEvents,
-	 storeEvents, storeResources,
-	 storeShifts, loadShifts,
-	 storeMetaData, loadMetaData } from './storage'
+import { loadResources, loadEvents, loadShifts,
+	 loadMetaData, storeData } from './storage'
 
 import { moveEvent, addEvent, removeEvent,
 	 eventRender, getEventProp, addEvents } from './events'
 
-import { createResource, archiveResource } from './resources'
-import { createShift, archiveShift } from './shifts'
+import { create, archive } from './utilities'
 
 import './App.css'
 import { storeTestData } from './testdata'
@@ -68,11 +65,8 @@ class App extends Component {
     this.eventRender = eventRender.bind(this)
     this.getEventProp = getEventProp.bind(this)
 
-    this.createResource = createResource.bind(this)
-    this.archiveResource = archiveResource.bind(this)
-
-    this.createShift = createShift.bind(this)
-    this.archiveShift = archiveShift.bind(this)
+    this.create = create.bind(this)
+    this.archive = archive.bind(this)
   }
 
   setSelected = ({ shift, resource }) => {
@@ -93,9 +87,7 @@ class App extends Component {
     const newList = update(this.state[type], {$splice: [[index, true, newElement]]})
 
     this.setState({ [type]: newList })
-
-    if (type === 'shifts') storeShifts(newList)
-    else if (type === 'resources') storeResources(newList)
+    storeData(newList, type)
   }
 
   
@@ -125,10 +117,8 @@ class App extends Component {
 		document.getElementById('root').style.filter = ''
 		this.setState({ optionsModalOpen: false })
 	    }}
-	    archiveResource = { this.archiveResource }
-	    createResource = { this.createResource }
-	    archiveShift = { this.archiveShift }
-	    createShift = { this.createShift }
+	    archive = { this.archive }
+	    create = { this.create }
 	  />
 	</Modal>
 
