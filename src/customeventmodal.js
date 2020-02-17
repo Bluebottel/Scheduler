@@ -11,9 +11,10 @@ class CustomEventModal extends Component {
     super(props)
 
     this.state = {
-      eventColor: this.props.event.color,
+      eventColor: this.randomColor(),
       start: this.props.event.start,
       end: this.props.event.end,
+      customTitle: '',
     }
     
   }
@@ -39,7 +40,11 @@ class CustomEventModal extends Component {
 	<input
 	  ref = { instance => this.titleInput = instance }
 	  type = "text"
-	  placeholder = "Titel">
+	  placeholder = "Titel"
+	  onChange = { event => this.setState({
+	      customTitle: event.target.value,
+	  }) }
+	>
 	</input>
 
 	<div>
@@ -63,7 +68,12 @@ class CustomEventModal extends Component {
 	  }}>
 	  <button
 	    onClick = { () => {
-		// save stuff
+		this.props.addEvent({
+		  customTitle: this.state.customTitle,
+		  start: this.state.start,
+		  end: this.state.end,
+		  color: this.state.eventColor,
+		})
 		this.props.closeModal()
 	    }}>
 	    Spara

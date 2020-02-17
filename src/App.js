@@ -13,8 +13,8 @@ import { loadResources, loadEvents,
 	 storeShifts, loadShifts,
 	 storeMetaData, loadMetaData } from './storage'
 
-import { moveEvent, newEvent, removeEvent,
-	 eventRender, getEventProp } from './events'
+import { moveEvent, addEvent, removeEvent,
+	 eventRender, getEventProp, addEvents } from './events'
 
 import { createResource, archiveResource } from './resources'
 import { createShift, archiveShift } from './shifts'
@@ -57,12 +57,13 @@ class App extends Component {
       optionsModalOpen: false,
       customEventModalOpen: false,
       meta: metaData,
-      step: 15,
+      view: 'month',
     }
 
     // TODO: some better binding method
     this.moveEvent = moveEvent.bind(this)
-    this.newEvent = newEvent.bind(this)
+    this.addEvents = addEvents.bind(this)
+    this.addEvent = addEvent.bind(this)
     this.removeEvent = removeEvent.bind(this)
     this.eventRender = eventRender.bind(this)
     this.getEventProp = getEventProp.bind(this)
@@ -145,8 +146,8 @@ class App extends Component {
 	  ariaHideApp = { false }
 	>
 	  <CustomEventModal
-	    createEvent = { this.newEvent }
-	    event = {{ color: '#ddd', start: new Date(), end: new Date()}}
+	    addEvent = { this.addEvent }
+	    event = { this.state.customEvent }
 	    closeModal = { () => {
 		// remove blur
 		document.getElementById('root').style.filter = ''
@@ -164,14 +165,28 @@ class App extends Component {
             onEventDrop = { this.moveEvent }
             onEventResize = { () => {} }
 	    onDragStart = { console.log }
-            onSelectSlot = { this.newEvent }
+            onSelectSlot = { selection => {
+		if (this.state.view === 'month' )
+		  this.addEvents(selection)
+
+		if (this.state.view === 'week' ) {
+		  this.setState({
+		    customEventModalOpen: true,
+		    customEvent: {
+		      start: selection.start,
+		      end: selection.end,
+		    }
+		  })
+		}
+
+	    }}
             defaultView = "month"
             defaultDate = { new Date() }
 	    eventPropGetter = { this.getEventProp }
 	    selectable = { 'ignoreEvents' }
 	    showMultiDayTimes = { true }
-	    step = { this.state.step }
-	    views = { ['month', 'week']}
+	    views = { ['month', 'week'] }
+	    onView = { view => this.setState({ view: view })}
 	    popup
 	    components = {{
 	      eventWrapper: ({event, children}) => (
