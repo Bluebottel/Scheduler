@@ -3,7 +3,7 @@ import update from 'immutability-helper'
 import { storeData } from './storage'
 
 // accepts both shifts and resources
-export function create(element, type) {
+function create(element, type) {
 
   if (type !== 'resources' && type !== 'shifts') {
     console.log('Wrong type: ', type, element)
@@ -34,7 +34,7 @@ export function create(element, type) {
 }
 
 
-export function archive(element, type) {
+function archive(element, type) {
 
   if (type !== 'resources' && type !== 'shifts') {
     console.log('Wrong type: ', type, element)
@@ -63,5 +63,7 @@ export function archive(element, type) {
   })
 }
 
-// TODO: exporting down here doesn't work for some reason
-// missing ; error from create
+export {
+  create,
+  archive,
+}

@@ -140,6 +140,4 @@ function ShiftInfoBlock(props) {
   )
 }
 
-
-
 export default PickerPanel
