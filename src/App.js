@@ -13,8 +13,8 @@ import { loadResources, loadEvents,
 	 storeShifts, loadShifts,
 	 storeMetaData, loadMetaData } from './storage'
 
-import { moveEvent, newEvent, removeEvent,
-	 eventRender, getEventProp } from './events'
+import { moveEvent, addEvent, removeEvent,
+	 eventRender, getEventProp, addEvents } from './events'
 
 import { createResource, archiveResource } from './resources'
 import { createShift, archiveShift } from './shifts'
@@ -23,6 +23,7 @@ import './App.css'
 import { storeTestData } from './testdata'
 import ModalMenu from './modalmenu'
 import PickerPanel from './pickerpanel'
+import CustomEventModal from './customeventmodal'
 
 
 // changing locale doesn't work without this
@@ -54,12 +55,15 @@ class App extends Component {
 	resource: resources[0],
       },
       optionsModalOpen: false,
+      customEventModalOpen: false,
       meta: metaData,
+      view: 'month',
     }
 
     // TODO: some better binding method
     this.moveEvent = moveEvent.bind(this)
-    this.newEvent = newEvent.bind(this)
+    this.addEvents = addEvents.bind(this)
+    this.addEvent = addEvent.bind(this)
     this.removeEvent = removeEvent.bind(this)
     this.eventRender = eventRender.bind(this)
     this.getEventProp = getEventProp.bind(this)
@@ -101,23 +105,23 @@ class App extends Component {
       <div id = "container">
 	<Modal
 	  isOpen = { this.state.optionsModalOpen }
-	  onRequestClose = { () => this.setState({ optionsModalOpen: false }) }
 	  shouldCloseOnOverlayClick = { true }
-	  className = "optionsModal"
-	  overlayClassName = "optionsModalOverlay"
-	  ariaHideApp = { false }
+	  className = "modalCommon optionsMenuModal"
+	  overlayClassName = "modalOverlayCommon"
 	  onAfterOpen = { () => document.getElementById('root')
 					.style.filter = 'blur(2px)' }
 	  onRequestClose = { () => {
 	      document.getElementById('root').style.filter = ''
 	      this.setState({ optionsModalOpen: false })
 	  }}
+	  ariaHideApp = { false }
 	>
 	  <ModalMenu
 	    resources = { this.state.resources }
 	    shifts = { this.state.shifts }
 	    updateElement = { this.updateElement }
 	    closeModal = { () => {
+		// remove blur
 		document.getElementById('root').style.filter = ''
 		this.setState({ optionsModalOpen: false })
 	    }}
@@ -127,6 +131,31 @@ class App extends Component {
 	    createShift = { this.createShift }
 	  />
 	</Modal>
+
+	<Modal
+	  isOpen = { this.state.customEventModalOpen }
+	  shouldCloseOnOverlayClick = { false }
+	  className = "modalCommon customEventModal"
+	  overlayClassName = "modalOverlayCommon"
+	  onAfterOpen = { () => document.getElementById('root')
+					.style.filter = 'blur(2px)' }
+	  onRequestClose = { () => {
+	      document.getElementById('root').style.filter = ''
+	      this.setState({ customEventModalOpen: false })
+	  }}
+	  ariaHideApp = { false }
+	>
+	  <CustomEventModal
+	    addEvent = { this.addEvent }
+	    event = { this.state.customEvent }
+	    closeModal = { () => {
+		// remove blur
+		document.getElementById('root').style.filter = ''
+		this.setState({ customEventModalOpen: false })
+	    }}
+	  />
+	</Modal>
+	
 	<div id = "calendar">
 	  <DragCalendar
 	    startAccessor = "start"
@@ -135,12 +164,29 @@ class App extends Component {
             events = { this.state.events }
             onEventDrop = { this.moveEvent }
             onEventResize = { () => {} }
-            onSelectSlot = { this.newEvent }
+	    onDragStart = { console.log }
+            onSelectSlot = { selection => {
+		if (this.state.view === 'month' )
+		  this.addEvents(selection)
+
+		if (this.state.view === 'week' ) {
+		  this.setState({
+		    customEventModalOpen: true,
+		    customEvent: {
+		      start: selection.start,
+		      end: selection.end,
+		    }
+		  })
+		}
+
+	    }}
             defaultView = "month"
             defaultDate = { new Date() }
 	    eventPropGetter = { this.getEventProp }
 	    selectable = { 'ignoreEvents' }
 	    showMultiDayTimes = { true }
+	    views = { ['month', 'week'] }
+	    onView = { view => this.setState({ view: view })}
 	    popup
 	    components = {{
 	      eventWrapper: ({event, children}) => (

@@ -24,7 +24,8 @@ function moveEvent ({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
 
 }
 
-function newEvent (allSelected) {
+// this will only ever be called from the month view
+function addEvents (allSelected) {
 
   // in case of empty lists
   if (!this.state.selected.resource || !this.state.selected.shift)
@@ -54,9 +55,8 @@ function newEvent (allSelected) {
       resourceId: this.state.selected.resource.id,
       shiftId: this.state.selected.shift.id,
     }
-
     newEvents.push(newEvent)
-    eventId++;
+    eventId++
   })
 
   this.setState((state, _) => {
@@ -68,7 +68,27 @@ function newEvent (allSelected) {
   })
 }
 
-// TODO: add a warning + confirmation before removing
+function addEvent(event) {
+
+  // find the largest and then increment to guarantee a unique event ID
+  let eventId = 0
+  this.state.events.forEach(ev => {
+    if (ev.id > eventId)
+      eventId = ev.id
+  })
+
+  event.id = eventId + 1
+
+  this.setState((state, _) => {
+    storeEvents(state.events.concat(event))
+
+    return {
+      events: state.events.concat(event)
+    }
+  })
+  
+}
+
 function removeEvent (argEvent, e) {
   this.setState((state, _) => {
     
@@ -83,12 +103,20 @@ function removeEvent (argEvent, e) {
 
 function eventRender ({ event }) {
 
+  if (event.customTitle !== undefined) {
+    return (
+      <div>
+      { event.customTitle }
+      </div>
+    )
+  }
+  
   let resource = this.state.resources.find(res => res.id === event.resourceId)
   if (resource === undefined)
     resource = this.state.meta.archive.resources
     .find(res => res.id === event.resourceId)
   let shift = this.state.shifts.find(sh => sh.id === event.shiftId)
-
+  
   return (
       <div>
       { resource.title + ', ' + shift.title }
@@ -100,9 +128,20 @@ function eventRender ({ event }) {
   // TODO: check if the event is a meta event and show total scheduled hours for
   //       that day instead
   // TODO: make a gradient background and let the rightmost part represent shift
-  //       and the rest of the resource
+  //       and the rest the resource
 function getEventProp (event, start, end, isSelected) {
 
+  // custom events don't have resources/shifts linked to them
+  if (event.customTitle !== undefined) {
+    return {
+      style: {
+	background: event.color,
+	cursor: 'grab',
+      },
+      className: 'eventPanel',
+    }
+  }
+  
   let resource = this.state.resources.find(res => res.id === event.resourceId)
 
   // in case a resource has been removed
@@ -138,8 +177,9 @@ function getEventProp (event, start, end, isSelected) {
 
 export {
   moveEvent,
-  newEvent,
   removeEvent,
   eventRender,
   getEventProp,
+  addEvent,
+  addEvents,
 }
