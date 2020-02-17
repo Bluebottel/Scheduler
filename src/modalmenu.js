@@ -71,7 +71,7 @@ class ModalMenu extends Component {
 
 	      <InlineConfirmButton
 		className = "confirmButton"
-		textValues = {['', 'Delete?', '']}
+		textValues = {['', 'Ta bort?', '']}
 		onClick = { () => this.props.archiveResource(resource) }
 		showTimer
 	      >
@@ -89,7 +89,10 @@ class ModalMenu extends Component {
 
     const addResourceRow = (
       <div
-	style = {{ textAlign: 'center' }}
+	style = {{
+	  textAlign: 'center',
+	  marginTop: '5px',
+	}}
 	onClick = { () => {
 	    let created = this.props.createResource('Person',
 						    this.randomColor())
@@ -117,69 +120,69 @@ class ModalMenu extends Component {
 	  <tr key = { i }>
 	    <td>
 	      <EasyEdit
-	      type = "text"
-	      value = { shift.title }
-	      onSave = {
-		text => {
-		  if (text.length === 0)
-		    return
-		  
-		  shift.title = text
-		  this.props.updateElement(shift, 'shifts')
+		type = "text"
+		value = { shift.title }
+		onSave = {
+		  text => {
+		    if (text.length === 0)
+		      return
+		    
+		    shift.title = text
+		    this.props.updateElement(shift, 'shifts')
+		  }
 		}
-	      }
 
-	      onValidate = { text => text.length > 0 }
-	      validationMessage = "Namnet kan inte vara tomt"
-
-	      saveButtonLabel = "Spara"
-	      cancelButtonLabel = "Avbryt"
-	      onHoverCssClass = "clickable"
+		onValidate = { text => text.length > 0 }
+		validationMessage = "Namnet kan inte vara tomt"
+	      
+		saveButtonLabel = "Spara"
+		cancelButtonLabel = "Avbryt"
+		onHoverCssClass = "clickable"
 	      />
 	    </td>
 
 	    <td>
 	      <EasyEdit
-	      type = "text"
-	      value = { timePad(shift.startHour) + ':'
-		     + timePad(shift.startMinute) }
-	      onSave = {
-		text => {
-		  shift.startHour = parseInt(this.state.picked.split(':')[0])
-		  shift.startMinute = parseInt(this.state.picked.split(':')[1])
-		  this.props.updateElement(shift, 'shifts')
-		}}
+		type = "text"
+		value = { timePad(shift.startHour) + ':'
+		       + timePad(shift.startMinute) }
+		onSave = {
+		  text => {
+		    shift.startHour = parseInt(this.state.picked.split(':')[0])
+		    shift.startMinute = parseInt(this.state.picked.split(':')[1])
+		    this.props.updateElement(shift, 'shifts')
+		  }}
 
-	      editComponent = { this.clock(shift) }
+		editComponent = { this.clock(shift) }
 
-	      saveButtonLabel = "Spara"
-	      cancelButtonLabel = "Avbryt"
-	      onHoverCssClass = "clickable"
+		saveButtonLabel = "Spara"
+		cancelButtonLabel = "Avbryt"
+		onHoverCssClass = "clickable"
 	      />
 	    </td>
 	    
 	    <td>
 	      <EasyEdit
-	      type = "number"
+		type = "number"
 
-	      value = {
-		// the component throws an error unless
-		// supplied with a string
-		shift.minuteLength.toString()
-	      }
+		value = {
+		  // the component throws an error unless
+		  // supplied with a string
+		  shift.minuteLength.toString()
+		}
 
-		onSave = {
-		  value => {
-		    shift.minuteLength = value
-		    this.props.updateElement(shift, 'shifts')
-		  }}
+	      onSave = {
+		value => {
+		  shift.minuteLength = value
+		  this.props.updateElement(shift, 'shifts')
+		}}
 	      
-	      onValidate = { value => value > 0 }
-	      validationMessage = "Måste vara en siffra > 0"
+		onValidate = { value => value > 0 }
+		validationMessage = "Måste vara en siffra > 0"
 
-	      saveButtonLabel = "Spara"
-	      cancelButtonLabel = "Avbryt"
-	      onHoverCssClass = "clickable"
+		saveButtonLabel = "Spara"
+		cancelButtonLabel = "Avbryt"
+		onHoverCssClass = "clickable"
 	      />
 	    </td>
 
@@ -187,7 +190,7 @@ class ModalMenu extends Component {
 	      <div className = "optionSidePanel">
 		<InlineConfirmButton
 		  className = "confirmButton"
-		  textValues = {['', 'Delete?', '']}
+		  textValues = {['', 'Ta bort?', '']}
 		  onClick = { () => this.props.archiveShift(shift) }
 		  showTimer
 		>
@@ -207,7 +210,10 @@ class ModalMenu extends Component {
 
     const addShiftRow = (
       <div
-	style = {{ textAlign: 'center' }}
+	style = {{
+	  textAlign: 'center',
+	  marginTop: '5px',
+	}}
 	onClick = { () => this.props.createShift('Pass',
 						 13, 37, 420) }
 	className = "clickable"

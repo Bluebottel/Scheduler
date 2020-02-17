@@ -1,7 +1,3 @@
-.option>* {
-    display: inline;
-}
-
 .option {
     height: 21px;
 }
@@ -129,9 +125,6 @@
     transform: translate(-50%, -50%);
     position: absolute;
 
-    width: 1000px;
-    height: 500px;
-
     filter: drop-shadow(10px 10px 5px #9f9f9f);    
 }
 
@@ -148,6 +141,10 @@
 }
 
 .optionsMenuModal {
-    width: 1000px;
-    height: 500px;
+
+}
+
+.easy-edit-wrapper {
+    display: inline;
+    margin-right: 15px;
 }

@@ -41,6 +41,11 @@
     background: #ededed;
 }
 
+option>div:firs-child {
+    display: inline;
+    margin-right: 10px;
+}
+
 .clickable {
     cursor: pointer;
 }
