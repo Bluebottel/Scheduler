@@ -38,7 +38,7 @@ function archive(element, type) {
 
   if (type !== 'resources' && type !== 'shifts') {
     console.log('Wrong type: ', type, element)
-    return
+    return {}
   }
 
 
@@ -61,6 +61,8 @@ function archive(element, type) {
 
     return { [type]: newList, }
   })
+
+  return element
 }
 
 export {

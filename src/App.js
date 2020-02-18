@@ -43,6 +43,8 @@ class App extends Component {
     const shifts = loadShifts()
     const metaData = loadMetaData()
 
+    console.log(shifts[0], resources[0])
+
     this.state = {
       events: events,
       resources: resources,
@@ -83,16 +85,38 @@ class App extends Component {
     let index = this.state[type].findIndex(elem => elem.id === newElement.id)
     if (type === 'resources' && index === -1)
       index = this.state.meta.archive.findIndex(res => res.id === newElement.id)
-    
+
     const newList = update(this.state[type], {$splice: [[index, true, newElement]]})
 
     this.setState({ [type]: newList })
     storeData(newList, type)
   }
 
-  
+
   // TODO: add a context menu instead of removing the event straight away
   render() {
+
+    // don't render the pickerPanel when in week mode so the app
+    // is slightly more usable on mobile devices since it's not
+    // used there anyway
+    
+    let pickerPanel = ''
+
+    if (this.state.view === 'month') {
+      pickerPanel = (
+	<PickerPanel
+	  resources = { this.state.resources }
+	  shifts = { this.state.shifts }
+	  selected = { this.state.selected }
+	  setSelected = { this.setSelected }
+	  optionsModalOpen = { this.state.optionsModalOpen }
+	  setOptionsModal = { (value) => this.setState({
+	      optionsModalOpen: value
+	  }) }
+	/>
+      )
+    }
+
     return (
       <div id = "container">
 	<Modal
@@ -117,8 +141,31 @@ class App extends Component {
 		document.getElementById('root').style.filter = ''
 		this.setState({ optionsModalOpen: false })
 	    }}
-	    archive = { this.archive }
-	    create = { this.create }
+	    archive = { (element, type) => {
+		// select another element when the currently selected one gets removed
+		
+		this.archive(element, type)
+		let replacement = this.state[type].find(ele => ele.id !== element.id )
+
+		// slice to go from 'resourceS' -> 'resource'
+		this.setState({
+		  selected: update(this.state.selected,
+				   {[type.slice(0,-1)]: {$set: replacement}})
+		})
+	    }}
+	  
+	    create = { (element, type) => {
+		// if there is no selected element ie it's an empty list then
+		// create and select that one
+		let created = this.create(element, type)
+
+		if (!this.state.selected[type.slice(0,-1)]) {
+		  this.setState({
+		    selected: update(this.state.selected,
+				     {[type.slice(0,-1)]: {$set: created }}),
+		  })
+		}
+	    }}
 	  />
 	</Modal>
 
@@ -145,7 +192,7 @@ class App extends Component {
 	    }}
 	  />
 	</Modal>
-	
+
 	<div id = "calendar">
 	  <DragCalendar
 	    startAccessor = "start"
@@ -192,17 +239,9 @@ class App extends Component {
 	    }}
 	  />
 	</div>
+
+	{ pickerPanel }
 	
-	<PickerPanel
-	  resources = { this.state.resources }
-	  shifts = { this.state.shifts }
-	  selected = { this.state.selected }
-	  setSelected = { this.setSelected }
-	  optionsModalOpen = { this.state.optionsModalOpen }
-	  setOptionsModal = { (value) => this.setState({
-	      optionsModalOpen: value
-	  }) }
-	/>
       </div>
     )
   }
