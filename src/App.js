@@ -224,6 +224,7 @@ class App extends Component {
 	    showMultiDayTimes = { true }
 	    views = { ['month', 'week'] }
 	    onView = { view => this.setState({ view: view })}
+	    step = { 15 }
 	    popup
 	    components = {{
 	      eventWrapper: ({event, children}) => (

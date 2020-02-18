@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^7.2.1",
     "gh-pages": "^2.2.0",
     "immutability-helper": "^3.0.1",
+    "input-moment": "^0.4.0",
     "moment": "^2.24.0",
     "rc-color-picker": "^1.2.6",
     "react": "^16.12.0",
