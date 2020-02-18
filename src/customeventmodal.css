@@ -24,3 +24,11 @@
     border-collapse: collapse;
     
 }
+
+.errorPanel {
+    background: #ffa5a5;
+}
+
+.current-day {
+    background: #89c2f2;
+}

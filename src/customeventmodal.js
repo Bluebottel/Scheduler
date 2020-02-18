@@ -22,8 +22,8 @@ class CustomEventModal extends Component {
       start: this.props.event.start,
       end: this.props.event.end,
       customTitle: '',
-      choosingStart: false,
-      choosingEnd: false,
+      startChoosing: false,
+      endChoosing: false,
     }
     
   }
@@ -35,11 +35,28 @@ class CustomEventModal extends Component {
   randomColor = () => { return "#"+((1<<24)*Math
     .random()|0).toString(16) }
 
-  // date = "start" | "end"
-  dateTimePicker = ({ trigger, date, changeTarget, saveTo }) => {
+  generalErrorPanel = () => {
+    if (!this.state.generalError)
+      return ''
 
-    let dt = this.state[date]
-    
+    else return (
+      <div
+	style = {{
+	  textAlign: 'center',
+	  margin: '-8px 0px 6px',
+	  background: '#ffa5a5',
+	}}
+      >
+	{ this.state.generalError }
+      </div>
+    )
+  }
+
+  // target = "start" | "end"
+  dateTimePicker = ({ trigger, target }) => {
+
+    let dt = this.state[target]
+
     if (!trigger)
       return (
 	  <div
@@ -47,11 +64,10 @@ class CustomEventModal extends Component {
 	    style = {{
 	      display: 'inline-table',
 	      padding: '0px 4px 0px 4px',
-	      border: '1px solid #a8a8a8',
 	    }}
 	    onClick = { () => {
 		this.setState({
-		  choosingStart: true,
+		  [`${target}Choosing`]: true,
 		})
 	    }}
 	  >
@@ -67,71 +83,134 @@ class CustomEventModal extends Component {
 
     else return (
       <InputMoment
-	moment = { moment(moment(this.state[date])) }
-	onSave = { arg => {
-
-	    console.log('arg: ', arg)
-
+	mindate = { new Date() }
+	moment = { moment(this.state[target]) }
+	onSave = { () => {
+	    this.setState({
+	      [`${target}Choosing`]: false,
+	    })	    
 	}}
-	minStep = { 1 }
+	onChange = { newMoment => {
+	    if (target === 'start' && newMoment.isAfter(this.state.end)) {
+	      this.setState({
+		dateError: 'Händelsen måste börja innan den slutar',
+	      })
+	      return
+	    }
+
+	      if (target === 'end' && newMoment.isBefore(this.state.start) ) {
+		this.setState({
+		  dateError: 'Händelsen måste sluta innan den börjar',
+		})
+		return
+	      }
+
+	      this.setState({
+		[target]: newMoment.toDate(),
+		dateError: undefined,
+	      })  
+	}}
+	minStep = { 15 }
 	hourStep = { 1 }
 	prevMonthIcon = "ion-ios-arrow-left"
 	nextMonthIcon = "ion-ios-arrow-right"
       />
-    )
+	    )
   }
 
   optionsTable = () => {
 
-    return (
-      <React.Fragment>
-	<div
-	  style = {{
-	    display: 'flex',
-	    alignItems: 'center',
-	  }}>
+    if (this.state.startChoosing || this.state.endChoosing) {
+      const target = this.state.startChoosing ? 'start' : 'end'
+      let errorPanel
+      
+      if (this.state.dateError)
+	errorPanel = (
+	  <div
+	    className = 'errorPanel'
+	    style = {{
+	      width: '100%',
+	      textAlign: 'center',
+	    }} 
+	  >
+	    { this.state.dateError }
+	  </div>
+	)
+      else errorPanel = ''
+      
+      return (
+	<React.Fragment>
 	  <div
 	    style = {{
-	      marginRight: '10px',
-	    }}
-	  >
-	    Färg
+	      width: '100%',
+	      textAlign: 'center',
+	  }}>
+	    <b>{ target === 'start' ? 'Börjar' : 'Slutar' }</b>
 	  </div>
-	  <ColorPicker
-	    enableAlpha = { false }
-	    animation = 'slide-up'
-	    color = { this.state.eventColor }
-	    onClose = { choice => {
-		this.setState({
-		  eventColor: choice.color
-		})
-	    }}
-	  />
-	</div>
-
-	<div>
-	  <div style = {{
-	    display: 'inline',
-	    marginRight: '10px',
-	  }}
-	  >
-	    Börjar
-	  </div>
+	  
+	  { this.generalErrorPanel() }
+	  
 	  {
 	    this.dateTimePicker({
-	      trigger: this.state.choosingStart,
-	      date: 'start',
-	      changeTarget: 'start',
-	      saveTo: 'start',
+	      trigger: true,
+	      target: target,
 	    })
 	  }
-	</div>
+	</React.Fragment>
+      )
+    }
+    
+    return (
+      <table>
+	<tbody>
+	  
+	  <tr>
+	    <td
+	      style = {{
+		width: '50px',
+	      }}
+	    >
+	      Färg
+	    </td>
+	    <td>
+	      <ColorPicker
+	      enableAlpha = { false }
+	      animation = 'slide-up'
+	      color = { this.state.eventColor }
+	      onClose = { choice => {
+		  this.setState({
+		    eventColor: choice.color
+		  })
+	      }}
+	      />
+	    </td>
+	  </tr>
 
-	<div>
-	  <div>Slutar</div>
-	  <div>timepicker</div>
-	</div>
-      </React.Fragment>
+	  <tr>
+	    <td>Börjar</td>
+	    <td>
+	      {
+		this.dateTimePicker({
+		  trigger: this.state.startChoosing,
+		  target: 'start'
+		})
+	      }
+	    </td>
+	  </tr>
+
+	  <tr>
+	    <td>Slutar</td>
+	    <td>
+	      {
+		this.dateTimePicker({
+		  trigger: this.state.endChoosing,
+		  target: 'end'
+		})
+	      }
+	    </td>
+	  </tr>
+	</tbody>
+      </table>
     )
   }
 
@@ -155,17 +234,25 @@ class CustomEventModal extends Component {
 	    ref = { instance => this.titleInput = instance }
 	    type = "text"
 	    placeholder = "Titel"
-	    onChange = { event => this.setState({
-		customTitle: event.target.value,
-	    })}
+	    onChange = { event => {
+		let newError = undefined
+		if (event.target.value.length === 0)
+		  newError = this.state.generalError
+
+		this.setState({
+		  customTitle: event.target.value,
+		  generalError: newError,
+		})
+	    }}
 	    style = {{
-	      border: '1px solid #a8a8a8',
 	      padding: '4px',
 	      width: '100%',
 	    }}
 	  >
 	  </input>
 	</div>
+
+	{ this.generalErrorPanel() }
 
 	{ this.optionsTable() }
 	
@@ -177,6 +264,14 @@ class CustomEventModal extends Component {
 	  }}>
 	  <button
 	    onClick = { () => {
+		if (!this.state.customTitle || this.state.customTitle.length === 0) {
+
+		  this.setState({
+		    generalError: 'Titeln får inte vara tom',
+		  })
+		  return
+		}
+		
 		this.props.addEvent({
 		  customTitle: this.state.customTitle,
 		  start: this.state.start,
