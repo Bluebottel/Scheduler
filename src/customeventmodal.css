@@ -1,15 +1,26 @@
-.customEventModal {
-    background: linear-gradient(0deg, white 75%, #dfdede 89%)
+.customEventModal button {
+    border: none;
+    background: #c1c1c1;
+    padding: 5px;
+}
+
+.customEventModal button:hover {
+    background: #ddd;
 }
 
 .customEventModal * {
     margin: 3px 0 3px 0;
 }
 
-.customEventModal div:first-child {
+.customEventModal:first-child {
     margin: -6px 0 6px 0;
 }
 
-.customEventModal div:last-child {
+.customEventModal:last-child {
     margin: 3px 0 0 0;
+}
+
+.customEventModal table {
+    border-collapse: collapse;
+    
 }
