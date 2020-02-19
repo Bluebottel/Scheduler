@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import update from 'immutability-helper'
 import moment from 'moment'
 
+import optionsIcon from './img/settings.png'
+
 function timePad(number)
 { return (number < 10) ? "0" + number : number }
 
@@ -114,10 +116,19 @@ class PickerPanel extends Component {
 	<div className = "pickerBox">
 	  { this.renderResources() }
 	</div>
-	<button onClick = { () => this.props.setOptionsModal(true) }>
-	  Options
-	</button>
-	
+	<img
+	  onClick = { () => this.props.setOptionsModal(true) }
+	  src = { optionsIcon }
+	  alt = '[Options]'
+	  style = {{
+	    position: 'absolute',
+	    bottom: '10px',
+	    right: '10px',
+	    width: '30px',
+	    cursor: 'pointer',
+	  }}
+	/>
+
       </div>
     )
   }
