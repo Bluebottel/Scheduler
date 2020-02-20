@@ -121,7 +121,7 @@ class App extends Component {
       <div id = "container">
 	<Modal
 	  isOpen = { this.state.optionsModalOpen }
-	  shouldCloseOnOverlayClick = { true }
+	  shouldCloseOnOverlayClick = { false }
 	  className = "modalCommon optionsMenuModal"
 	  overlayClassName = "modalOverlayCommon"
 	  onAfterOpen = { () => document.getElementById('root')
