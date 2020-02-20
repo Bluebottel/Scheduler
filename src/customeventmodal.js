@@ -55,6 +55,7 @@ class CustomEventModal extends Component {
   // target = "start" | "end"
   dateTimePicker = ({ trigger, target }) => {
 
+    console.log('datepicker: ', this.state.start, this.state.end)
     let dt = this.state[target]
 
     if (!trigger)
@@ -73,8 +74,8 @@ class CustomEventModal extends Component {
 	  >
 	    {
 	      dt.getFullYear() + '-' +
-	      timePad(dt.getMonth()) +  '-' +
-	      timePad(dt.getDay()) + ' ' +
+	      timePad(dt.getMonth()+1) +  '-' +
+	      timePad(dt.getDate()) + ' ' +
 	      timePad(dt.getHours()) + ':' +
 	      timePad(dt.getMinutes())
 	    }
@@ -122,22 +123,7 @@ class CustomEventModal extends Component {
 
     if (this.state.startChoosing || this.state.endChoosing) {
       const target = this.state.startChoosing ? 'start' : 'end'
-      let errorPanel
-      
-      if (this.state.dateError)
-	errorPanel = (
-	  <div
-	    className = 'errorPanel'
-	    style = {{
-	      width: '100%',
-	      textAlign: 'center',
-	    }} 
-	  >
-	    { this.state.dateError }
-	  </div>
-	)
-      else errorPanel = ''
-      
+  
       return (
 	<React.Fragment>
 	  <div
