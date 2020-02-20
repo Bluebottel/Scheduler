@@ -2,7 +2,7 @@
 #sideContainer {
     display: flex;
     flex-direction: column;
-    width: 18%;
+    width: 18em;
     margin-left: 5px;
 }
 

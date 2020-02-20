@@ -195,12 +195,14 @@ class App extends Component {
 
 	<div id = "calendar">
 	  <DragCalendar
+	    resizableAccessor={ () => false }
 	    startAccessor = "start"
 	    endAccessor = "end"
             localizer = { localizer }
             events = { this.state.events }
             onEventDrop = { this.moveEvent }
-            onEventResize = { () => {} }
+            onEventResize = { (ev) => {  }}
+	    onDragEnd = { () => this.forceUpdate() }
 	    onDragStart = { console.log }
             onSelectSlot = { selection => {
 		if (this.state.view === 'month' )
