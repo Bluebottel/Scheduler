@@ -211,32 +211,25 @@ class CustomEventModal extends Component {
 	>
 	  Ny händelse
 	</div>
-	<div
-	  style = {{
-	    marginRight: '10px',
-	  }}
-	>
-	  <input
-	    ref = { instance => this.titleInput = instance }
-	    type = "text"
-	    placeholder = "Titel"
-	    onChange = { event => {
-		let newError = undefined
-		if (event.target.value.length === 0)
-		  newError = this.state.generalError
 
-		this.setState({
-		  customTitle: event.target.value,
-		  generalError: newError,
-		})
-	    }}
-	    style = {{
-	      padding: '4px',
-	      width: '100%',
-	    }}
-	  >
-	  </input>
-	</div>
+	<input
+	  ref = { instance => this.titleInput = instance }
+	  type = "text"
+	  placeholder = "Titel"
+	  onChange = { event => {
+	      let newError = undefined
+	      if (event.target.value.length === 0)
+		newError = this.state.generalError
+
+	      this.setState({
+		customTitle: event.target.value,
+		generalError: newError,
+	      })
+	  }}
+	  style = {{ padding: '4px' }}
+	>
+	</input>
+
 
 	{ this.generalErrorPanel() }
 
