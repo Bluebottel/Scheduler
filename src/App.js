@@ -20,7 +20,7 @@ import './App.css'
 //import { storeTestData } from './testdata'
 import ModalMenu from './modalmenu'
 import PickerPanel from './pickerpanel'
-import CustomEventModal from './customeventmodal'
+import EditEventModal from './editeventmodal'
 
 
 // changing locale doesn't work without this
@@ -43,8 +43,6 @@ class App extends Component {
     const shifts = loadShifts()
     const metaData = loadMetaData()
 
-    console.log(shifts[0], resources[0])
-
     this.state = {
       events: events,
       resources: resources,
@@ -54,7 +52,7 @@ class App extends Component {
 	resource: resources[0],
       },
       optionsModalOpen: false,
-      customEventModalOpen: false,
+      editEventModalOpen: false,
       meta: metaData,
       view: 'month',
     }
@@ -170,25 +168,35 @@ class App extends Component {
 	</Modal>
 
 	<Modal
-	  isOpen = { this.state.customEventModalOpen }
+	  isOpen = { this.state.editEventModalOpen }
 	  shouldCloseOnOverlayClick = { false }
-	  className = "modalCommon customEventModal"
+	  className = "modalCommon editEventModal"
 	  overlayClassName = "modalOverlayCommon"
 	  onAfterOpen = { () => document.getElementById('root')
 					.style.filter = 'blur(2px)' }
 	  onRequestClose = { () => {
 	      document.getElementById('root').style.filter = ''
-	      this.setState({ customEventModalOpen: false })
+	      this.setState({ editEventModalOpen: false })
 	  }}
 	  ariaHideApp = { false }
 	>
-	  <CustomEventModal
+	  <EditEventModal
 	    addEvent = { this.addEvent }
-	    event = { this.state.customEvent }
+	    event = { this.state.eventBasis }
+	    editEvent = { replacement => {
+		const index = this.state.events
+				   .findIndex(ev => ev.id === replacement.id )
+
+		const newList = update(this.state.events,
+				       {$splice: [[index, true, replacement]]})
+
+		this.setState({ events: newList })
+		storeData(newList, 'events')
+	    }}
 	    closeModal = { () => {
 		// remove blur
 		document.getElementById('root').style.filter = ''
-		this.setState({ customEventModalOpen: false })
+		this.setState({ editEventModalOpen: false })
 	    }}
 	  />
 	</Modal>
@@ -201,8 +209,6 @@ class App extends Component {
             localizer = { localizer }
             events = { this.state.events }
             onEventDrop = { this.moveEvent }
-            onEventResize = { (ev) => {  }}
-	    onDragEnd = { () => this.forceUpdate() }
 	    onDragStart = { console.log }
             onSelectSlot = { selection => {
 		if (this.state.view === 'month' )
@@ -210,8 +216,8 @@ class App extends Component {
 
 		if (this.state.view === 'week' ) {
 		  this.setState({
-		    customEventModalOpen: true,
-		    customEvent: {
+		    editEventModalOpen: true,
+		    eventBasis: {
 		      start: selection.start,
 		      end: selection.end,
 		    }
@@ -219,6 +225,26 @@ class App extends Component {
 		}
 
 	    }}
+	  
+	    onDoubleClickEvent = { (event, e) => {
+		let resolvedColor
+		if (event.color === undefined ) {
+		  resolvedColor = this.state.resources
+				      .find(res => res.id === event.resourceId)
+				      .color		  
+		}
+
+		else { resolvedColor = event.color }
+
+		this.setState({
+		  eventBasis: {
+		    ...event,
+		    color: resolvedColor,
+		  },
+		  editEventModalOpen: true,
+		})
+	    }}
+	  
             defaultView = "month"
             defaultDate = { new Date() }
 	    eventPropGetter = { this.getEventProp }

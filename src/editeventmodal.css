@@ -1,26 +1,26 @@
-.customEventModal button {
+.editEventModal button, input[type=submit] {
     border: none;
     background: #c1c1c1;
     padding: 5px;
 }
 
-.customEventModal button:hover {
+.editEventModal button:hover {
     background: #ddd;
 }
 
-.customEventModal * {
+.editEventModal * {
     margin: 3px 0 3px 0;
 }
 
-.customEventModal:first-child {
+.editEventModal:first-child {
     margin: -6px 0 6px 0;
 }
 
-.customEventModal:last-child {
+.editEventModal:last-child {
     margin: 3px 0 0 0;
 }
 
-.customEventModal table {
+.editEventModal table {
     border-collapse: collapse;
     
 }

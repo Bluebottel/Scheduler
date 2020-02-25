@@ -8,20 +8,38 @@ import 'input-moment/dist/input-moment.css'
 
 import moment from 'moment'
 
-import './customeventmodal.css'
+import './editeventmodal.css'
 
 function timePad(number)
 { return (number < 10) ? "0" + number : number }
 
-class CustomEventModal extends Component {
+class EditEventModal extends Component {
   constructor(props) {
     super(props)
 
+    const color = this.props.event.color === undefined ?
+		  this.randomColor() : this.props.event.color
+
+    let title, titleValue
+    if (this.props.event.title === undefined &&
+	this.props.event.customTitle === undefined) {
+      title = 'Titel'
+      titleValue = ''
+    }
+    
+
+    else {
+      title = this.props.event.title !== undefined ?
+	      this.props.event.title : this.props.event.customTitle
+      titleValue = title
+    }
+
     this.state = {
-      eventColor: this.randomColor(),
+      eventColor: color,
       start: this.props.event.start,
       end: this.props.event.end,
-      customTitle: '',
+      customTitle: titleValue,
+      previousTitle: title,
       startChoosing: false,
       endChoosing: false,
     }
@@ -43,8 +61,9 @@ class CustomEventModal extends Component {
       <div
 	style = {{
 	  textAlign: 'center',
-	  margin: '-8px 0px 6px',
+	  margin: '0px 0px 6px',
 	  background: '#ffa5a5',
+	  padding: '4px 0 4px 0',
 	}}
       >
 	{ this.state[type] }
@@ -55,7 +74,6 @@ class CustomEventModal extends Component {
   // target = "start" | "end"
   dateTimePicker = ({ trigger, target }) => {
 
-    console.log('datepicker: ', this.state.start, this.state.end)
     let dt = this.state[target]
 
     if (!trigger)
@@ -102,7 +120,7 @@ class CustomEventModal extends Component {
 
 	    if (target === 'end' && newMoment.isBefore(this.state.start) ) {
 	      this.setState({
-		dateError: 'Händelsen måste sluta innan den börjar',
+		dateError: 'Händelsen får inte sluta innan den börjar',
 	      })
 	      return
 	    }
@@ -112,7 +130,7 @@ class CustomEventModal extends Component {
 	      dateError: undefined,
 	    })  
 	}}
-      minStep = { 15 }
+	minStep = { 15 }
 	hourStep = { 1 }
 	prevMonthIcon = "ion-ios-arrow-left"
 	nextMonthIcon = "ion-ios-arrow-right"
@@ -135,7 +153,7 @@ class CustomEventModal extends Component {
 	    <b>{ target === 'start' ? 'Börjar' : 'Slutar' }</b>
 	  </div>
 	  
-	  { this.generalErrorPanel('titelError') }
+	  { this.generalErrorPanel('dateError') }
 	  
 	  {
 	    this.dateTimePicker({
@@ -203,43 +221,70 @@ class CustomEventModal extends Component {
 
   render() {
     return (
-      <React.Fragment>
+      <form
+	onSubmit = { ev => {
+	    ev.preventDefault()
+	    if (!this.state.customTitle || this.state.customTitle.length === 0) {
+
+	      this.setState({
+		titleError: 'Titeln får inte vara tom',
+	      })
+	      return
+	    }
+
+	    if (this.props.event.id !== undefined) {
+	      this.props.editEvent({
+		id: this.props.event.id,
+		customTitle: this.state.customTitle,
+		start: this.state.start,
+		end: this.state.end,
+		color: this.state.eventColor,
+		resourceId: undefined,
+		shiftId: undefined,
+	      })
+	      this.props.closeModal()
+	    }
+	    else { 
+	      this.props.addEvent({
+		customTitle: this.state.customTitle,
+		start: this.state.start,
+		end: this.state.end,
+		color: this.state.eventColor,
+	      })
+	      this.props.closeModal()
+	    }
+	}}
+	>
+	
 	<div style = {{
 	  textAlign: "center",
 	  fontWeight: "bold",
 	  margin: '-8px 0px 6px 0px',
 	}}
 	>
-	  Ny händelse
+	  { this.props.event.id === undefined ? 'Ny händelse' : 'Redigera händelse' }
 	</div>
-	<div
-	  style = {{
-	    marginRight: '10px',
+
+	<input
+	  ref = { instance => this.titleInput = instance }
+	  type = "text"
+	  placeholder = { this.state.previousTitle }
+	  value = { this.state.customTitle}
+	  onChange = { event => {
+	      let newError = undefined
+	      if (event.target.value.length === 0)
+		newError = this.state.titleError
+
+	      this.setState({
+		customTitle: event.target.value,
+		titleError: newError,
+	      })
 	  }}
+	  style = {{ padding: '4px' }}
 	>
-	  <input
-	    ref = { instance => this.titleInput = instance }
-	    type = "text"
-	    placeholder = "Titel"
-	    onChange = { event => {
-		let newError = undefined
-		if (event.target.value.length === 0)
-		  newError = this.state.titelError
+	</input>
 
-		this.setState({
-		  customTitle: event.target.value,
-		  titelError: newError,
-		})
-	    }}
-	    style = {{
-	      padding: '4px',
-	      width: '100%',
-	    }}
-	  >
-	  </input>
-	</div>
-
-	{ this.generalErrorPanel('dateError') }
+	{ this.generalErrorPanel('titleError') }
 	{ this.optionsTable() }
 	
 	<div
@@ -248,30 +293,13 @@ class CustomEventModal extends Component {
 	    justifyContent: "space-between",
 	    marginBottom: '-3px',
 	  }}>
-	  <button
-	    onClick = { () => {
-		if (!this.state.customTitle || this.state.customTitle.length === 0) {
-
-		  this.setState({
-		    titelError: 'Titeln får inte vara tom',
-		  })
-		  return
-		}
-		
-		this.props.addEvent({
-		  customTitle: this.state.customTitle,
-		  start: this.state.start,
-		  end: this.state.end,
-		  color: this.state.eventColor,
-		})
-		this.props.closeModal()
-	    }}
+	  <input
+	    type = "submit"
+	    value = "Spara"
 	    style = {{
 	      borderRadius: '0px 0px 0px 5px',
 	    }}
-	  >
-	    Spara
-	  </button>
+	  />
 	  <button
 	    onClick = { this.props.closeModal }
 	    style = {{
@@ -281,9 +309,9 @@ class CustomEventModal extends Component {
 	    Avbryt
 	  </button>
 	</div>
-      </React.Fragment>
+      </form>
     )
   }
 }
 
-export default CustomEventModal
+export default EditEventModal
