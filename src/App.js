@@ -227,19 +227,28 @@ class App extends Component {
 	    }}
 	  
 	    onDoubleClickEvent = { (event, e) => {
-		let resolvedColor
+		let resolvedColor, resolvedTitle
 		if (event.color === undefined ) {
 		  resolvedColor = this.state.resources
 				      .find(res => res.id === event.resourceId)
 				      .color		  
 		}
-
 		else { resolvedColor = event.color }
+
+		if (event.title === undefined && event.customTitle === undefined) {
+		  let resource = this.state.resources
+				     .find(res => res.id === event.resourceId)
+		  let shift = this.state.shifts
+				  .find(sh => sh.id === event.shiftId)
+		  resolvedTitle = resource.title + ', ' + shift.title
+		}
+		else { resolvedTitle = undefined }
 
 		this.setState({
 		  eventBasis: {
 		    ...event,
 		    color: resolvedColor,
+		    title: resolvedTitle,
 		  },
 		  editEventModalOpen: true,
 		})
