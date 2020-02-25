@@ -8,7 +8,6 @@ import ColorPicker from 'rc-color-picker'
 import 'rc-color-picker/assets/index.css'
 
 import trashcan from './img/trashcan.png'
-import edit from './img/edit.png'
 import addBubble from './img/plus.png'
 
 import './modalmenu.css'
@@ -95,12 +94,10 @@ class ModalMenu extends Component {
 	  marginTop: '5px',
 	}}
 	onClick = { () => {
-	let created = this.props.create(
-	    {
+	    this.props.create({
 	      title: 'Person',
 	      color: this.randomColor(),
 	    }, 'resources')
-	    // TODO: set this one as selected!
 	}}
 	className = "clickable"
 	key = { optionsList.length }

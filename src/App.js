@@ -17,7 +17,7 @@ import { moveEvent, addEvent, removeEvent,
 import { create, archive } from './utilities'
 
 import './App.css'
-import { storeTestData } from './testdata'
+//import { storeTestData } from './testdata'
 import ModalMenu from './modalmenu'
 import PickerPanel from './pickerpanel'
 import CustomEventModal from './customeventmodal'
