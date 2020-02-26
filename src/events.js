@@ -103,7 +103,9 @@ function removeEvent (argEvent, e) {
 
 function eventRender ({ event }) {
 
-  if (event.customTitle !== undefined) {
+  if (event.customTitle !== undefined ||
+      event.shiftId === undefined ||
+      event.resourceId === undefined) {
     return (
       <div>
       { event.customTitle }
