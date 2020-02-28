@@ -1,11 +1,16 @@
 import React, { Component } from 'react'
+import update from 'immutability-helper'
 
 import EasyEdit from 'react-easy-edit'
-import TimePicker from 'react-time-picker'
 import InlineConfirmButton from 'react-inline-confirm'
 
 import ColorPicker from 'rc-color-picker'
 import 'rc-color-picker/assets/index.css'
+
+import TimePicker from 'react-times'
+import 'react-times/css/material/default.css'
+
+import { timePad } from './utils'
 
 import trashcan from './img/trashcan.png'
 import addBubble from './img/plus.png'
@@ -13,10 +18,6 @@ import addBubble from './img/plus.png'
 import './modalmenu.css'
 
 import FTPPanel from './ftp'
-
-
-function timePad(number)
-{ return (number < 10) ? "0" + number : number }
 
 class ModalMenu extends Component {
   constructor(props) {
@@ -27,15 +28,21 @@ class ModalMenu extends Component {
 	hour: 0,
 	minute: 0,
       },
+      timePickerOpen: false,
+      shifts: this.props.shifts,
+      time: {
+	hour: 21,
+	minute: 5,
+      }
     }
 
-    this.clock = clock.bind(this)
   }
 
   randomColor = () => { return "#"+((1<<24)*Math.random()|0).toString(16) }
 
   // TODO: remove the focus outline from the inline confirm button
   renderResources = () => {
+
     let optionsList = (
       this.props.resources.map((resource, i) => {
 	return (
@@ -143,22 +150,41 @@ class ModalMenu extends Component {
 	    </td>
 
 	    <td>
-	      <EasyEdit
-		type = "text"
-		value = { timePad(shift.startHour) + ':'
-		       + timePad(shift.startMinute) }
-		onSave = {
-		  text => {
-		    shift.startHour = parseInt(this.state.picked.split(':')[0])
-		    shift.startMinute = parseInt(this.state.picked.split(':')[1])
-		    this.props.updateElement(shift, 'shifts')
-		  }}
+	      <TimePicker
+		time = { shift.startHour + ':' + shift.startMinute }
+		onFocusChange = { focus => {
+		  // this only triggers when the picker closes for some reason
+		    this.setState({
+		      timePickerOpen: false,
+		    })
+		}}
+	      
+		onTimeChange = { ({hour, minute}) => {
+		    const replacement = update(shift, {
+		      startHour: {$set: hour},
+		      startMinute: {$set: minute}
+		    })
 
-		editComponent = { this.clock(shift) }
-
-		saveButtonLabel = "Spara"
-		cancelButtonLabel = "Avbryt"
-		onHoverCssClass = "clickable"
+		    this.props.updateElement(replacement, 'shifts')
+		}}
+	      
+		withoutIcon
+		focused = { this.state.timePickerOpen === shift.id }
+		trigger = {(
+		    <div
+		    onClick = { e => {
+			this.setState({
+			  timePickerOpen: shift.id,
+			})
+		    }}
+			      className = "clickable"
+		      >
+		      {
+			`${timePad(shift.startHour)}:`
+			+ `${timePad(shift.startMinute)}`
+		      }
+		    </div>
+		)}
 	      />
 	    </td>
 	    
@@ -291,24 +317,6 @@ class ModalMenu extends Component {
     )
   }
 
-}
-
-function clock({ startHour, startMinute }) {
-
-  return (
-    <React.Fragment>
-      <TimePicker
-      maxDetail = "minute"
-      isOpen = { true }
-      hourPlaceholder = { timePad(startHour).toString() }
-      minutePlaceholder = { timePad(startMinute).toString() }
-      locale = "sv-SE"
-      value = { `${timePad(startHour)}:${timePad(startMinute)}:00` }
-      onChange = { value => this.setState({ picked: value}) }
-      autoFocus
-      />
-    </React.Fragment>
-  )
 }
 
 export default ModalMenu

@@ -4,9 +4,7 @@ import moment from 'moment'
 
 import optionsIcon from './img/settings.png'
 
-function timePad(number)
-{ return (number < 10) ? "0" + number : number }
-
+import { timePad } from './utils'
 
 class PickerPanel extends Component {
 

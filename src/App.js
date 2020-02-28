@@ -93,10 +93,9 @@ class App extends Component {
 
   // TODO: add a context menu instead of removing the event straight away
   render() {
-
     // don't render the pickerPanel when in week mode so the app
-    // is slightly more usable on mobile devices since it's not
-    // used there anyway
+    // is slightly more usable on mobile devices since the panel
+    // isn't used in that mode anyway
     
     let pickerPanel = ''
 

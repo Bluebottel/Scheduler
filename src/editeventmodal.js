@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import moment from 'moment'
 
 import ColorPicker from 'rc-color-picker'
 import 'rc-color-picker/assets/index.css'
@@ -6,12 +7,10 @@ import 'rc-color-picker/assets/index.css'
 import InputMoment from 'input-moment'
 import 'input-moment/dist/input-moment.css'
 
-import moment from 'moment'
+import { timePad } from './utils'
 
 import './editeventmodal.css'
 
-function timePad(number)
-{ return (number < 10) ? "0" + number : number }
 
 class EditEventModal extends Component {
   constructor(props) {

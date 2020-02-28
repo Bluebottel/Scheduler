@@ -148,3 +148,7 @@
     display: inline;
     margin-right: 15px;
 }
+
+.modal_container {
+    width: auto;
+}
