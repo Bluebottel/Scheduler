@@ -110,7 +110,7 @@ class PickerPanel extends Component {
 	  { this.renderShifts() }
 	</div>
 	
-	<div className = "boxLabel">Personer</div>
+	<div className = "boxLabel">Resurser</div>
 	<div className = "pickerBox">
 	  { this.renderResources() }
 	</div>
