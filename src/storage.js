@@ -84,10 +84,31 @@ function storeData(data, type) {
     .setItem(`schedule_${type}`, JSON.stringify(data))
 }
 
+// a blob with all data that is saved in the localStorage
+// meant for the save-to-file anchor tag
+function saveBlob() {
+  const metaData = loadMetaData()
+  const shifts = loadShifts()
+  const events = loadEvents()
+  const resources = loadResources()
+
+  const allData = {
+    metaData: metaData,
+    shifts: shifts,
+    events: events,
+    resources: resources,
+    created: new Date(),
+  }
+
+  return new Blob([JSON.stringify(allData)],
+		  { type: 'json' })
+}
+
 export {
   loadResources,
   loadEvents,
   loadShifts,
   loadMetaData,
   storeData,
+  saveBlob
 }
