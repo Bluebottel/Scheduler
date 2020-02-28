@@ -184,7 +184,7 @@ class App extends Component {
 	    event = { this.state.eventBasis }
 	    editEvent = { replacement => {
 		const index = this.state.events
-				   .findIndex(ev => ev.id === replacement.id )
+				  .findIndex(ev => ev.id === replacement.id )
 
 		const newList = update(this.state.events,
 				       {$splice: [[index, true, replacement]]})
@@ -252,15 +252,13 @@ class App extends Component {
 		  editEventModalOpen: true,
 		})
 	    }}
-	  
             defaultView = "month"
             defaultDate = { new Date() }
 	    eventPropGetter = { this.getEventProp }
 	    selectable = { 'ignoreEvents' }
-	    showMultiDayTimes = { true }
 	    views = { ['month', 'week'] }
 	    onView = { view => this.setState({ view: view })}
-	    step = { 15 }
+	    step = { 60 }
 	    popup
 	    components = {{
 	      eventWrapper: ({event, children}) => (
