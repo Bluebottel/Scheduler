@@ -22,7 +22,13 @@ class SavePanel extends Component {
 	
  	  onChange = { event => {
 	      event.preventDefault()
-	      console.log(event.target.files)
+	      event.target.files[0].text()
+		   .then(msg => {
+		     console.log(JSON.parse(msg))
+		   })
+
+	      
+	      
 	  }}
 	
 	  style = {{
