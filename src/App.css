@@ -2,7 +2,6 @@
 #sideContainer {
     display: flex;
     flex-direction: column;
-    width: 18em;
     margin-left: 5px;
 }
 
@@ -37,12 +36,17 @@
     position: relative;
 }
 
+.option {
+    display: flex;
+    justify-content: space-between;
+    height: 21px;
+}
+
 .option:hover {
     background: #ededed;
 }
 
 option>div:firs-child {
-    display: inline;
     margin-right: 10px;
 }
 
@@ -51,12 +55,12 @@ option>div:firs-child {
 }
 
 .shiftTitle {
-    display: inline;
+    margin-right: 15px;
 }
 
 .shiftInfo {
-    float: right;
     font-style: italic;
+    white-space: nowrap;
 }
 
 .selected {
@@ -86,4 +90,10 @@ option>div:firs-child {
     bottom: 0;
     z-index: 100;
     position: fixed;
+}
+
+/* this just manages to squeeze in another event per day */
+.rbc-event {
+    height: 20px;
+    font-size: 14px;
 }
