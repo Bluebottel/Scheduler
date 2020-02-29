@@ -17,7 +17,7 @@ import addBubble from './img/plus.png'
 
 import './modalmenu.css'
 
-import FTPPanel from './ftp'
+import SavePanel from './savepanel'
 
 class ModalMenu extends Component {
   constructor(props) {
@@ -307,11 +307,12 @@ class ModalMenu extends Component {
 	</div>
 
 	<div className = "modalPanel">
-	  <div className = "boxLabel">FTP</div>
+	  <div className = "boxLabel">Lagring</div>
 	  <div className = "pickerBox">
-	    <FTPPanel />
+	    <SavePanel />
 	  </div>
 	</div>
+	
 	
       </div>
     )

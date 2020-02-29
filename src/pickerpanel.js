@@ -3,10 +3,8 @@ import update from 'immutability-helper'
 import moment from 'moment'
 
 import optionsIcon from './img/settings.png'
-import saveIcon from './img/save.png'
 
 import { timePad } from './utils'
-import { saveBlob } from './storage'
 
 class PickerPanel extends Component {
 
@@ -134,36 +132,9 @@ class PickerPanel extends Component {
 	  }}
 	/>
 
-	<a
-	  style = {{
-	    position: 'absolute',
-	    bottom: '7px',
-	    right: '50px',
-	  }}
-	  
-	  className = 'clickable'
-	  href = {
-	    URL.createObjectURL(saveBlob())
-	  }
-	  download = 'schedule.json'
-	>
-	  <img
-	    src = { saveIcon }
-	    alt = '[Save]'
-	    style = {{
-	      width: '30px',
-	  }}
-	  />
-	</a>
-
       </div>
     )
   }
-}
-
-function saveFile() {
-
-  
 }
 
 function ShiftInfoBlock(props) {

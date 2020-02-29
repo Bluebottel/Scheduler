@@ -144,3 +144,31 @@
 .modal_container {
     width: auto;
 }
+
+.savePanel {
+    display: flex;
+    flex-direction: column;
+}
+
+.savePanel * {
+    margin: 4px 0px 4px 0px;
+}
+
+.savePanel:first-child {
+    margin-top: 0;
+}
+
+.savePanel:last-child {
+    margin-bot: 0px;
+}
+
+.fileButton {
+    background: #c3bebe;
+    padding: 4px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.fileButton:hover {
+    background: #ededed;
+}

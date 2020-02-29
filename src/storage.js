@@ -1,13 +1,13 @@
 
 // A resource in this case is just a person
-function loadResources() {
-
-  let resourceList = window.localStorage.getItem('schedule_resources')
+function loadResources(resourceList = window
+		       .localStorage
+		       .getItem('schedule_resources')) {
 
   try {
     resourceList = JSON.parse(resourceList)
 
-    // in case there are no resources store at all
+    // in case there are no resources stored at all
     if (!resourceList) return []
 
     resourceList.forEach((res, i) => {
@@ -21,8 +21,9 @@ function loadResources() {
   else return resourceList
 }
 
-function loadEvents() {
-  let eventList = window.localStorage.getItem('schedule_events')
+function loadEvents(eventList = window
+		    .localStorage
+		    .getItem('schedule_events')) {
 
   try {
     eventList = JSON.parse(eventList)
@@ -43,9 +44,10 @@ function loadEvents() {
   else return eventList
 }
 
-function loadShifts() {
-  let shiftList = window.localStorage.getItem('schedule_shifts')
-
+function loadShifts(shiftList = window
+		    .localStorage
+		    .getItem('schedule_shifts')) {
+  
   if (!shiftList) return []
 
   try { shiftList = JSON.parse(shiftList) }
@@ -55,8 +57,9 @@ function loadShifts() {
   else return shiftList
 }
 
-function loadMetaData() {
-  let metaData = window.localStorage.getItem('schedule_metaData')
+function loadMetaData(metaData = window
+		      .localStorage
+		      .getItem('schedule_metaData')) {
 
   try {
     metaData = JSON.parse(metaData)
@@ -87,16 +90,11 @@ function storeData(data, type) {
 // a blob with all data that is saved in the localStorage
 // meant for the save-to-file anchor tag
 function saveBlob() {
-  const metaData = loadMetaData()
-  const shifts = loadShifts()
-  const events = loadEvents()
-  const resources = loadResources()
-
   const allData = {
-    metaData: metaData,
-    shifts: shifts,
-    events: events,
-    resources: resources,
+    metaData: loadMetaData(),
+    shifts: loadShifts(),
+    events: loadEvents(),
+    resources: loadResources(),
     created: new Date(),
   }
 
@@ -104,11 +102,32 @@ function saveBlob() {
 		  { type: 'json' })
 }
 
+function loadBlob(blob) {
+  try {
+    blob = JSON.parse(blob)
+    blob.resources = loadResources(blob.resources)
+    blob.shifts = loadShifts(blob.shifts)
+    blob.events = loadEvents(blob.events)
+    blob.metaData = loadMetaData(blob.metaData)
+  }
+  catch(err) { return undefined  }
+
+  storeData(blob.resources, 'resources')
+  storeData(blob.shifts, 'shifts')
+  storeData(blob.events, 'events')
+  storeData(blob.metaData, 'metaData')
+
+  blob.created = new Date(blob.created)
+
+  return blob
+}
+
 export {
   loadResources,
   loadEvents,
   loadShifts,
   loadMetaData,
+  loadBlob,
   storeData,
-  saveBlob
+  saveBlob,
 }
