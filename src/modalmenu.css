@@ -52,8 +52,8 @@
     border-radius: 50%;
     background: white;
     position: absolute;
-    right: -25px;
-    top: -25px;
+    right: -30px;
+    top: -30px;
     width: 50px;
     height: 50px;
     box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.3);
@@ -167,8 +167,10 @@
     padding: 4px;
     text-align: center;
     border-radius: 5px;
+    border: none;
+    color: black;
 }
 
 .fileButton:hover {
-    background: #ededed;
+    background: #d1d1d1;
 }

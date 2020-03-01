@@ -10,8 +10,6 @@ class PickerPanel extends Component {
 
   constructor(props) {
     super(props)
-
-    console.log(this.props.shifts)
   }
 
   matchId(id, type) {
@@ -27,12 +25,16 @@ class PickerPanel extends Component {
 
     if (!this.props.shifts || this.props.shifts.length === 0)
       return (
-	<div style = {{ fontStyle: 'italic',
-			color: '#878787',
-			textAlign: 'center',
-			cursor: 'default', }}
+	<div
+	  style = {{
+	    fontStyle: 'italic',
+	    color: '#878787',
+	    textAlign: 'center',
+	    cursor: 'default',
+	    whiteSpace: 'nowrap',
+	  }}
 	>
-	  -- Inga skift tillagda --
+	  Inga skift tillagda
 	</div>
       )
     
@@ -70,12 +72,16 @@ class PickerPanel extends Component {
 
     if (!this.props.resources || this.props.resources.length === 0)
       return (
-	<div style = {{ fontStyle: 'italic',
-			color: '#878787',
-			textAlign: 'center',
-			cursor: 'default', }}
+	<div
+	  style = {{
+	    fontStyle: 'italic',
+	    color: '#878787',
+	    textAlign: 'center',
+	    cursor: 'default',
+	    whiteSpace: 'nowrap',
+	  }}
 	>
-	  -- Inga resurser tillagda --
+	  Inga resurser tillagda
 	</div>
       )
     

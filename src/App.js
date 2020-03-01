@@ -163,6 +163,21 @@ class App extends Component {
 		  })
 		}
 	    }}
+
+	    insert = { newData => {
+		// used in modalmenu to insert the new state from a
+		// loaded file
+		// TODO: display the created date somewhere
+		// TODO: check version
+
+		this.setState({
+		  events: newData.events,
+		  shifts: newData.shifts,
+		  resources: newData.resources,
+		  metaData: newData.metaData,
+		})
+		
+	    }}
 	  />
 	</Modal>
 

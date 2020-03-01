@@ -3,6 +3,19 @@ import React, { Component } from 'react'
 import { saveBlob, loadBlob } from './storage'
 
 class SavePanel extends Component {
+  constructor(props) {
+    super(props)
+  }
+
+  loadErrorPanel() {
+    if (this.state.loadError) {
+      return (
+	<div>
+	  
+	</div>
+      )
+    }
+  }
 
   render() {
     return (
@@ -11,7 +24,7 @@ class SavePanel extends Component {
 	  href = { URL.createObjectURL(saveBlob()) }
 	  download = 'schedule.json'
 	>
-	  <button>Spara</button>
+	  <button className = 'fileButton'>Spara</button>
 	</a>
 
 	<input
@@ -23,12 +36,13 @@ class SavePanel extends Component {
  	  onChange = { event => {
 	      event.preventDefault()
 	      event.target.files[0].text()
-		   .then(msg => {
-		     console.log(JSON.parse(msg))
+		   .then(data => {
+		     console.log('preload')
+		     // parses from JSON to actual data
+		     data = loadBlob(data)
+		     this.props.insert(data)
+		     this.props.closeModal()
 		   })
-
-	      
-	      
 	  }}
 	
 	  style = {{

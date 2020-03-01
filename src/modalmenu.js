@@ -309,7 +309,10 @@ class ModalMenu extends Component {
 	<div className = "modalPanel">
 	  <div className = "boxLabel">Lagring</div>
 	  <div className = "pickerBox">
-	    <SavePanel />
+	    <SavePanel
+	      insert = { newData => this.props.insert(newData) }
+	      closeModal = { this.props.closeModal }
+	    />
 	  </div>
 	</div>
 	

@@ -2,10 +2,11 @@
 // A resource in this case is just a person
 function loadResources(resourceList = window
 		       .localStorage
-		       .getItem('schedule_resources')) {
+		       .getItem('schedule_resources'),
+		       parseJSON = true) {
 
   try {
-    resourceList = JSON.parse(resourceList)
+    if (parseJSON) resourceList = JSON.parse(resourceList)
 
     // in case there are no resources stored at all
     if (!resourceList) return []
@@ -23,10 +24,11 @@ function loadResources(resourceList = window
 
 function loadEvents(eventList = window
 		    .localStorage
-		    .getItem('schedule_events')) {
+		    .getItem('schedule_events'),
+		    parseJSON = true) {
 
   try {
-    eventList = JSON.parse(eventList)
+    if (parseJSON) eventList = JSON.parse(eventList)
 
     // The dates get stored as strings and the parsing
     // doesn't turn them back into date objects automatically
@@ -46,11 +48,14 @@ function loadEvents(eventList = window
 
 function loadShifts(shiftList = window
 		    .localStorage
-		    .getItem('schedule_shifts')) {
+		    .getItem('schedule_shifts'),
+		    parseJSON = true) {
+
+  console.log('loading shifts')
   
   if (!shiftList) return []
 
-  try { shiftList = JSON.parse(shiftList) }
+  try { if(parseJSON) shiftList = JSON.parse(shiftList) }
   catch(_) { return [] }
 
   if (!shiftList instanceof Array) { return [] }
@@ -59,10 +64,11 @@ function loadShifts(shiftList = window
 
 function loadMetaData(metaData = window
 		      .localStorage
-		      .getItem('schedule_metaData')) {
+		      .getItem('schedule_metaData'),
+		      parseJSON = true) {
 
   try {
-    metaData = JSON.parse(metaData)
+    if (parseJSON) metaData = JSON.parse(metaData)
 
     if (!metaData.archive.resources)
       metaData.archive.resources = []
@@ -105,10 +111,11 @@ function saveBlob() {
 function loadBlob(blob) {
   try {
     blob = JSON.parse(blob)
-    blob.resources = loadResources(blob.resources)
-    blob.shifts = loadShifts(blob.shifts)
-    blob.events = loadEvents(blob.events)
-    blob.metaData = loadMetaData(blob.metaData)
+    blob.resources = loadResources(blob.resources, false)
+    console.log('resources: ', blob.resources)
+    blob.shifts = loadShifts(blob.shifts, false)
+    blob.events = loadEvents(blob.events, false)
+    blob.metaData = loadMetaData(blob.metaData, false)
   }
   catch(err) { return undefined  }
 
