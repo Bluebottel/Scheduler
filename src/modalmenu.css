@@ -124,10 +124,6 @@
     outline: none;
 }
 
-.eventPanel:focus {
-    outline: none;
-}
-
 .btn-danger:focus {
     outline: none;
 }

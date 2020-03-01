@@ -14,7 +14,7 @@ import { loadResources, loadEvents, loadShifts,
 import { moveEvent, addEvent, removeEvent,
 	 eventRender, getEventProp, addEvents } from './events'
 
-import { create, archive } from './utilities'
+import { create, archive, sortComparer } from './utilities'
 
 import './App.css'
 //import { storeTestData } from './testdata'
@@ -45,8 +45,8 @@ class App extends Component {
 
     this.state = {
       events: events,
-      resources: resources,
-      shifts: shifts,
+      resources: resources.sort(sortComparer('resources')),
+      shifts: shifts.sort(sortComparer('shifts')),
       selected: {
 	shift: shifts[0],
 	resource: resources[0],
@@ -108,7 +108,7 @@ class App extends Component {
     }
 
     this.setState({
-      [type]: newList,
+      [type]: newList.sort(sortComparer(type)),
       events: newEventList,
     })
     storeData(newList, type)
@@ -194,11 +194,18 @@ class App extends Component {
 		// TODO: display the created date somewhere
 		// TODO: check version
 
+		newData.shifts.sort(sortComparer('shifts'))
+		newData.resources.sort(sortComparer('resources'))
+
 		this.setState({
 		  events: newData.events,
 		  shifts: newData.shifts,
 		  resources: newData.resources,
 		  metaData: newData.metaData,
+		  selected: {
+		    resource: newData.resources[0],
+		    shifts: newData.shifts[0]
+		  }
 		})
 		
 	    }}

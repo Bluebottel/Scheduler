@@ -45,8 +45,6 @@ function loadShifts(shiftList = window
 		    .getItem('schedule_shifts'),
 		    parseJSON = true) {
 
-  console.log('loading shifts')
-  
   if (!shiftList) return []
 
   try { if(parseJSON) shiftList = JSON.parse(shiftList) }

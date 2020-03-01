@@ -3,9 +3,6 @@ import React, { Component } from 'react'
 import { saveBlob, loadBlob } from './storage'
 
 class SavePanel extends Component {
-  constructor(props) {
-    super(props)
-  }
 
   loadErrorPanel() {
     if (this.state.loadError) {

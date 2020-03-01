@@ -7,7 +7,7 @@ import 'rc-color-picker/assets/index.css'
 import InputMoment from 'input-moment'
 import 'input-moment/dist/input-moment.css'
 
-import { timePad } from './utils'
+import { timePad } from './utilities'
 
 import './editeventmodal.css'
 

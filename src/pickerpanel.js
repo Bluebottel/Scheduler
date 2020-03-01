@@ -4,13 +4,9 @@ import moment from 'moment'
 
 import optionsIcon from './img/settings.png'
 
-import { timePad } from './utils'
+import { timePad } from './utilities'
 
 class PickerPanel extends Component {
-
-  constructor(props) {
-    super(props)
-  }
 
   matchId(id, type) {
     if (this.props.selected

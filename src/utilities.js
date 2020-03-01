@@ -23,6 +23,7 @@ function create(element, type) {
   this.setState((state, _) => {
     const newList = update(state[type],
 			   {$push: [ element ]})
+	  .sort(sortComparer(type))
 
     storeData(newList, type)
     return {
@@ -33,39 +34,63 @@ function create(element, type) {
   return element
 }
 
-
+// TODO: the bug when removing the selected shift/resource
+// is back
 function archive(element, type) {
 
-  if (type !== 'resources' && type !== 'shifts') {
-    console.log('Wrong type: ', type, element)
-    return {}
-  }
+  if (type !== 'resources' && type !== 'shifts')
+    throw new Error('Unvalid type: ', type)
 
 
-  const index = this.state[type].findIndex(ele => ele.id === element.id)
-  const newMeta = update(this.state.meta,
+  this.setState((state, _) => {
+    const index = this.state[type].findIndex(ele => ele.id === element.id)
+    const newMeta = update(this.state.meta,
 			 { archive: { [type]: { $push: [ element ]}}})
-
-
-  this.setState((state, _) => {
-    storeData(newMeta, 'metaData')
-
-    return { meta: newMeta }
-  })
-
-  this.setState((state, _) => {
     const newList = update(state[type],
 			   {$splice: [[index, 1]]})
 
     storeData(newList, type)
+    storeData(newMeta, 'metaData')
 
-    return { [type]: newList, }
+    return {
+      [type]: newList,
+      meta: newMeta
+    }
   })
 
   return element
 }
 
+function timePad(number)
+{
+  if (number.toString().length === 2) return number
+  return (number < 10) ? "0" + number : number
+}
+
+function shiftComparer(first, second) {
+  if (first.startHour === second.startHour) {
+    return first.startMinute - second.startMinute
+  }
+  
+  else return first.startHour - second.startHour
+}
+
+function resourceComparer(first, second) {
+
+  // the same as the default method used by sort()
+  return first.title > second.title
+}
+
+function sortComparer(type) {
+  if (type === 'resources') return resourceComparer
+  else if (type === 'shifts') return shiftComparer
+
+  else throw new Error('Invalid sort type: ', type)
+}
+
 export {
   create,
   archive,
+  timePad,
+  sortComparer,
 }

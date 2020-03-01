@@ -10,7 +10,7 @@ import 'rc-color-picker/assets/index.css'
 import TimePicker from 'react-times'
 import 'react-times/css/material/default.css'
 
-import { timePad } from './utils'
+import { timePad } from './utilities'
 
 import trashcan from './img/trashcan.png'
 import addBubble from './img/plus.png'

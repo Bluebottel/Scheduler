@@ -108,7 +108,7 @@ function eventRender ({ event }) {
       event.resourceId === undefined) {
     return (
       <div>
-      { event.customTitle }
+	{ event.customTitle }
       </div>
     )
   }
@@ -116,21 +116,20 @@ function eventRender ({ event }) {
   let resource = this.state.resources.find(res => res.id === event.resourceId)
   if (resource === undefined)
     resource = this.state.meta.archive.resources
-    .find(res => res.id === event.resourceId)
+		   .find(res => res.id === event.resourceId)
   let shift = this.state.shifts.find(sh => sh.id === event.shiftId)
   
   return (
       <div>
-      { resource.title + ', ' + shift.title }
-    </div>
+	{ resource.title + ', ' + shift.title }
+      </div>
   )
 }
 
 
-  // TODO: check if the event is a meta event and show total scheduled hours for
-  //       that day instead
-  // TODO: make a gradient background and let the rightmost part represent shift
-  //       and the rest the resource
+
+// TODO: make a gradient background and let the rightmost part represent shift
+//       and the rest the resource
 function getEventProp (event, start, end, isSelected) {
 
   // custom events don't have resources/shifts linked to them
@@ -149,22 +148,12 @@ function getEventProp (event, start, end, isSelected) {
   // in case a resource has been removed
   if (resource === undefined)
     resource = this.state.meta.archive
-    .resources.find(res => res.id === event.resourceId)
+		   .resources.find(res => res.id === event.resourceId)
 
   if (!resource) {
     console.log('no resource found: ', event)
     console.log(this.state.resources)
     return ''
-  }
-
-  
-  if (resource.title === "#META_INFO#") {
-    return {
-      style: {
-	background: 'none',
-	border: 'none',
-      }
-    }
   }
 
   return {
