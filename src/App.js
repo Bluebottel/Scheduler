@@ -283,8 +283,14 @@ class App extends Component {
 		if (event.title === undefined && event.customTitle === undefined) {
 		  let resource = this.state.resources
 				     .find(res => res.id === event.resourceId)
+		  	      || this.state.meta.archive.resources
+				     .find(res => res.id === event.resourceId )
+		  
 		  let shift = this.state.shifts
 				  .find(sh => sh.id === event.shiftId)
+			   || this.state.meta.archive.shifts
+				  .find(sh => sh.id === event.shiftId )
+		  
 		  resolvedTitle = resource.title + ', ' + shift.title
 		}
 		else { resolvedTitle = undefined }

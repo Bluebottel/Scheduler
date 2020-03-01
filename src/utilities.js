@@ -39,7 +39,7 @@ function create(element, type) {
 function archive(element, type) {
 
   if (type !== 'resources' && type !== 'shifts')
-    throw new Error('Unvalid type: ', type)
+    throw new Error('Invalid type: ', type)
 
 
   this.setState((state, _) => {
@@ -52,9 +52,15 @@ function archive(element, type) {
     storeData(newList, type)
     storeData(newMeta, 'metaData')
 
+    let newSelected = update(this.state.selected,
+			     {[type.slice(0,-1)]: {$set: newList[0]}})
+
+    console.log('newSelected: ', newSelected)
+
     return {
       [type]: newList,
-      meta: newMeta
+      meta: newMeta,
+      selected: newSelected,
     }
   })
 

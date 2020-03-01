@@ -116,8 +116,12 @@ function eventRender ({ event }) {
   let resource = this.state.resources.find(res => res.id === event.resourceId)
   if (resource === undefined)
     resource = this.state.meta.archive.resources
-		   .find(res => res.id === event.resourceId)
+    .find(res => res.id === event.resourceId)
+
   let shift = this.state.shifts.find(sh => sh.id === event.shiftId)
+  if (shift === undefined)
+    shift = this.state.meta.archive.shifts
+    .find(sh => sh.id === event.shiftId)
   
   return (
       <div>
