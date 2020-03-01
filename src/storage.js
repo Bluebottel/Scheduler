@@ -10,11 +10,6 @@ function loadResources(resourceList = window
 
     // in case there are no resources stored at all
     if (!resourceList) return []
-
-    resourceList.forEach((res, i) => {
-      resourceList[i].resourceTitleAccessor = () => this.title
-      resourceList[i].resourceIdAccessor = () => this.id
-    })
   }
   catch(_) { return [] }
 
@@ -35,11 +30,10 @@ function loadEvents(eventList = window
     eventList.map(event => {
       event.start = new Date(event.start)
       event.end = new Date(event.end)
-     
       return event
     })
   }
-			     
+
   catch(_) { return [] }
 
   if (!eventList instanceof Array) { return [] }
