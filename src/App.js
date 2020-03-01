@@ -80,13 +80,37 @@ class App extends Component {
 
   updateElement = (newElement, type) => {
 
+    console.log('newElement: ', newElement)
+
     let index = this.state[type].findIndex(elem => elem.id === newElement.id)
     if (type === 'resources' && index === -1)
       index = this.state.meta.archive.findIndex(res => res.id === newElement.id)
 
     const newList = update(this.state[type], {$splice: [[index, true, newElement]]})
+    let newEventList = this.state.events
 
-    this.setState({ [type]: newList })
+    // if a shift is updated then all the events associated with it
+    // has to have their start and end dates updated
+    if (type === 'shifts') {
+      newEventList = this.state.events.map(event => {
+	if (event.shiftId === newElement.id) {
+	  event.start.setHours(newElement.startHour,
+			       newElement.startMinute, 0)
+	  event.end = moment(event.start)
+	    .add(newElement.minuteLength, 'm')
+	    .toDate()
+	}
+	
+	return event
+      })
+      
+      storeData(newEventList, 'events')
+    }
+
+    this.setState({
+      [type]: newList,
+      events: newEventList,
+    })
     storeData(newList, type)
   }
 
@@ -162,6 +186,21 @@ class App extends Component {
 				     {[type.slice(0,-1)]: {$set: created }}),
 		  })
 		}
+	    }}
+
+	    insert = { newData => {
+		// used in modalmenu to insert the new state from a
+		// loaded file
+		// TODO: display the created date somewhere
+		// TODO: check version
+
+		this.setState({
+		  events: newData.events,
+		  shifts: newData.shifts,
+		  resources: newData.resources,
+		  metaData: newData.metaData,
+		})
+		
 	    }}
 	  />
 	</Modal>

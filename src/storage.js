@@ -1,19 +1,15 @@
 
 // A resource in this case is just a person
-function loadResources() {
-
-  let resourceList = window.localStorage.getItem('schedule_resources')
+function loadResources(resourceList = window
+		       .localStorage
+		       .getItem('schedule_resources'),
+		       parseJSON = true) {
 
   try {
-    resourceList = JSON.parse(resourceList)
+    if (parseJSON) resourceList = JSON.parse(resourceList)
 
-    // in case there are no resources store at all
+    // in case there are no resources stored at all
     if (!resourceList) return []
-
-    resourceList.forEach((res, i) => {
-      resourceList[i].resourceTitleAccessor = () => this.title
-      resourceList[i].resourceIdAccessor = () => this.id
-    })
   }
   catch(_) { return [] }
 
@@ -21,45 +17,52 @@ function loadResources() {
   else return resourceList
 }
 
-function loadEvents() {
-  let eventList = window.localStorage.getItem('schedule_events')
+function loadEvents(eventList = window
+		    .localStorage
+		    .getItem('schedule_events'),
+		    parseJSON = true) {
 
   try {
-    eventList = JSON.parse(eventList)
+    if (parseJSON) eventList = JSON.parse(eventList)
 
     // The dates get stored as strings and the parsing
     // doesn't turn them back into date objects automatically
     eventList.map(event => {
       event.start = new Date(event.start)
       event.end = new Date(event.end)
-     
       return event
     })
   }
-			     
+
   catch(_) { return [] }
 
   if (!eventList instanceof Array) { return [] }
   else return eventList
 }
 
-function loadShifts() {
-  let shiftList = window.localStorage.getItem('schedule_shifts')
+function loadShifts(shiftList = window
+		    .localStorage
+		    .getItem('schedule_shifts'),
+		    parseJSON = true) {
 
+  console.log('loading shifts')
+  
   if (!shiftList) return []
 
-  try { shiftList = JSON.parse(shiftList) }
+  try { if(parseJSON) shiftList = JSON.parse(shiftList) }
   catch(_) { return [] }
 
   if (!shiftList instanceof Array) { return [] }
   else return shiftList
 }
 
-function loadMetaData() {
-  let metaData = window.localStorage.getItem('schedule_metaData')
+function loadMetaData(metaData = window
+		      .localStorage
+		      .getItem('schedule_metaData'),
+		      parseJSON = true) {
 
   try {
-    metaData = JSON.parse(metaData)
+    if (parseJSON) metaData = JSON.parse(metaData)
 
     if (!metaData.archive.resources)
       metaData.archive.resources = []
@@ -87,16 +90,11 @@ function storeData(data, type) {
 // a blob with all data that is saved in the localStorage
 // meant for the save-to-file anchor tag
 function saveBlob() {
-  const metaData = loadMetaData()
-  const shifts = loadShifts()
-  const events = loadEvents()
-  const resources = loadResources()
-
   const allData = {
-    metaData: metaData,
-    shifts: shifts,
-    events: events,
-    resources: resources,
+    metaData: loadMetaData(),
+    shifts: loadShifts(),
+    events: loadEvents(),
+    resources: loadResources(),
     created: new Date(),
   }
 
@@ -104,11 +102,33 @@ function saveBlob() {
 		  { type: 'json' })
 }
 
+function loadBlob(blob) {
+  try {
+    blob = JSON.parse(blob)
+    blob.resources = loadResources(blob.resources, false)
+    console.log('resources: ', blob.resources)
+    blob.shifts = loadShifts(blob.shifts, false)
+    blob.events = loadEvents(blob.events, false)
+    blob.metaData = loadMetaData(blob.metaData, false)
+  }
+  catch(err) { return undefined  }
+
+  storeData(blob.resources, 'resources')
+  storeData(blob.shifts, 'shifts')
+  storeData(blob.events, 'events')
+  storeData(blob.metaData, 'metaData')
+
+  blob.created = new Date(blob.created)
+
+  return blob
+}
+
 export {
   loadResources,
   loadEvents,
   loadShifts,
   loadMetaData,
+  loadBlob,
   storeData,
-  saveBlob
+  saveBlob,
 }

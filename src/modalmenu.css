@@ -52,8 +52,8 @@
     border-radius: 50%;
     background: white;
     position: absolute;
-    right: -25px;
-    top: -25px;
+    right: -30px;
+    top: -30px;
     width: 50px;
     height: 50px;
     box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.3);
@@ -143,4 +143,34 @@
 
 .modal_container {
     width: auto;
+}
+
+.savePanel {
+    display: flex;
+    flex-direction: column;
+}
+
+.savePanel * {
+    margin: 4px 0px 4px 0px;
+}
+
+.savePanel:first-child {
+    margin-top: 0;
+}
+
+.savePanel:last-child {
+    margin-bot: 0px;
+}
+
+.fileButton {
+    background: #c3bebe;
+    padding: 4px;
+    text-align: center;
+    border-radius: 5px;
+    border: none;
+    color: black;
+}
+
+.fileButton:hover {
+    background: #d1d1d1;
 }
