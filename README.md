@@ -1,4 +1,4 @@
-# Schduler
+# Scheduler
 
 A calendar specifically made for small scale shift and worker
 scheduling. The emphasis is on speed by making the most common tasks
