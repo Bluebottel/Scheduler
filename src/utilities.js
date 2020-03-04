@@ -69,8 +69,8 @@ function archive(element, type) {
 
 function timePad(number)
 {
-  if (number.toString().length === 2) return number
-  return (number < 10) ? "0" + number : number
+  if (number.toString().length === 2) return number.toString()
+  return (number < 10) ? "0" + number : number.toString()
 }
 
 function shiftComparer(first, second) {

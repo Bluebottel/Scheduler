@@ -80,8 +80,6 @@ class App extends Component {
 
   updateElement = (newElement, type) => {
 
-    console.log('newElement: ', newElement)
-
     let index = this.state[type].findIndex(elem => elem.id === newElement.id)
     if (type === 'resources' && index === -1)
       index = this.state.meta.archive.findIndex(res => res.id === newElement.id)
