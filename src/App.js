@@ -69,11 +69,14 @@ class App extends Component {
 
   updateElement = (newElement, type) => {
 
-    let index = this.state[type].findIndex(elem => elem.id === newElement.id)
+    let index = this.state[type]
+		    .findIndex(elem => elem.id === newElement.id)
     if (type === 'resources' && index === -1)
-      index = this.state.metaData.archive.findIndex(res => res.id === newElement.id)
+      index = this.state.metaData.archive
+		  .findIndex(res => res.id === newElement.id)
 
-    const newList = update(this.state[type], {$splice: [[index, true, newElement]]})
+    const newList = update(this.state[type],
+			   {$splice: [[index, true, newElement]]})
     let newEventList = this.state.events
 
     // if a shift is updated then all the events associated with it
@@ -150,10 +153,12 @@ class App extends Component {
 		this.setState({ optionsModalOpen: false })
 	    }}
 	    archive = { (element, type) => {
-		// select another element when the currently selected one gets removed
+		// select another element when the currently selected
+		// one gets removed
 		
 		const newData = archive(element, type, this.state)
-		const replacement = this.state[type].find(ele => ele.id !== element.id )
+		const replacement = this.state[type]
+					.find(ele => ele.id !== element.id )
 
 		// slice to go from 'resourceS' -> 'resource'
 		this.setState({
