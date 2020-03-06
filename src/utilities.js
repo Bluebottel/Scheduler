@@ -5,10 +5,9 @@ import { storeData } from './storage'
 // type = 'shifts' | 'resources'
 function create(element, type, state) {
 
-  if (!(type === 'resources' || type === 'shifts')) {
-    console.log('Wrong type: ', type, element)
-    return {}
-  }
+  if (!(type === 'resources' || type === 'shifts'))
+    throw new TypeError('Invalid type: ', type)
+  
 
   // make sure that the new ID is unique by making it larger than every other ID
   // including removed resources/shifts since those can still have events tied to them
@@ -32,21 +31,14 @@ function create(element, type, state) {
 // is back
 function archive(argElement, type, state) {
 
-  console.log('pre state: ', state)
-  
   if (type !== 'resources' && type !== 'shifts')
-    throw new Error('Invalid type: ', type)
+    throw new TypeError('Invalid type: ', type)
 
 
   const index = state[type].findIndex(ele => ele.id === argElement.id)
   state.metaData.archive[type] = state.metaData.archive[type].concat(argElement)
   state[type].splice(index, 1)
 
-  //storeData(newList, type)
-  //storeData(newMeta, 'metaData')
-
-  console.log('post: ', state)
-  
   return {
     [type]: state[type],
     metaData: state.metaData,

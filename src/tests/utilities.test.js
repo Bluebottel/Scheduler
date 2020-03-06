@@ -1,5 +1,5 @@
 import { timePad, sortComparer,
-	 create } from '../utilities'
+	 create, archive } from '../utilities'
 import { shallow } from 'enzyme'
 
 describe('timePad', () => {
@@ -73,38 +73,133 @@ describe('sortComparer', () => {
       .toBeLessThan(0)
   })
 })
- 
 
 
-test('Create new resource', () => {
-  let state = {
-    shifts: [],
-    resources: [],
-    selected : {
-      shift: undefined,
-      resource: undefined,
-    },
-    meta: {
+// TODO: more complex states to see if off by one in slice and such
+describe('Create new shifts and resources', () => {
+  describe('From empty state', () => {
+    let emptyState = {
+      shifts: [],
+      resources: [],
+      events: [],
+      selected : {
+	shift: undefined,
+	resource: undefined,
+      },
+      metaData: {
+	archive: {
+          shifts: [],
+	  resources: [],
+	}
+      }
+    }
+    
+    test('New shift', () => {
+      const newShift = {
+	title: 'newShift',
+	startHour: 1,
+	startMinute: 2,
+	minuteLength: 60,
+      }
+
+      let newData = create(newShift, 'shifts', emptyState)
+
+      expect(newData).toStrictEqual({
+	newElementList: [{
+	  ...newShift,
+	  id: 1,
+	}],
+	newElement: {
+	  ...newShift,
+	  id: 1,
+	}
+      })
+    })
+
+    test('New resource', () => {
+      const newResource = {
+	title: 'realPerson',
+      }
+
+      expect(create(newResource, 'resources', emptyState))
+	.toStrictEqual({
+	  newElementList: [{
+	    ...newResource,
+	    id: 1,
+	  }],
+	  newElement: {
+	    ...newResource,
+	    id: 1,
+	  },
+	})
+      
+    })
+
+    test('Invalid name', () => {
+      expect(() => {
+	create({ title: 'Person' }, 'invalidType', emptyState)	
+      }).toThrow()
+    })
+    
+  }) // from empty state
+})
+
+describe('Archive shifts and resources', () => {
+
+  const resource = {
+    title: 'Person',
+    id: 1,
+  }
+
+  const shift = {
+    title: 'shiftTitle',
+    id: 1,
+    startMinute: 2,
+    startHour: 21,
+    minuteLength: 100,
+  }
+  
+  const state = {
+    resources: [ resource ],
+    shifts: [ shift ],
+    metaData: {
       archive: {
-        shifts: [],
+	shifts: [],
+	resources: [],
       }
     }
   }
 
-  let setState = (obj) => { this.state = obj }
-  let newShift = {
-    title: 'newShift',
-    startHour: 1,
-    startMinute: 2,
-    minuteLength: 60,
-  }
+  test('Invalid type', () => {
+    expect(() => {
+      archive(resource, 'invalidType', state)
+    }).toThrow()
+  })
+  
+  test('Resource', () => {
+    expect(archive(resource, 'resources', state))
+      .toStrictEqual({
+	resources: [],
+	metaData: {
+	  archive: {
+	    shifts: state.metaData.archive.shifts,
+	    resources: [ resource ],
+	  }
+	}
+      })
+  })
 
-
-  return expect(create(newShift, 'shifts'))
-    .toBe({
-      ...newShift,
-      id: 0,
-    })
-
-
+    test('Shift', () => {
+    expect(archive(shift, 'shifts', state))
+      .toStrictEqual({
+	shifts: [],
+	metaData: {
+	  archive: {
+	    shifts: [ shift ],
+	    resources: state.metaData.archive.resources,
+	  }
+	}
+      })
+  })
+  
 })
