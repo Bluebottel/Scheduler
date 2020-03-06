@@ -6,16 +6,12 @@ import { storeData } from './storage'
 function moveEvent ({ event, start, end, isAllDay: droppedOnAllDaySlot },
 		    events) {
 
+  //console.log(event, start, end, droppedOnAllDaySlot)
+
   const idx = events.findIndex(elem => elem.id === event.id)
   let allDay = event.allDay
 
-  if (!event.allDay && droppedOnAllDaySlot) {
-    allDay = true
-  } else if (event.allDay && !droppedOnAllDaySlot) {
-    allDay = false
-  }
-
-  const updatedEvent = { ...event, start, end, allDay }
+  const updatedEvent = { ...event, start, end, isAllDay: false }
 
   const nextEvents = [...events]
   nextEvents.splice(idx, 1, updatedEvent)
