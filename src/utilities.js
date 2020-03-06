@@ -2,75 +2,53 @@ import update from 'immutability-helper'
 
 import { storeData } from './storage'
 
-// accepts both shifts and resources
-function create(element, type) {
+// type = 'shifts' | 'resources'
+function create(element, type, state) {
 
-  if (type !== 'resources' && type !== 'shifts') {
-    console.log('Wrong type: ', type, element)
-    return {}
-  }
+  if (!(type === 'resources' || type === 'shifts'))
+    throw new TypeError('Invalid type: ', type)
+  
 
   // make sure that the new ID is unique by making it larger than every other ID
   // including removed resources/shifts since those can still have events tied to them
   let newId = 0
-  this.state[type].forEach(ele => { if (ele.id >= newId) { newId = ele.id }})
-  this.state.meta.archive[type]
+  state[type].forEach(ele => { if (ele.id >= newId) { newId = ele.id }})
+  state.metaData.archive[type]
     .forEach(ele => { if (ele.id >= newId) { newId = ele.id }})
   newId++;
 
   element.id = newId
 
-  this.setState((state, _) => {
-    const newList = update(state[type],
-			   {$push: [ element ]})
-	  .sort(sortComparer(type))
-
-    storeData(newList, type)
-    return {
-      [type]: newList,
-    }
-  })
-
-  return element
+  const newList = state[type].concat(element).sort(sortComparer(type))
+  
+  return {
+    newElementList: newList,
+    newElement: element,
+  }
 }
 
 // TODO: the bug when removing the selected shift/resource
 // is back
-function archive(element, type) {
+function archive(argElement, type, state) {
 
   if (type !== 'resources' && type !== 'shifts')
-    throw new Error('Invalid type: ', type)
+    throw new TypeError('Invalid type: ', type)
 
 
-  this.setState((state, _) => {
-    const index = this.state[type].findIndex(ele => ele.id === element.id)
-    const newMeta = update(this.state.meta,
-			 { archive: { [type]: { $push: [ element ]}}})
-    const newList = update(state[type],
-			   {$splice: [[index, 1]]})
+  const index = state[type].findIndex(ele => ele.id === argElement.id)
+  state.metaData.archive[type] = state.metaData.archive[type].concat(argElement)
+  state[type].splice(index, 1)
 
-    storeData(newList, type)
-    storeData(newMeta, 'metaData')
-
-    let newSelected = update(this.state.selected,
-			     {[type.slice(0,-1)]: {$set: newList[0]}})
-
-    console.log('newSelected: ', newSelected)
-
-    return {
-      [type]: newList,
-      meta: newMeta,
-      selected: newSelected,
-    }
-  })
-
-  return element
+  return {
+    [type]: state[type],
+    metaData: state.metaData,
+  }
 }
 
 function timePad(number)
 {
-  if (number.toString().length === 2) return number
-  return (number < 10) ? "0" + number : number
+  if (number.toString().length === 2) return number.toString()
+  return (number < 10) ? "0" + number : number.toString()
 }
 
 function shiftComparer(first, second) {

@@ -1,3 +1,5 @@
+const ALLOWED_TYPES = [ 'shifts', 'events', 'resources', 'metaData' ]
+
 
 // A resource in this case is just a person
 function loadResources(resourceList = window
@@ -80,7 +82,12 @@ function loadMetaData(metaData = window
   return metaData
 }
 
+// type = 'resources' | 'shifts' | 'metaData'
 function storeData(data, type) {
+  if (!ALLOWED_TYPES.includes(type)) {
+    throw new TypeError('Invalid type: ', type)
+  }
+      
   window.localStorage
     .setItem(`schedule_${type}`, JSON.stringify(data))
 }
