@@ -341,7 +341,24 @@ class App extends Component {
 		  { children }
 		</div>
 	      ),
-	      event: args => { return eventRender(args, this.state) }
+	      event: args => { return eventRender(args, this.state) },
+	      dateCellWrapper: cellProps => {
+		
+		const style = {
+		  display: 'flex',
+		  flex: 1,
+		  borderLeft: '1px solid #DDD',
+		  
+		}
+
+		// use this to insert things into the date cell
+		return (
+		  <div style={style}>
+		    <div>40</div>
+		    {cellProps.children}
+		  </div>
+		)
+	      },
 	    }}
 	  />
 	</div>
