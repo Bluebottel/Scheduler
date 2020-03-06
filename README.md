@@ -4,6 +4,8 @@ A calendar specifically made for small scale shift and worker
 scheduling. The emphasis is on speed by making the most common tasks
 really easy and keeping the flexibility in check.
 
+There is currently only a Swedish translation available.
+
 Live demo [here](https://bluebottel.github.io/Scheduler).
 
 ### Setup
