@@ -99,7 +99,8 @@ test('Create new resource', () => {
     minuteLength: 60,
   }
 
-  test(create(newShift, 'shifts').bind(this))
+
+  return expect(create(newShift, 'shifts'))
     .toBe({
       ...newShift,
       id: 0,

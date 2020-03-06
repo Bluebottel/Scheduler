@@ -80,6 +80,7 @@ function loadMetaData(metaData = window
   return metaData
 }
 
+// type = 'resources' | 'shifts' | 'metaData'
 function storeData(data, type) {
   window.localStorage
     .setItem(`schedule_${type}`, JSON.stringify(data))

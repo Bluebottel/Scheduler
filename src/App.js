@@ -53,20 +53,9 @@ class App extends Component {
       },
       optionsModalOpen: false,
       editEventModalOpen: false,
-      meta: metaData,
+      metaData: metaData,
       view: 'month',
     }
-
-    // TODO: some better binding method
-    this.moveEvent = moveEvent.bind(this)
-    this.addEvents = addEvents.bind(this)
-    this.addEvent = addEvent.bind(this)
-    this.removeEvent = removeEvent.bind(this)
-    this.eventRender = eventRender.bind(this)
-    this.getEventProp = getEventProp.bind(this)
-
-    this.create = create.bind(this)
-    this.archive = archive.bind(this)
   }
 
   setSelected = ({ shift, resource }) => {
@@ -82,7 +71,7 @@ class App extends Component {
 
     let index = this.state[type].findIndex(elem => elem.id === newElement.id)
     if (type === 'resources' && index === -1)
-      index = this.state.meta.archive.findIndex(res => res.id === newElement.id)
+      index = this.state.metaData.archive.findIndex(res => res.id === newElement.id)
 
     const newList = update(this.state[type], {$splice: [[index, true, newElement]]})
     let newEventList = this.state.events
@@ -163,27 +152,35 @@ class App extends Component {
 	    archive = { (element, type) => {
 		// select another element when the currently selected one gets removed
 		
-		this.archive(element, type)
-		let replacement = this.state[type].find(ele => ele.id !== element.id )
+		const newData = archive(element, type, this.state)
+		const replacement = this.state[type].find(ele => ele.id !== element.id )
 
 		// slice to go from 'resourceS' -> 'resource'
 		this.setState({
 		  selected: update(this.state.selected,
-				   {[type.slice(0,-1)]: {$set: replacement}})
+				   {[type.slice(0,-1)]: {$set: replacement}}),
+		  [type]: newData[type],
+		  metaData: newData.metaData,
 		})
+
+		storeData(newData[type], type)
+		storeData(newData.metaData, 'metaData')
 	    }}
 	  
 	    create = { (element, type) => {
-		// if there is no selected element ie it's an empty list then
-		// create and select that one
-		let created = this.create(element, type)
+		let created = create(element, type, this.state)
 
+		// if it's the first resource or shift created then
+		// make it selected
 		if (!this.state.selected[type.slice(0,-1)]) {
 		  this.setState({
 		    selected: update(this.state.selected,
-				     {[type.slice(0,-1)]: {$set: created }}),
+				     {[type.slice(0,-1)]: {$set: created.newElement }}),
 		  })
 		}
+
+		this.setState({ [type]: created.newElementList })
+		storeData(created.newElementList, type)
 	    }}
 
 	    insert = { newData => {
@@ -224,7 +221,11 @@ class App extends Component {
 	  ariaHideApp = { false }
 	>
 	  <EditEventModal
-	    addEvent = { this.addEvent }
+	    addEvent = { newEvent => {
+		const newEventList = addEvent(newEvent, this.state.events)
+		this.setState({ events: newEventList })
+		storeData(newEventList, 'events')
+	    }}
 	    event = { this.state.eventBasis }
 	    editEvent = { replacement => {
 		const index = this.state.events
@@ -251,12 +252,21 @@ class App extends Component {
 	    endAccessor = "end"
             localizer = { localizer }
             events = { this.state.events }
-            onEventDrop = { this.moveEvent }
+	    onEventDrop = { (eventObj) => {
+		const newEventList = moveEvent(eventObj, this.state.events)
+		this.setState({ events: newEventList })
+		storeData(newEventList, 'events')
+	    }}
 	    onDragStart = { console.log }
             onSelectSlot = { selection => {
-		if (this.state.view === 'month' )
-		  this.addEvents(selection)
-
+		if (this.state.view === 'month' ) {
+		  const newEventList = addEvents(selection,
+						 this.state.events,
+						 this.state.selected)
+		  this.setState({ events: newEventList })
+		  storeData(newEventList, 'events')
+		}
+		
 		if (this.state.view === 'week' ) {
 		  this.setState({
 		    editEventModalOpen: true,
@@ -281,12 +291,12 @@ class App extends Component {
 		if (event.title === undefined && event.customTitle === undefined) {
 		  let resource = this.state.resources
 				     .find(res => res.id === event.resourceId)
-		  	      || this.state.meta.archive.resources
+		  	      || this.state.metaData.archive.resources
 				     .find(res => res.id === event.resourceId )
 		  
 		  let shift = this.state.shifts
 				  .find(sh => sh.id === event.shiftId)
-			   || this.state.meta.archive.shifts
+			   || this.state.metaData.archive.shifts
 				  .find(sh => sh.id === event.shiftId )
 		  
 		  resolvedTitle = resource.title + ', ' + shift.title
@@ -304,7 +314,11 @@ class App extends Component {
 	    }}
             defaultView = "month"
             defaultDate = { new Date() }
-	    eventPropGetter = { this.getEventProp }
+	    eventPropGetter = { (event, start, end, isSelected) => {
+		return getEventProp(event, start,
+				    end, isSelected,
+				    this.state)
+	    }}
 	    selectable = { 'ignoreEvents' }
 	    views = { ['month', 'week'] }
 	    onView = { view => this.setState({ view: view })}
@@ -314,13 +328,15 @@ class App extends Component {
 	      eventWrapper: ({event, children}) => (
 		<div
 		  onContextMenu = { e => {
-		      this.removeEvent(event, e)
+		      const newEventList = removeEvent(event, this.state.events)
+		      this.setState({ events: newEventList })
+		      storeData(newEventList, 'events')
 		      e.preventDefault()
 		  }}>
 		  { children }
 		</div>
 	      ),
-	      event: this.eventRender,
+	      event: args => { return eventRender(args, this.state) }
 	    }}
 	  />
 	</div>
