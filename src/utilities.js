@@ -1,6 +1,7 @@
-import update from 'immutability-helper'
+import Moment from 'moment'
+import { extendMoment } from 'moment-range'
 
-import { storeData } from './storage'
+const moment = extendMoment(Moment)
 
 // type = 'shifts' | 'resources'
 function create(element, type, state) {
@@ -27,8 +28,6 @@ function create(element, type, state) {
   }
 }
 
-// TODO: the bug when removing the selected shift/resource
-// is back
 function archive(argElement, type, state) {
 
   if (type !== 'resources' && type !== 'shifts')
@@ -72,9 +71,20 @@ function sortComparer(type) {
   else throw new Error('Invalid sort type: ', type)
 }
 
+// overlap time in ms
+function timeOverlap(first, second) {
+  const firstRange = moment.range(first.start, first.end)
+  const secondRange = moment.range(second.start, second.end)
+
+  if (!firstRange.overlaps(secondRange)) return 0
+  return firstRange.intersect(secondRange).valueOf()
+  
+}
+
 export {
   create,
   archive,
   timePad,
   sortComparer,
+  timeOverlap
 }
