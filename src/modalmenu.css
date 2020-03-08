@@ -165,6 +165,7 @@
     border-radius: 5px;
     border: none;
     color: black;
+    font-size: 17px;
 }
 
 .fileButton:hover {

@@ -1,5 +1,6 @@
 import { timePad, sortComparer,
-	 create, archive } from '../utilities'
+	 create, archive, timeOverlap } from '../utilities'
+import moment from 'moment'
 import { shallow } from 'enzyme'
 
 describe('timePad', () => {
@@ -189,7 +190,7 @@ describe('Archive shifts and resources', () => {
       })
   })
 
-    test('Shift', () => {
+  test('Shift', () => {
     expect(archive(shift, 'shifts', state))
       .toStrictEqual({
 	shifts: [],
@@ -203,3 +204,36 @@ describe('Archive shifts and resources', () => {
   })
   
 })
+
+describe('timeOverlap', () => {
+  let one = {
+    start: new Date('2020-03-08 05:00'),
+    end: new Date('2020-03-08 05:45'),
+  }
+
+  let two = {
+    start: moment('2020-03-08').startOf('day'),
+    end: moment('2020-03-08').endOf('day'),
+  }
+  
+  test('Overlapping ranges', () => {
+    expect(timeOverlap(one, two)).toBe(45*60*1000)
+  })
+
+  test('No overlap', () => {
+    expect(timeOverlap(two, {
+      start: new Date('1994-11-25'),
+      end: new Date('1994-11-26')
+    })).toBe(0)
+  })
+
+  test('Overlap with some overflow', () => {
+    expect(timeOverlap(two, {
+      start: one.start,
+      end: new Date('2020-03-09 02:00')
+    }))
+      .toBe(19*60*60*1000 - 1) // loses one ms between days
+  })
+  
+})
+

@@ -1,7 +1,5 @@
 import React from 'react'
-import update from 'immutability-helper'
 import moment from 'moment'
-import { storeData } from './storage'
 
 function moveEvent ({ event, start, end, isAllDay: droppedOnAllDaySlot },
 		    events) {
@@ -9,8 +7,6 @@ function moveEvent ({ event, start, end, isAllDay: droppedOnAllDaySlot },
   //console.log(event, start, end, droppedOnAllDaySlot)
 
   const idx = events.findIndex(elem => elem.id === event.id)
-  let allDay = event.allDay
-
   const updatedEvent = { ...event, start, end, isAllDay: false }
 
   const nextEvents = [...events]

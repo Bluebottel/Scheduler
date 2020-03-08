@@ -14,7 +14,7 @@ import { loadResources, loadEvents, loadShifts,
 import { moveEvent, addEvent, removeEvent,
 	 eventRender, getEventProp, addEvents } from './events'
 
-import { create, archive, sortComparer } from './utilities'
+import { create, archive, sortComparer, timeOverlap } from './utilities'
 
 import './App.css'
 //import { storeTestData } from './testdata'
@@ -36,8 +36,7 @@ class App extends Component {
   constructor(props) {
     super(props)
 
-    //storeTestData()
-
+    // read data from localStorage
     const events = loadEvents()
     const resources = loadResources()
     const shifts = loadShifts()
@@ -64,7 +63,7 @@ class App extends Component {
 	shift: shift,
 	resource: resource,
       }
-    })
+    })    
   }
 
   updateElement = (newElement, type) => {
@@ -341,7 +340,50 @@ class App extends Component {
 		  { children }
 		</div>
 	      ),
-	      event: args => { return eventRender(args, this.state) }
+	      event: args => { return eventRender(args, this.state) },
+	      dateCellWrapper: cellProps => {
+		
+		const style = {
+		  display: 'flex',
+		  position: 'relative',
+		  flex: 1,
+		  borderLeft: '1px solid #DDD',
+		}
+
+		let calendarDay = {
+		  start: cellProps.value,
+		  end: moment(cellProps.value).endOf('day')
+		}
+		
+		let scheduledHours = 0
+		
+		this.state.events.forEach(elem => {
+		  scheduledHours += timeOverlap(calendarDay, {
+		    start: moment(elem.start),
+		    end: moment(elem.end),
+		  })
+		})
+
+		// ms -> hours
+		scheduledHours = scheduledHours / (60*60*1000)
+
+		let tag = ''
+
+		// TODO: optimize this
+		if (Math.round(scheduledHours) !== 0)
+		  tag = (
+		    <div className = 'dateCellTag'>
+		      { scheduledHours.toFixed(1) + 'h'}
+		    </div>
+		  )
+		
+		return (
+		  <div style={style}>
+		    { tag }
+		    { cellProps.children }
+		  </div>
+		)
+	      },
 	    }}
 	  />
 	</div>
