@@ -315,7 +315,7 @@ class App extends Component {
 				    .find(sh => sh.id === event.shiftId )
 
 		  resolvedColor = resource.color
-		  resolvedTitle = resource.title + ', ' + shift.title
+		  resolvedTitle = resource.title + ', ' + shift.title + '*'
 		}
 		
 		this.setState({
