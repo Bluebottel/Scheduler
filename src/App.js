@@ -54,6 +54,7 @@ class App extends Component {
       editEventModalOpen: false,
       metaData: metaData,
       view: 'month',
+      viewDate: new Date(),
     }
   }
 
@@ -227,6 +228,7 @@ class App extends Component {
 	  <EditEventModal
 	    addEvent = { newEvent => {
 		const newEventList = addEvent(newEvent, this.state.events)
+
 		this.setState({ events: newEventList })
 		storeData(newEventList, 'events')
 	    }}
@@ -254,6 +256,13 @@ class App extends Component {
 	    resizableAccessor={ () => false }
 	    startAccessor = "start"
 	    endAccessor = "end"
+	    onDrillDown = { date => {
+		console.log(date)
+		this.setState({
+		  viewDate: date,
+		  view: 'week',
+		})
+	    }}
             localizer = { localizer }
             events = { this.state.events }
 	    onEventDrop = { (eventObj) => {
@@ -318,8 +327,10 @@ class App extends Component {
 		  editEventModalOpen: true,
 		})
 	    }}
-            defaultView = "month"
-            defaultDate = { new Date() }
+            defaultView = { 'month' }
+	    view = { this.state.view }
+            defaultDate = { this.state.viewDate }
+	    date = { this.state.viewDate }
 	    eventPropGetter = { (event, start, end, isSelected) => {
 		return getEventProp(event, start,
 				    end, isSelected,
@@ -327,7 +338,11 @@ class App extends Component {
 	    }}
 	    selectable = { 'ignoreEvents' }
 	    views = { ['month', 'week'] }
-	    onView = { view => this.setState({ view: view })}
+	    onView = { view => {
+		console.log(view)
+		this.setState({ view: view })
+	    }}
+	    onNavigate = { newDate => { this.setState({ viewDate: newDate }) }}
 	    step = { 60 }
 	    popup
 	    components = {{
@@ -382,9 +397,9 @@ class App extends Component {
 		return (
 		  <div
 		    style={style}
-		    onContextMenu = { e => {
-			e.preventDefault()
-		    }}
+			  onContextMenu = { e => {
+			      e.preventDefault()
+			  }}
 		    >
 		    { tag }
 		    { cellProps.children }
