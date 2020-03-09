@@ -284,29 +284,27 @@ class App extends Component {
 	    }}
 	  
 	    onDoubleClickEvent = { (event, e) => {
-		let resolvedColor, resolvedTitle
-		if (event.color === undefined ) {
-		  resolvedColor = this.state.resources
-				      .find(res => res.id === event.resourceId)
-				      .color		  
-		}
-		else { resolvedColor = event.color }
 
-		if (event.title === undefined && event.customTitle === undefined) {
-		  let resource = this.state.resources
-				     .find(res => res.id === event.resourceId)
-		  	      || this.state.metaData.archive.resources
-				     .find(res => res.id === event.resourceId )
-		  
-		  let shift = this.state.shifts
-				  .find(sh => sh.id === event.shiftId)
-			   || this.state.metaData.archive.shifts
-				  .find(sh => sh.id === event.shiftId )
-		  
+		console.log('dbl: ', this.state.resources)
+		let resolvedColor, resolvedTitle
+
+		// custome events don't have resources associated with them
+		if (event.customTitle !== undefined ) {
+		  resolvedColor = event.color
+		  resolvedTitle = event.title
+		}
+		else {
+		  const resource = this.state.resources.find(res => res.id === event.resourceId)
+				|| this.state.metaData.archive.resources
+				       .find(res => res.id === event.resourceId )
+		  const shift = this.state.shifts.find(sh => sh.id === event.shiftId)
+			     || this.state.metaData.archive.shifts
+				    .find(sh => sh.id === event.shiftId )
+
+		  resolvedColor = resource.color
 		  resolvedTitle = resource.title + ', ' + shift.title
 		}
-		else { resolvedTitle = undefined }
-
+		
 		this.setState({
 		  eventBasis: {
 		    ...event,
