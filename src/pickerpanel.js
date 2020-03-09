@@ -102,7 +102,17 @@ class PickerPanel extends Component {
 		})
 	    }}
 	    key = { i } >
-	    { res.title }
+	    <div>{ res.title }</div>
+	    <div
+	      style = {{
+		width: '15px',
+		background: res.color,
+		border: '1px solid #606060',
+		margin: '2px',
+		boxShadow: '0 0 0 2px #fff inset',
+		borderRadius: '2px',
+	      }}
+	    />
 	  </div>
 	)
       }) 
