@@ -111,7 +111,6 @@ function loadBlob(blob) {
   try {
     blob = JSON.parse(blob)
     blob.resources = loadResources(blob.resources, false)
-    console.log('resources: ', blob.resources)
     blob.shifts = loadShifts(blob.shifts, false)
     blob.events = loadEvents(blob.events, false)
     blob.metaData = loadMetaData(blob.metaData, false)

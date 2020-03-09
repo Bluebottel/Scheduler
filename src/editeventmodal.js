@@ -129,7 +129,7 @@ class EditEventModal extends Component {
 	      dateError: undefined,
 	    })  
 	}}
-	minStep = { 15 }
+	minStep = { 5 }
 	hourStep = { 1 }
 	prevMonthIcon = "ion-ios-arrow-left"
 	nextMonthIcon = "ion-ios-arrow-right"
@@ -218,10 +218,50 @@ class EditEventModal extends Component {
     )
   }
 
+  buttonsPanel = () => {
+    return (
+      <div
+	style = {{
+	  display: "flex",
+	  justifyContent: "space-between",
+	  marginBottom: '-3px',
+	}}>
+	<input
+	type = "submit"
+	value = "Spara"
+	style = {{
+	  borderRadius: '0px 0px 0px 5px',
+	}}
+	/>
+	<button
+	  onClick = { this.props.closeModal }
+	  style = {{
+	    borderRadius: '0px 0px 5px 0px',
+	  }}
+	>
+	  Avbryt
+	</button>
+      </div>
+    )
+  }
+
   render() {
+    if (this.state.startChoosing || this.state.endChoosing)
+      return (
+	<React.Fragment>
+	{ this.generalErrorPanel('dateError') }
+	{
+	  this.dateTimePicker({
+	    trigger: true,
+	    target: this.state.startChoosing ? 'start' : 'end',
+	  })
+	}
+	</React.Fragment>
+      )
+    
     return (
       <form
-	onSubmit = { ev => {
+      onSubmit = { ev => {
 	    ev.preventDefault()
 	    if (!this.state.customTitle || this.state.customTitle.length === 0) {
 
@@ -285,29 +325,7 @@ class EditEventModal extends Component {
 
 	{ this.generalErrorPanel('titleError') }
 	{ this.optionsTable() }
-	
-	<div
-	  style = {{
-	    display: "flex",
-	    justifyContent: "space-between",
-	    marginBottom: '-3px',
-	  }}>
-	  <input
-	    type = "submit"
-	    value = "Spara"
-	    style = {{
-	      borderRadius: '0px 0px 0px 5px',
-	    }}
-	  />
-	  <button
-	    onClick = { this.props.closeModal }
-	    style = {{
-	      borderRadius: '0px 0px 5px 0px',
-	    }}
-	  >
-	    Avbryt
-	  </button>
-	</div>
+	{ this.buttonsPanel() }
       </form>
     )
   }
