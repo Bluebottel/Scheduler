@@ -376,7 +376,12 @@ class App extends Component {
 		  )
 		
 		return (
-		  <div style={style}>
+		  <div
+		    style={style}
+		    onContextMenu = { e => {
+			e.preventDefault()
+		    }}
+		    >
 		    { tag }
 		    { cellProps.children }
 		  </div>
