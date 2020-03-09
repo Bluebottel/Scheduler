@@ -263,6 +263,10 @@ class App extends Component {
 	    }}
 	    onDragStart = { console.log }
             onSelectSlot = { selection => {
+		if (this.state.selected.resource === undefined
+		    || this.state.selected.shift === undefined) {
+		  return
+		}
 		if (this.state.view === 'month' ) {
 		  const newEventList = addEvents(selection,
 						 this.state.events,
