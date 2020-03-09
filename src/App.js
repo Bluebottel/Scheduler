@@ -203,7 +203,7 @@ class App extends Component {
 		  metaData: newData.metaData,
 		  selected: {
 		    resource: newData.resources[0],
-		    shifts: newData.shifts[0]
+		    shift: newData.shifts[0]
 		  }
 		})
 		

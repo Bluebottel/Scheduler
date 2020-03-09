@@ -34,7 +34,7 @@ class SavePanel extends Component {
 	      event.preventDefault()
 	      event.target.files[0].text()
 		   .then(data => {
-		     console.log('preload')
+
 		     // parses from JSON to actual data
 		     data = loadBlob(data)
 		     this.props.insert(data)
