@@ -207,8 +207,18 @@ class App extends Component {
 		    shift: newData.shifts[0]
 		  }
 		})
-		
 	    }}
+
+	    setRules = { newRules => {
+		let newMetaData = update(this.state.metaData,
+					 {rules: {$set: newRules }})
+		
+		storeData(newMetaData, 'metaData')
+		this.setState({
+		  metaData: newMetaData,
+		})
+	    }}
+	    rules = { this.state.metaData.rules }
 	  />
 	</Modal>
 
@@ -257,7 +267,6 @@ class App extends Component {
 	    startAccessor = "start"
 	    endAccessor = "end"
 	    onDrillDown = { date => {
-		console.log(date)
 		this.setState({
 		  viewDate: date,
 		  view: 'week',
@@ -298,7 +307,6 @@ class App extends Component {
 	  
 	    onDoubleClickEvent = { (event, e) => {
 
-		console.log('dbl: ', this.state.resources)
 		let resolvedColor, resolvedTitle
 
 		// custome events don't have resources associated with them
@@ -339,7 +347,6 @@ class App extends Component {
 	    selectable = { 'ignoreEvents' }
 	    views = { ['month', 'week'] }
 	    onView = { view => {
-		console.log(view)
 		this.setState({ view: view })
 	    }}
 	    onNavigate = { newDate => { this.setState({ viewDate: newDate }) }}
@@ -384,12 +391,25 @@ class App extends Component {
 		// ms -> hours
 		scheduledHours = scheduledHours / (60*60*1000)
 
-		let tag = ''
+		let tag = '', background
+
+		// note that this always runs all conditions meaning
+		// more than one rule can apply
+		// TODO: warn about multiple hits (?)
+		this.state.metaData.rules.forEach(rule => {
+		  if (rule.condition(scheduledHours))
+		    background = rule.color
+		})
 
 		// TODO: optimize this
 		if (Math.round(scheduledHours) !== 0)
 		  tag = (
-		    <div className = 'dateCellTag'>
+		    <div
+		      className = 'dateCellTag'
+		      style = {{
+			background: background,
+		      }}
+		      >
 		      { scheduledHours.toFixed(1) + 'h'}
 		    </div>
 		  )
@@ -398,6 +418,9 @@ class App extends Component {
 		  <div
 		    style={style}
 			  onContextMenu = { e => {
+			      // if the user misses slightly when attempting
+			      // to remove an event the standard context menu
+			      // pops up which is annoying
 			      e.preventDefault()
 			  }}
 		    >
