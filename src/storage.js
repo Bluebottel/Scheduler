@@ -1,3 +1,5 @@
+import { rulesMap, updateCondition } from './rulestore'
+
 const ALLOWED_TYPES = [ 'shifts', 'events', 'resources', 'metaData' ]
 
 
@@ -29,7 +31,7 @@ function loadEvents(eventList = window
 
     // The dates get stored as strings and the parsing
     // doesn't turn them back into date objects automatically
-    eventList.map(event => {
+    eventList = eventList.map(event => {
       event.start = new Date(event.start)
       event.end = new Date(event.end)
       return event
@@ -69,20 +71,32 @@ function loadMetaData(metaData = window
 
     if (!metaData.archive.shifts)
       metaData.archive.shifts = []
+
+    if (!metaData.rules)
+      metaData.rules = []
   }
   catch(_) {
     return {
       archive: {
 	resources: [],
 	shifts: [],
-      }
+      },
+      rules: [],
     }
   }
+
+  metaData.rules = metaData.rules.map(rule => {
+    rule.value = parseFloat(rule.value)
+    rule.condition = argValue => {
+      return rulesMap.get(rule.text)(argValue, rule.value)
+    }
+    return rule
+  })
 
   return metaData
 }
 
-// type = 'resources' | 'shifts' | 'metaData'
+// type = 'resources' | 'shifts' | 'metaData' | 'events'
 function storeData(data, type) {
   if (!ALLOWED_TYPES.includes(type)) {
     throw new TypeError('Invalid type: ', type)

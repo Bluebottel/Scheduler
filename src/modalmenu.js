@@ -11,6 +11,7 @@ import TimePicker from 'react-times'
 import 'react-times/css/material/default.css'
 
 import { timePad } from './utilities'
+import { updateCondition } from './rulestore'
 
 import trashcan from './img/trashcan.png'
 import addBubble from './img/plus.png'
@@ -18,6 +19,7 @@ import addBubble from './img/plus.png'
 import './modalmenu.css'
 
 import SavePanel from './savepanel'
+import RulesPanel from './rulespanel'
 
 class ModalMenu extends Component {
   constructor(props) {
@@ -268,6 +270,34 @@ class ModalMenu extends Component {
       </div>
     )
   }
+  
+  addRuleRow = () => {
+    return (
+      <div
+	style = {{
+	  textAlign: 'center',
+	  marginTop: '5px',
+	}}
+	onClick = { arg => {
+	    let newRules = this.props.rules
+	    newRules.push({
+	      text: '>',
+	      value: '500',
+	      color: this.randomColor(),
+	    })
+	    newRules[newRules.length-1] = updateCondition(newRules[newRules.length-1])
+	    this.props.setRules(newRules)
+	}}
+	className = "clickable"
+      >
+	<img
+	  src = { addBubble }
+	  alt = "Lägg till"
+	  style = {{ height: '20px' }}
+	/>
+      </div>
+    )
+  }
 
   // TODO: make a 75% border around the close bubble
   render() {   
@@ -313,6 +343,17 @@ class ModalMenu extends Component {
 	      insert = { newData => this.props.insert(newData) }
 	      closeModal = { this.props.closeModal }
 	    />
+	  </div>
+	</div>
+
+	<div className = "modalPanel">
+	  <div className = "boxLabel">Regler</div>
+	  <div className = "pickerBox">
+	    <RulesPanel
+	      rules = { this.props.rules }
+	      setRules = { this.props.setRules }
+	    />
+	    { this.addRuleRow() }
 	  </div>
 	</div>
 	
