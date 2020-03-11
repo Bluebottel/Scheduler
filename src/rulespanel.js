@@ -82,7 +82,6 @@ class RulesPanel extends Component {
 		  animation = 'slide-up'
 		  color = { color }
 		  onClose = { argColor => {
-		      console.log('argcolor: ', argColor)
 		      let newRules = this.props.rules
 		      newRules[i].color = argColor.color
 		      this.props.setRules(newRules)

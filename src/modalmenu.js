@@ -20,6 +20,7 @@ import './modalmenu.css'
 
 import SavePanel from './savepanel'
 import RulesPanel from './rulespanel'
+import packageJson from '../package.json'
 
 class ModalMenu extends Component {
   constructor(props) {
@@ -42,7 +43,6 @@ class ModalMenu extends Component {
 
   randomColor = () => { return "#"+((1<<24)*Math.random()|0).toString(16) }
 
-  // TODO: remove the focus outline from the inline confirm button
   renderResources = () => {
 
     let optionsList = (
@@ -299,12 +299,11 @@ class ModalMenu extends Component {
     )
   }
 
-  // TODO: make a 75% border around the close bubble
   render() {   
     return (
       <div style = {{ display: "flex" }}>
 	<div id ="closeBubble" onClick = { this.props.closeModal }>
-	  <div className = "__arc">
+	  <div className = 'bubbleCenter'>
 	    X
 	  </div>
 	</div>
@@ -342,6 +341,15 @@ class ModalMenu extends Component {
 	    <SavePanel
 	      insert = { newData => this.props.insert(newData) }
 	      closeModal = { this.props.closeModal }
+	      setLoadingError = { (message, error) => {
+		  this.setState({
+		    loadingError: {
+		      message: message,
+		      error: error,
+		    }
+		  })
+	      }}
+	      loadingError = { this.state.loadingError }
 	    />
 	  </div>
 	</div>
@@ -356,8 +364,20 @@ class ModalMenu extends Component {
 	    { this.addRuleRow() }
 	  </div>
 	</div>
-	
-	
+
+	<div
+	  style = {{
+	    position: 'absolute',
+	    bottom: '3px',
+	    right: '3px',
+	    background: 'none',
+	    zIndex: '100',
+	    padding: '0px 3px 0px 3px',
+	    color: '#c3bebe',
+	  }}
+	>
+	  { packageJson.version }
+	</div>
       </div>
     )
   }

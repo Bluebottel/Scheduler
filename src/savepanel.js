@@ -5,10 +5,17 @@ import { saveBlob, loadBlob } from './storage'
 class SavePanel extends Component {
 
   loadErrorPanel() {
-    if (this.state.loadError) {
+    if (this.props.loadingError !== undefined) {
       return (
-	<div>
-	  
+	<div
+	  style = {{
+	    background: '#ffa5a5',
+	    borderRadius: '2px',
+	    border: '1px solid #ff7a7a',
+	    padding: '2px',
+	  }}>
+	  { this.props.loadingError.message }
+	  { this.props.loadingError.error }
 	</div>
       )
     }
@@ -17,11 +24,19 @@ class SavePanel extends Component {
   render() {
     return (
       <div className = 'savePanel'>
+	{ this.loadErrorPanel() }
 	<a
 	  href = { URL.createObjectURL(saveBlob()) }
 	  download = 'schedule.json'
 	>
-	  <button className = 'fileButton'>Spara</button>
+	  <button
+	    className = 'fileButton'
+	    style = {{
+	      width: '100%',
+	    }}
+	  >
+	    Spara till fil
+	  </button>
 	</a>
 
 	<input
@@ -35,8 +50,21 @@ class SavePanel extends Component {
 	      event.target.files[0].text()
 		   .then(data => {
 
+		     try {
 		     // parses from JSON to actual data
-		     data = loadBlob(data)
+		       data = loadBlob(data)
+		     }
+		     catch (error) {
+		       this.props.setLoadingError('Filen är trasig eller tom', error)
+		       return
+		     }
+
+		     // in case the user is trying to load a broken or empty file
+		     if (!data) {
+		       this.props.setLoadingError('Filen är trasig eller tom')
+		       return
+		     }
+		     
 		     this.props.insert(data)
 		     this.props.closeModal()
 		   })
@@ -55,7 +83,7 @@ class SavePanel extends Component {
 	  htmlFor = 'file'
 	  className = 'fileButton clickable'
 	>
-	  Öppna
+	  Öppna fil
 	</label>
 	
       </div>

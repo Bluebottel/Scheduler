@@ -150,7 +150,9 @@ class App extends Component {
 	    closeModal = { () => {
 		// remove blur
 		document.getElementById('root').style.filter = ''
-		this.setState({ optionsModalOpen: false })
+		this.setState({
+		  optionsModalOpen: false,
+		})
 	    }}
 	    archive = { (element, type) => {
 		// select another element when the currently selected
