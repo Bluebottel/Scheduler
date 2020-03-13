@@ -371,7 +371,6 @@ class ModalMenu extends Component {
 	    bottom: '3px',
 	    right: '3px',
 	    background: 'none',
-	    zIndex: '100',
 	    padding: '0px 3px 0px 3px',
 	    color: '#c3bebe',
 	  }}

@@ -1,4 +1,4 @@
-import { rulesMap, updateCondition } from './rulestore'
+import { updateCondition } from './rulestore'
 
 const ALLOWED_TYPES = [ 'shifts', 'events', 'resources', 'metaData' ]
 
@@ -87,9 +87,7 @@ function loadMetaData(metaData = window
 
   metaData.rules = metaData.rules.map(rule => {
     rule.value = parseFloat(rule.value)
-    rule.condition = argValue => {
-      return rulesMap.get(rule.text)(argValue, rule.value)
-    }
+    rule = updateCondition(rule)
     return rule
   })
 

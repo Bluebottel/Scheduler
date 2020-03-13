@@ -135,6 +135,7 @@ class PickerPanel extends Component {
 	  onClick = { () => this.props.setOptionsModal(true) }
 	  src = { optionsIcon }
 	  alt = '[Options]'
+	  id = 'cogButton'
 	  style = {{
 	    position: 'absolute',
 	    bottom: '10px',

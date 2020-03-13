@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import update from 'immutability-helper'
 import Modal from 'react-modal'
+import Joyride from 'react-joyride'
 
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
@@ -21,6 +22,7 @@ import './App.css'
 import ModalMenu from './modalmenu'
 import PickerPanel from './pickerpanel'
 import EditEventModal from './editeventmodal'
+import PackageTour from './packagetour'
 
 
 // changing locale doesn't work without this
@@ -130,6 +132,8 @@ class App extends Component {
 
     return (
       <div id = "container">
+	<PackageTour />
+	
 	<Modal
 	  isOpen = { this.state.optionsModalOpen }
 	  shouldCloseOnOverlayClick = { false }
@@ -408,9 +412,9 @@ class App extends Component {
 		  tag = (
 		    <div
 		      className = 'dateCellTag'
-		      style = {{
-			background: background,
-		      }}
+				   style = {{
+				     background: background,
+				   }}
 		      >
 		      { scheduledHours.toFixed(1) + 'h'}
 		    </div>
@@ -436,7 +440,7 @@ class App extends Component {
 	</div>
 
 	{ pickerPanel }
-	
+
       </div>
     )
   }
