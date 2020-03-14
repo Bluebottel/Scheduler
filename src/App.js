@@ -57,6 +57,7 @@ class App extends Component {
       metaData: metaData,
       view: 'month',
       viewDate: new Date(),
+      stepIndex: 0,
     }
   }
 
@@ -132,7 +133,15 @@ class App extends Component {
 
     return (
       <div id = "container">
-	<PackageTour />
+	<PackageTour
+	  parentState = { this.state }
+	  stepIndex = { this.state.stepIndex }
+	  setStep = { newStep => {
+	      this.setState({
+		stepIndex: newStep,
+	      })
+	  }}
+	/>
 	
 	<Modal
 	  isOpen = { this.state.optionsModalOpen }
