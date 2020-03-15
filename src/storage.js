@@ -74,6 +74,12 @@ function loadMetaData(metaData = window
 
     if (!metaData.rules)
       metaData.rules = []
+
+    if (!metaData.tutorial)
+      metaData.tutorial = {
+	done: false,
+	stepIndex: 0,
+      }
   }
   catch(_) {
     return {
@@ -82,6 +88,10 @@ function loadMetaData(metaData = window
 	shifts: [],
       },
       rules: [],
+      tutorial: {
+	done: false,
+	stepIndex: 0,
+      },
     }
   }
 

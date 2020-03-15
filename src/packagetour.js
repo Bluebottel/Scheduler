@@ -5,78 +5,133 @@ class PackageTour extends Component {
   constructor(props) {
     super(props)
 
-    let nextStep = new Map()
-
-    nextStep.set(0, this.props.parentState.optionsModalOpen ? 1 : 0)
-
-    nextStep.set(1, false)
-    nextStep.set(2, false)
-
-    this.state = {
-      nextStep: nextStep,
-    }
   }
 
   steps = [
     {
+      target: 'body',
+      title: 'Första gången rundvandring',
+      content: 'En kort genomgång av alla funktionaliteter.',
+      placement: 'center',
+    },
+    
+    {
       target: '#cogButton',
-      content: 'Press me!',
+      content: 'Klicka på kugghjulet för att öppna huvudmenyn.',
       disableBeacon: true,
       placement: 'top-start',
-      hideCloseButton: false,
+      hideCloseButton: true,
       disableOverlayClose: true,
-      hideFooter: false,
+      hideFooter: true,
       spotlightClicks: true,
     },
     
     {
       target: 'div.modalPanel:nth-child(2)',
-      content: 'Moar',
-      disableBeacon: true,
+      content: '',
     },
+    
     {
       target: 'div.modalPanel:nth-child(3)',
-      content: 'even more stuff',
-      disableBeacon: true,
-      
+      content: 'shifts',
+    },
+    
+    {
+      target: 'div.modalPanel:nth-child(4)',
+      content: 'storage',
+    },
+    
+    {
+      target: 'div.modalPanel:nth-child(5)',
+      content: 'rules',
+    },
+
+    {
+      target: '#closeBubble',
+      content: 'close with esc or here',
+      placement: 'top-start',
+      hideCloseButton: true,
+      disableOverlayClose: true,
+      hideFooter: true,
+      spotlightClicks: true,
+    },
+
+    {
+      target: '#sideContainer',
+      content: 'Changes here, note marked',
+      placement: 'left',
+    },
+
+    {
+      target: 'div.rbc-month-row:nth-child(4) > div:nth-child(1) > div:nth-child(4)',
+      content: 'click here to add',
+      placement: 'bottom',
+    },
+
+    {
+      target: 'span.rbc-btn-group:nth-child(3) > button:nth-child(2)',
+      content: 'goto week',
+      placement: 'bottom',
+      hideCloseButton: true,
+      disableOverlayClose: true,
+      hideFooter: true,
+      spotlightClicks: true,
+    },
+
+    {
+      target: 'div.rbc-day-slot:nth-child(4) > div:nth-child(13)',
+      content: 'click and drag to add',
+      hideCloseButton: true,
+      disableOverlayClose: true,
+      hideFooter: true,
+      spotlightClicks: true,
+    },
+
+    {
+      target: '.ReactModal__Content',
+      content: 'do stuff',
+      placement: 'left',
+      offset: 100,
+      hideCloseButton: true,
+      disableOverlayClose: true,
+      hideFooter: true,
+      spotlightClicks: true,
+      disableOverlay: true,
+    },
+
+    {
+      target: 'body',
+      content: 'done!',
+      placement: 'center',
     }
+
   ]
 
-  specialStep = step => {
-    if (step === 0 && this.props.parentState.optionsModalOpen)
-      return 1
-    else return step
-  }
-  
   handleCallback = arg => {
-    console.log('callback: ', arg)
-    if (arg.lifecycle === 'ready' && arg.action === 'next'
-     && arg.type === 'step:before')
-      return arg.index
-    
     if (arg.type === 'step:after')
-      this.props.setStep(arg.index)
-    if (arg.index === this.specialStep(arg.index))
-      this.props.setStep(arg.index)
-    else this.props.setStep(this.specialStep(arg.index))
+      this.props.setStep(arg.index+1)
 
-
-  
+    if (arg.action === 'skip')
+      this.props.done()
   }
 
   render() {
-    console.log('render ride')
     return (
       <Joyride
 	disableOverlayClose = { true }
 	showSkipButton = { true }
 	steps = { this.steps }
-	stepIndex = { this.specialStep(this.props.stepIndex) }
+	stepIndex = { this.props.stepIndex }
 	locale = {{
-	  close: 'Nästa',
+	  next: 'Nästa',
+	  skip: 'Hoppa över',
+	  last: 'Klar',
 	}}
-	run = { this.state.run }
 	callback = { this.handleCallback }
+	hideBackButton = { true }
+	disableBeacon = { true }
+	continuous = { true }
+	run = { this.props.run }
       />
     )
   }
