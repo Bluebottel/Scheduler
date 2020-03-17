@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import Joyride from 'react-joyride'
 
+import addBubble from './img/plus.png'
+
 class PackageTour extends Component {
   constructor(props) {
     super(props)
@@ -24,8 +26,7 @@ class PackageTour extends Component {
     
     {
       target: '#cogButton',
-      content: 'Pass och resurser läggs till i huvudmenyn. Klicka på'
-	     + ' [bild] för att öppna den.',
+      content: 'Pass och resurser läggs till i huvudmenyn. Klicka här för att öppna den.',
       placement: 'top-start',
       hideFooter: true,
       spotlightClicks: true,
@@ -33,9 +34,23 @@ class PackageTour extends Component {
     
     {
       target: 'div.modalPanel:nth-child(2)',
-      content: 'Klicka på [bild] för att lägga till en resurs. Resursen'
-	     + ' kommer att skapas med förifyllda värden som kan ändras genom att'
-	     + ' klicka på dem. Ändra ett värde för att fortsätta.',
+      content: (
+	<div>
+	  Klicka på
+	  <img
+	    src = { addBubble }
+	    alt = 'Plus sign'
+	    style = {{
+	      width: '20px',
+	      display: 'inline',
+	      margin: '0px 5px -4px 5px',
+	    }}
+	  />
+	  för att lägga till en resurs. Resursen kommer att skapas med förifyllda
+	  värden som kan ändras genom att klicka på dem. Ändra ett värde för att
+	  fortsätta.
+	</div>
+      ),
       hideFooter: true,
       spotlightClicks: true,
     },
@@ -55,7 +70,7 @@ class PackageTour extends Component {
     
     {
       target: 'div.modalPanel:nth-child(5)',
-      content: 'Varje dag i kalendern har en siffran i övre högra hörnet'
+      content: 'Varje dag i kalendern har en siffran i övre vänstra hörnet'
 	     + ' som visar antalet schemalagda timmar den dagen. Om siffran'
 	     + ' uppfyller regeln så kommer den att få den angivna färgen.'
 	     + ' Lägg till en regel och gör en förändring för att fortsätta.',
@@ -74,9 +89,9 @@ class PackageTour extends Component {
 
     {
       target: '#sideContainer',
-      content: 'Notera hur passet och resursen som lades till tidigare nu'
-	     + ' finns i listan. Den grå bakgrunden betyder att passet eller resursen'
-	     + ' kommer att användas då en händelse läggs till.',
+      content: 'Passet och resursen som lades till tidigare finns nu'
+	     + ' i listan. Den grå bakgrunden betyder att passet eller resursen'
+	     + ' är markerat och kommer att användas då en händelse läggs till.',
       placement: 'left',
       hideBackButton: true,
     },
@@ -85,7 +100,9 @@ class PackageTour extends Component {
       target: 'div.rbc-month-row:nth-child(4) > div:nth-child(1) > div:nth-child(4)',
       content: 'Klicka på en kalenderruta för att lägga till en händelse. Du'
 	     + ' kan också klicka och dra för att lägga till flera samtidigt.',
-      placement: 'bottom',
+      placement: 'left',
+      spotlightClicks: true,
+      disableOverlay: true,
     },
 
     {
@@ -114,6 +131,7 @@ class PackageTour extends Component {
 	     + ' inte pass eller resurser utan fristående händelser skapas i stället.'
 	     + ' De är inte kopplade till något och kommer inte att ändras om något'
 	     + ' av passen eller resurserna förändras.',
+      disableOverlay: true,
     },
 
     {
@@ -122,6 +140,7 @@ class PackageTour extends Component {
       hideCloseButton: true,
       hideFooter: true,
       spotlightClicks: true,
+      hideCloseButton: true,
     },
 
     {
@@ -139,6 +158,23 @@ class PackageTour extends Component {
 
     {
       target: 'body',
+      title: 'Ändra utlagda händelser',
+      content: (
+	<p
+	style = {{
+	  textAlign: 'left',
+	}}>
+	  <b>Högerklick</b> - tar bort händelsen<br />
+	  <b>Dubbelklick</b> - redigerar händelsen<br />
+	  Klicka och dra för att flytta en händelse
+	</p>
+      ),
+      placement: 'center',
+      hideBackButton: true,
+    },
+
+    {
+      target: 'body',
       content: 'Du är nu klar med genomgången. Lycka till! 🎂',
       placement: 'center',
       hideBackButton: true,
@@ -147,7 +183,11 @@ class PackageTour extends Component {
   ]
 
   handleCallback = arg => {
-    console.log(arg)
+    if (arg.type === 'tour:end') {
+      this.props.done()
+      return
+    }
+      
     if (arg.type === 'step:after')
       this.props.setStep(arg.index+1)
 
