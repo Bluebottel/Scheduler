@@ -21,7 +21,7 @@ function create(element, type, state) {
   element.id = newId
 
   const newList = state[type].concat(element).sort(sortComparer(type))
-  
+
   return {
     newElementList: newList,
     newElement: element,
@@ -61,7 +61,7 @@ function shiftComparer(first, second) {
 function resourceComparer(first, second) {
 
   // the same as the default method used by sort()
-  return first.title > second.title
+  return first.title.toLowerCase() > second.title.toLowerCase()
 }
 
 function sortComparer(type) {
