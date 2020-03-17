@@ -362,7 +362,10 @@ class ModalMenu extends Component {
 	  <div className = "pickerBox">
 	    <RulesPanel
 	      rules = { this.props.rules }
-	      setRules = { this.props.setRules }
+	      setRules = { newRules => {
+		  this.props.advanceTutorial()
+		  this.props.setRules(newRules)
+	      }}
 	    />
 	    { this.addRuleRow() }
 	  </div>

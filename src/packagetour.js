@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Joyride from 'react-joyride'
 
 import addBubble from './img/plus.png'
+import ruleTag from './img/ruletag.png'
 
 class PackageTour extends Component {
   constructor(props) {
@@ -53,14 +54,29 @@ class PackageTour extends Component {
       ),
       hideFooter: true,
       spotlightClicks: true,
+      hideCloseButton: true,
     },
     
     {
       target: 'div.modalPanel:nth-child(3)',
-      content: 'Pass läggs till på samma sätt som resurser. Ändra ett värde'
-	     + ' för att fortsätta',
+      content: (
+	<div>
+	  Klicka på
+	  <img
+	    src = { addBubble }
+	    alt = 'Plus sign'
+	    style = {{
+	      width: '20px',
+	      display: 'inline',
+	      margin: '0px 5px -4px 5px',
+	    }}
+	  />
+	  för att lägga till en resurs. Ändra ett värde för att fortsätta.
+	</div>
+      ),
       hideFooter: true,
       spotlightClicks: true,
+      hideCloseButton: true,
     },
     
     {
@@ -70,17 +86,43 @@ class PackageTour extends Component {
     
     {
       target: 'div.modalPanel:nth-child(5)',
-      content: 'Varje dag i kalendern har en siffran i övre vänstra hörnet'
-	     + ' som visar antalet schemalagda timmar den dagen. Om siffran'
-	     + ' uppfyller regeln så kommer den att få den angivna färgen.'
-	     + ' Lägg till en regel och gör en förändring för att fortsätta.',
+      content: (
+	<div>
+	  <img
+	    src = { ruleTag }
+	    alt = 'Rule demonstration'
+	    style = {{
+	      float: 'left',
+	      marginRight: '10px',
+	    }}
+	/>
+	<p style = {{ textAlign: 'left' }}>
+	  Varje dag i kalendern har en siffran i övre vänstra hörnet
+	  som visar antalet schemalagda timmar den dagen. Om siffran
+	  uppfyller regeln så kommer den att få den angivna färgen.
+	  Lägg till en regel genom att klicka på
+	  <img
+	    src = { addBubble }
+	    alt = 'Plus sign'
+	    style = {{
+	      width: '20px',
+	      display: 'inline',
+	      margin: '0px 5px -4px 5px',
+	    }}
+	  />
+	  och gör en förändring för att fortsätta.
+	</p>
+	</div>
+      ),
       hideFooter: true,
       spotlightClicks: true,
+      hideCloseButton: true,
+      hideFooter: true,
     },
 
     {
       target: '#closeBubble',
-      content: 'Stäng menyn genom att klicka här eller genom att trycka på esc.',
+      content: 'Stäng menyn genom att klicka här.',
       placement: 'top-start',
       hideCloseButton: true,
       hideFooter: true,
@@ -98,13 +140,22 @@ class PackageTour extends Component {
 
     {
       target: 'div.rbc-month-row:nth-child(4) > div:nth-child(1) > div:nth-child(4)',
-      content: 'Klicka på en kalenderruta för att lägga till en händelse. Du'
-	     + ' kan också klicka och dra för att lägga till flera samtidigt.',
+      content:
+      (	
+       <p style = {{ textAlign: 'left' }} >
+	 Klicka på en kalenderruta för att lägga till en händelse. Du
+	 kan också klicka och dra för att lägga till flera samtidigt.
+	 Klicka och dra för att flytta en händelse<br />
+	 <b>Högerklick</b> - tar bort händelsen<br />
+	 <b>Dubbelklick</b> - redigerar händelsen
+       </p>
+      ),
+      
       placement: 'left',
       spotlightClicks: true,
       disableOverlay: true,
     },
-
+    
     {
       target: 'span.rbc-btn-group:nth-child(3) > button:nth-child(1)',
       content: 'Schemaläggaren är nu i månadsvyn. I den här vyn kan bara normala'
@@ -114,7 +165,7 @@ class PackageTour extends Component {
 	     + ' - så kommer alla schemalagda händelser också att förändras.',
       placement: 'bottom',
     },
-
+    
     {
       target: 'span.rbc-btn-group:nth-child(3) > button:nth-child(2)',
       content: 'Klicka här för att ändra till veckovyn.',
@@ -132,6 +183,7 @@ class PackageTour extends Component {
 	     + ' De är inte kopplade till något och kommer inte att ändras om något'
 	     + ' av passen eller resurserna förändras.',
       disableOverlay: true,
+      disableBackButton: true,
     },
 
     {
@@ -154,23 +206,6 @@ class PackageTour extends Component {
       hideFooter: true,
       spotlightClicks: true,
       disableOverlay: true,
-    },
-
-    {
-      target: 'body',
-      title: 'Ändra utlagda händelser',
-      content: (
-	<p
-	style = {{
-	  textAlign: 'left',
-	}}>
-	  <b>Högerklick</b> - tar bort händelsen<br />
-	  <b>Dubbelklick</b> - redigerar händelsen<br />
-	  Klicka och dra för att flytta en händelse
-	</p>
-      ),
-      placement: 'center',
-      hideBackButton: true,
     },
 
     {

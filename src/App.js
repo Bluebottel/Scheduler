@@ -290,6 +290,7 @@ class App extends Component {
 		})
 	    }}
 	    rules = { this.state.metaData.rules }
+	    advanceTutorial = { this.advanceTutorial }
 	  />
 	</Modal>
 
