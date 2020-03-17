@@ -301,7 +301,10 @@ class ModalMenu extends Component {
 
   render() {   
     return (
-      <div style = {{ display: "flex" }}>
+      <div style = {{
+	display: 'flex',
+	flexWrap: 'wrap',
+      }}>
 	<div id ="closeBubble" onClick = { this.props.closeModal }>
 	  <div className = 'bubbleCenter'>
 	    X

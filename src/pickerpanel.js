@@ -128,7 +128,12 @@ class PickerPanel extends Component {
 	</div>
 	
 	<div className = "boxLabel">Resurser</div>
-	<div className = "pickerBox">
+	<div
+	  className = 'pickerBox'
+	  style = {{
+	    width: 'auto',
+	  }}
+	>
 	  { this.renderResources() }
 	</div>
 	<img
