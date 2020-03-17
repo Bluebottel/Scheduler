@@ -1,6 +1,6 @@
 {
   "name": "scheduler",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "private": true,
   "homepage": "https://bluebottel.github.io/Scheduler",
   "dependencies": {
