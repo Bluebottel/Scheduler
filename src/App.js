@@ -23,7 +23,6 @@ import PickerPanel from './pickerpanel'
 import EditEventModal from './editeventmodal'
 import PackageTour from './packagetour'
 
-
 // changing locale doesn't work without this
 import 'moment/locale/sv'
 
@@ -290,6 +289,7 @@ class App extends Component {
 		})
 	    }}
 	    rules = { this.state.metaData.rules }
+	    advanceTutorial = { this.advanceTutorial }
 	  />
 	</Modal>
 
