@@ -97,10 +97,6 @@
     outline: none;
 }
 
-.optionsMenuModal {
-
-}
-
 .easy-edit-wrapper {
     display: inline;
     margin-right: 15px;
@@ -151,4 +147,12 @@
 
 .rulesPanel {
     width: max-content;
+}
+
+.easy-edit-component-wrapper input[type=text] {
+    width: 4em;
+}
+
+.easy-edit-component-wrapper input[type=number] {
+    width: 4em;
 }
