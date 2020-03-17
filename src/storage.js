@@ -75,7 +75,7 @@ function loadMetaData(metaData = window
     if (!metaData.rules)
       metaData.rules = []
 
-    if (!metaData.tutorial)
+    if (!metaData.tutorial || metaData.tutorial.done !== true)
       metaData.tutorial = {
 	done: false,
 	stepIndex: 0,
