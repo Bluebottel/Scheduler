@@ -5,11 +5,6 @@ import addBubble from './img/plus.png'
 import ruleTag from './img/ruletag.png'
 
 class PackageTour extends Component {
-  constructor(props) {
-    super(props)
-
-  }
-
   steps = [
     {
       target: 'body',
@@ -117,7 +112,6 @@ class PackageTour extends Component {
       hideFooter: true,
       spotlightClicks: true,
       hideCloseButton: true,
-      hideFooter: true,
     },
 
     {
@@ -192,7 +186,6 @@ class PackageTour extends Component {
       hideCloseButton: true,
       hideFooter: true,
       spotlightClicks: true,
-      hideCloseButton: true,
     },
 
     {
