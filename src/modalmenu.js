@@ -255,9 +255,9 @@ class ModalMenu extends Component {
 	onClick = { () => this.props.create(
 	    {
 	      title: 'Pass',
-	      startHour: 13,
-	      startMinute: 37,
-	      minuteLength: 420,
+	      startHour: 8,
+	      startMinute: 0,
+	      minuteLength: 480,
 	    }, 'shifts')
 	}
 	className = "clickable"
@@ -281,8 +281,8 @@ class ModalMenu extends Component {
 	onClick = { arg => {
 	    let newRules = this.props.rules
 	    newRules.push({
-	      text: '>',
-	      value: '500',
+	      text: '=',
+	      value: '8.0',
 	      color: this.randomColor(),
 	    })
 	    newRules[newRules.length-1] = updateCondition(newRules[newRules.length-1])

@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import update from 'immutability-helper'
 import Modal from 'react-modal'
-import Joyride from 'react-joyride'
 
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
@@ -60,6 +59,15 @@ class App extends Component {
     }
   }
 
+  advanceTutorial = () => {
+    this.setState((state, _) => {
+      state.metaData.tutorial.stepIndex++;
+      return {
+	metaData: state.metaData
+      }
+    })
+  }
+  
   setSelected = ({ shift, resource }) => {
     this.setState({
       selected: {
@@ -109,8 +117,6 @@ class App extends Component {
 
   // TODO: add a context menu instead of removing the event straight away
   render() {
-
-    console.log('view: ', this.state.view)
     // don't render the pickerPanel when in week mode so the app
     // is slightly more usable on mobile devices since the panel
     // isn't used in that mode anyway
@@ -198,7 +204,10 @@ class App extends Component {
 	  <ModalMenu
 	    resources = { this.state.resources }
 	    shifts = { this.state.shifts }
-	    updateElement = { this.updateElement }
+	    updateElement = { (elem, type) => {
+		this.advanceTutorial()
+		this.updateElement(elem, type)
+	    }}
 	    closeModal = { () => {
 		// remove blur
 		document.getElementById('root').style.filter = ''
@@ -295,6 +304,7 @@ class App extends Component {
 	      document.getElementById('root').style.filter = ''
 	      this.setState((state, props) => {
 
+		// advance the tutorial one step and switch to the month view
 		if (!state.metaData.tutorial.done) {
 		  state.metaData.tutorial.stepIndex++;
 		  state.view = 'month'
