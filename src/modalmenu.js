@@ -255,9 +255,9 @@ class ModalMenu extends Component {
 	onClick = { () => this.props.create(
 	    {
 	      title: 'Pass',
-	      startHour: 13,
-	      startMinute: 37,
-	      minuteLength: 420,
+	      startHour: 8,
+	      startMinute: 0,
+	      minuteLength: 480,
 	    }, 'shifts')
 	}
 	className = "clickable"
@@ -281,8 +281,8 @@ class ModalMenu extends Component {
 	onClick = { arg => {
 	    let newRules = this.props.rules
 	    newRules.push({
-	      text: '>',
-	      value: '500',
+	      text: '=',
+	      value: '8.0',
 	      color: this.randomColor(),
 	    })
 	    newRules[newRules.length-1] = updateCondition(newRules[newRules.length-1])
@@ -301,7 +301,10 @@ class ModalMenu extends Component {
 
   render() {   
     return (
-      <div style = {{ display: "flex" }}>
+      <div style = {{
+	display: 'flex',
+	flexWrap: 'wrap',
+      }}>
 	<div id ="closeBubble" onClick = { this.props.closeModal }>
 	  <div className = 'bubbleCenter'>
 	    X
@@ -371,7 +374,6 @@ class ModalMenu extends Component {
 	    bottom: '3px',
 	    right: '3px',
 	    background: 'none',
-	    zIndex: '100',
 	    padding: '0px 3px 0px 3px',
 	    color: '#c3bebe',
 	  }}

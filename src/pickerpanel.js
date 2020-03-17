@@ -128,13 +128,19 @@ class PickerPanel extends Component {
 	</div>
 	
 	<div className = "boxLabel">Resurser</div>
-	<div className = "pickerBox">
+	<div
+	  className = 'pickerBox'
+	  style = {{
+	    width: 'auto',
+	  }}
+	>
 	  { this.renderResources() }
 	</div>
 	<img
 	  onClick = { () => this.props.setOptionsModal(true) }
 	  src = { optionsIcon }
 	  alt = '[Options]'
+	  id = 'cogButton'
 	  style = {{
 	    position: 'absolute',
 	    bottom: '10px',

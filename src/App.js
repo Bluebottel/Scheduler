@@ -21,6 +21,7 @@ import './App.css'
 import ModalMenu from './modalmenu'
 import PickerPanel from './pickerpanel'
 import EditEventModal from './editeventmodal'
+import PackageTour from './packagetour'
 
 
 // changing locale doesn't work without this
@@ -35,13 +36,13 @@ const DragCalendar = withDragAndDrop(Calendar)
 class App extends Component {
   constructor(props) {
     super(props)
-
+    
     // read data from localStorage
     const events = loadEvents()
     const resources = loadResources()
     const shifts = loadShifts()
     const metaData = loadMetaData()
-
+    
     this.state = {
       events: events,
       resources: resources.sort(sortComparer('resources')),
@@ -58,6 +59,15 @@ class App extends Component {
     }
   }
 
+  advanceTutorial = () => {
+    this.setState((state, _) => {
+      state.metaData.tutorial.stepIndex++;
+      return {
+	metaData: state.metaData
+      }
+    })
+  }
+  
   setSelected = ({ shift, resource }) => {
     this.setState({
       selected: {
@@ -130,28 +140,87 @@ class App extends Component {
 
     return (
       <div id = "container">
+	<PackageTour
+	  parentState = { this.state }
+	  stepIndex = { this.state.metaData.tutorial.stepIndex }
+	  setStep = { newStep => {
+	      this.setState({
+		metaData: update(this.state.metaData, {
+		  tutorial: {
+		    stepIndex: {$set: newStep}
+		  }}),
+	      })
+	  }}
+	  run = { !this.state.metaData.tutorial.done }
+	  done = { () => {
+	      this.setState((state, _) => {
+		state.metaData.tutorial = {
+		  done: true,
+		  stepIndex: 0,
+		}
+		
+		storeData(state.metaData, 'metaData')
+		return {
+		  metaData: state.metaData,
+		}
+	      })
+	  }}
+	/>
+	
 	<Modal
 	  isOpen = { this.state.optionsModalOpen }
 	  shouldCloseOnOverlayClick = { false }
 	  className = "modalCommon optionsMenuModal"
 	  overlayClassName = "modalOverlayCommon"
-	  onAfterOpen = { () => document.getElementById('root')
-					.style.filter = 'blur(2px)' }
+	  onAfterOpen = { () => {
+	      document.getElementById('root')
+		      .style.filter = 'blur(2px)'
+
+	      if (this.state.metaData.tutorial.done) return
+	      this.setState((state, props) => {
+
+		// TODO: some better check in case we go back into the menu
+		if (!state.metaData.tutorial.done) {
+		  state.metaData.tutorial.stepIndex++;
+		}
+
+		return {
+		  metaData: state.metaData,
+		}
+	      })
+	  }}
+	  
 	  onRequestClose = { () => {
 	      document.getElementById('root').style.filter = ''
-	      this.setState({ optionsModalOpen: false })
+	      this.setState((state, props) => {
+		state.optionsModalOpen = false
+
+		return state
+	      })
 	  }}
+	  
 	  ariaHideApp = { false }
 	>
 	  <ModalMenu
 	    resources = { this.state.resources }
 	    shifts = { this.state.shifts }
-	    updateElement = { this.updateElement }
+	    updateElement = { (elem, type) => {
+		this.advanceTutorial()
+		this.updateElement(elem, type)
+	    }}
 	    closeModal = { () => {
 		// remove blur
 		document.getElementById('root').style.filter = ''
-		this.setState({
-		  optionsModalOpen: false,
+		this.setState((state, props) => {
+
+		  if (!state.metaData.tutorial.done) {
+		    state.metaData.tutorial.stepIndex++;
+		  }
+
+		  return {
+		    optionsModalOpen: false,
+		    metaData: state.metaData,
+		  }
 		})
 	    }}
 	    archive = { (element, type) => {
@@ -233,7 +302,19 @@ class App extends Component {
 					.style.filter = 'blur(2px)' }
 	  onRequestClose = { () => {
 	      document.getElementById('root').style.filter = ''
-	      this.setState({ editEventModalOpen: false })
+	      this.setState((state, props) => {
+
+		// advance the tutorial one step and switch to the month view
+		if (!state.metaData.tutorial.done) {
+		  state.metaData.tutorial.stepIndex++;
+		  state.view = 'month'
+		}
+
+		return {
+		  editEventModalOpen: false,
+		  metaData: state.metaData,
+		}
+	      })
 	  }}
 	  ariaHideApp = { false }
 	>
@@ -258,7 +339,21 @@ class App extends Component {
 	    closeModal = { () => {
 		// remove blur
 		document.getElementById('root').style.filter = ''
-		this.setState({ editEventModalOpen: false })
+		this.setState((state, _) => {
+		  state.editEventModalOpen = false
+
+		  if (!state.metaData.tutorial.done) {
+		    state.metaData.tutorial.stepIndex++;
+		    state.view = 'month'
+		  }
+
+		  return {
+		    editEventModalOpen: state.editEventModalOpen,
+		    metaData: state.metaData,
+		    view: state.view,
+		  }
+		  
+		})
 	    }}
 	  />
 	</Modal>
@@ -283,8 +378,9 @@ class App extends Component {
 	    }}
 	    onDragStart = { console.log }
             onSelectSlot = { selection => {
-		if (this.state.selected.resource === undefined
-		    || this.state.selected.shift === undefined) {
+		if (this.state.view === 'month'
+		    && (this.state.selected.resource === undefined
+		     || this.state.selected.shift === undefined)) {
 		  return
 		}
 		if (this.state.view === 'month' ) {
@@ -296,11 +392,19 @@ class App extends Component {
 		}
 		
 		if (this.state.view === 'week' ) {
-		  this.setState({
-		    editEventModalOpen: true,
-		    eventBasis: {
-		      start: selection.start,
-		      end: selection.end,
+		  console.log('weekstuff')
+		  this.setState((state, props) => {
+
+		    if (!state.metaData.tutorial.done)
+		      state.metaData.tutorial.stepIndex++;
+
+		    return {
+		      metaData: state.metaData,
+		      editEventModalOpen: true,
+		      eventBasis: {
+			start: selection.start,
+			end: selection.end,
+		      }
 		    }
 		  })
 		}
@@ -317,7 +421,8 @@ class App extends Component {
 		  resolvedTitle = event.title
 		}
 		else {
-		  const resource = this.state.resources.find(res => res.id === event.resourceId)
+		  const resource = this.state.resources
+				       .find(res => res.id === event.resourceId)
 				|| this.state.metaData.archive.resources
 				       .find(res => res.id === event.resourceId )
 		  const shift = this.state.shifts.find(sh => sh.id === event.shiftId)
@@ -349,7 +454,31 @@ class App extends Component {
 	    selectable = { 'ignoreEvents' }
 	    views = { ['month', 'week'] }
 	    onView = { view => {
-		this.setState({ view: view })
+		this.setState((state, props) => {
+		  state.view = view
+
+		  if (!this.state.metaData.tutorial.done)
+		    state.metaData.tutorial.stepIndex++;
+
+		  // coming back to the month view a second time is only
+		  // done at the end of the tutorial
+		  if (view === 'month'
+		      && !this.state.metaData.tutorial.done
+		      && this.state.metaData.tutorial.stepIndex > 1) {
+		    
+		    state.metaData.tutorial = {
+		      stepIndex: 0,
+		      done: true,
+		    }
+		    
+		    storeData(state.metaData, 'metaData')
+		  }
+
+		  return {
+		    view: view,
+		    metaData: state.metaData
+		  }
+		})
 	    }}
 	    onNavigate = { newDate => { this.setState({ viewDate: newDate }) }}
 	    step = { 60 }
@@ -408,9 +537,9 @@ class App extends Component {
 		  tag = (
 		    <div
 		      className = 'dateCellTag'
-		      style = {{
-			background: background,
-		      }}
+				   style = {{
+				     background: background,
+				   }}
 		      >
 		      { scheduledHours.toFixed(1) + 'h'}
 		    </div>
@@ -436,7 +565,7 @@ class App extends Component {
 	</div>
 
 	{ pickerPanel }
-	
+
       </div>
     )
   }

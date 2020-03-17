@@ -1,4 +1,4 @@
-import { rulesMap, updateCondition } from './rulestore'
+import { updateCondition } from './rulestore'
 
 const ALLOWED_TYPES = [ 'shifts', 'events', 'resources', 'metaData' ]
 
@@ -74,6 +74,12 @@ function loadMetaData(metaData = window
 
     if (!metaData.rules)
       metaData.rules = []
+
+    if (!metaData.tutorial || metaData.tutorial.done !== true)
+      metaData.tutorial = {
+	done: false,
+	stepIndex: 0,
+      }
   }
   catch(_) {
     return {
@@ -82,14 +88,16 @@ function loadMetaData(metaData = window
 	shifts: [],
       },
       rules: [],
+      tutorial: {
+	done: false,
+	stepIndex: 0,
+      },
     }
   }
 
   metaData.rules = metaData.rules.map(rule => {
     rule.value = parseFloat(rule.value)
-    rule.condition = argValue => {
-      return rulesMap.get(rule.text)(argValue, rule.value)
-    }
+    rule = updateCondition(rule)
     return rule
   })
 

@@ -148,3 +148,7 @@
     margin-right: 10px;
     border-right: #adadad;
 }
+
+.rulesPanel {
+    width: max-content;
+}
