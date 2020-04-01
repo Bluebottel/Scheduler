@@ -8,6 +8,10 @@
     background: #ddd;
 }
 
+.editEventModal input[type=submit]:hover {
+    background: #ddd;
+}
+
 .editEventModal * {
     margin: 3px 0 3px 0;
 }
