@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import moment from 'moment'
+import Autocomplete from 'react-autocomplete'
 
 import ColorPicker from 'rc-color-picker'
 import 'rc-color-picker/assets/index.css'
@@ -198,6 +199,27 @@ class EditEventModal extends Component {
 	  }}
 	/>
 
+	<div
+	  style = {{
+	    gridColumn: 'span 2',
+	  }}
+	>
+	  <Autocomplete
+	    getItemValue = { item => item.title  }
+	    items = { this.props.resources }
+	    value = { this.state.autoCompleteValue }
+	    onChange = { e => this.setState({ autoCompleteValue: e.target.value }) }
+	    onSelect = { value => { this.setState({autoCompleteValue: value })} }
+	    shouldItemRender = { (item, value) => item.title.toLowerCase().includes(value) /* TODO: check for custom event */}
+	    renderItem = { (item, highlighted) => 
+	      <div style = {{ background: '#ddd' }}>
+		{ item.title }
+	      </div>
+	    }
+	  />
+	  
+	</div>
+
 	<div>Börjar</div>
 	{
 	  this.dateTimePicker({
@@ -273,6 +295,7 @@ class EditEventModal extends Component {
 	      return
 	    }
 
+	    // making a new event
 	    if (this.props.event.id !== undefined) {
 	      this.props.editEvent({
 		id: this.props.event.id,
@@ -285,6 +308,8 @@ class EditEventModal extends Component {
 	      })
 	      this.props.closeModal()
 	    }
+
+	    // editing an existing one
 	    else { 
 	      this.props.addEvent({
 		customTitle: this.state.customTitle,

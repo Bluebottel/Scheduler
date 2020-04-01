@@ -355,6 +355,8 @@ class App extends Component {
 		  
 		})
 	    }}
+
+	    resources = { this.state.resources }
 	  />
 	</Modal>
 
