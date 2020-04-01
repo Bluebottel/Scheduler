@@ -19,14 +19,14 @@ class EditEventModal extends Component {
     const color = this.props.event.color === undefined ?
 		  this.randomColor() : this.props.event.color
 
+    // in case a completely new event is being made
     let title, titleValue
     if (this.props.event.title === undefined &&
 	this.props.event.customTitle === undefined) {
-      title = 'Titel'
+      title = 'Title'
       titleValue = ''
     }
     
-
     else {
       title = this.props.event.title !== undefined ?
 	      this.props.event.title : this.props.event.customTitle
@@ -79,10 +79,6 @@ class EditEventModal extends Component {
       return (
 	  <div
 	    className = 'clickable'
-	    style = {{
-	      display: 'inline-table',
-	      padding: '0px 4px 0px 4px',
-	    }}
 	    onClick = { () => {
 		this.setState({
 		  [`${target}Choosing`]: true,
@@ -165,56 +161,45 @@ class EditEventModal extends Component {
     }
     
     return (
-      <table>
-	<tbody>
-	  
-	  <tr>
-	    <td
-	      style = {{
-		width: '50px',
-	      }}
-	    >
-	      Färg
-	    </td>
-	    <td>
-	      <ColorPicker
-	      enableAlpha = { false }
-	      animation = 'slide-up'
-	      color = { this.state.eventColor }
-	      onClose = { choice => {
-		  this.setState({
-		    eventColor: choice.color
-		  })
-	      }}
-	      />
-	    </td>
-	  </tr>
+      <div
+	style = {{
+	  display: 'grid',
+	  gridTemplateColumns: '1fr 3fr',
+	  gridRowGap: '0.5vh',
+	  margin: '0.5vh 0 0.5vh 0',
+	}}
+      >
+	<div>Färg</div>
+	<ColorPicker
+	  enableAlpha = { false }
+	  animation = 'slide-up'
+	  color = { this.state.eventColor }
+	  onClose = { choice => {
+	      this.setState({
+		eventColor: choice.color
+	      })
+	  }}
+	/>
 
-	  <tr>
-	    <td>Börjar</td>
-	    <td>
-	      {
-		this.dateTimePicker({
-		  trigger: this.state.startChoosing,
-		  target: 'start'
-		})
-	      }
-	    </td>
-	  </tr>
+	<div>Börjar</div>
+	{
+	  this.dateTimePicker({
+	    trigger: this.state.startChoosing,
+	    target: 'start'
+	  })
+	}
 
-	  <tr>
-	    <td>Slutar</td>
-	    <td>
-	      {
-		this.dateTimePicker({
-		  trigger: this.state.endChoosing,
-		  target: 'end'
-		})
-	      }
-	    </td>
-	  </tr>
-	</tbody>
-      </table>
+	<div>Slutar</div>
+
+	{
+	  this.dateTimePicker({
+	    trigger: this.state.endChoosing,
+	    target: 'end'
+	  })
+	}
+	
+	
+      </div>
     )
   }
 
@@ -261,8 +246,8 @@ class EditEventModal extends Component {
     
     return (
       <form
-      onSubmit = { ev => {
-	    ev.preventDefault()
+	onSubmit = { ev => {
+	  ev.preventDefault()
 	    if (!this.state.customTitle || this.state.customTitle.length === 0) {
 
 	      this.setState({
