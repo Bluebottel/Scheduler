@@ -39,6 +39,9 @@ class EditEventModal extends Component {
       end: this.props.event.end,
       customTitle: titleValue,
       previousTitle: title,
+
+      /* start and end choosing: true while the user is picking 
+	 a start or stop date for the event */
       startChoosing: false,
       endChoosing: false,
     }
@@ -47,6 +50,20 @@ class EditEventModal extends Component {
 
   componentDidMount() {
     this.titleInput.focus()
+    document.addEventListener("keydown", this.onTab, false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.onTab, false);
+  }
+
+  onTab = event => {
+    // fill in the text from the auto complete
+    if (event.key === 'Tab') {
+      event.preventDefault()
+      console.log('pressed tab! ', event)
+    }
+    
   }
 
   randomColor = () => { return "#"+((1<<24)*Math
