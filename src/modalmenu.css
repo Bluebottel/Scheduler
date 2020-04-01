@@ -156,3 +156,7 @@
 .easy-edit-component-wrapper input[type=number] {
     width: 4em;
 }
+
+.shiftColumnHeader {
+    font-weight: bold;
+}

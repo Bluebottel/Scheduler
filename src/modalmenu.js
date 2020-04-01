@@ -127,114 +127,106 @@ class ModalMenu extends Component {
     let shiftOptions = (
       this.props.shifts.map((shift, i) => {
 	return (
-	  <tr key = { i }>
-	    <td>
-	      <EasyEdit
-		type = "text"
-		value = { shift.title }
-		onSave = {
-		  text => {
-		    if (text.length === 0)
-		      return
-		    
-		    shift.title = text
-		    this.props.updateElement(shift, 'shifts')
-		  }
+	  <React.Fragment>
+	    <EasyEdit
+	      type = "text"
+	      value = { shift.title }
+	      onSave = {
+		text => {
+		  if (text.length === 0)
+		    return
+		  
+		  shift.title = text
+		  this.props.updateElement(shift, 'shifts')
 		}
+	      }
 
-		onValidate = { text => text.length > 0 }
-		validationMessage = "Namnet kan inte vara tomt"
-	      
-		saveButtonLabel = "Spara"
-		cancelButtonLabel = "Avbryt"
-		onHoverCssClass = "clickable"
-	      />
-	    </td>
+	      onValidate = { text => text.length > 0 }
+	      validationMessage = "Namnet kan inte vara tomt"
+	    
+	      saveButtonLabel = "Spara"
+	      cancelButtonLabel = "Avbryt"
+	      onHoverCssClass = "clickable"
+	    />
 
-	    <td>
-	      <TimePicker
-		time = { shift.startHour + ':' + shift.startMinute }
-		onFocusChange = { focus => {
+	    <TimePicker
+	      time = { shift.startHour + ':' + shift.startMinute }
+	      onFocusChange = { focus => {
 		  // this only triggers when the picker closes for some reason
-		    this.setState({
-		      timePickerOpen: false,
-		    })
-		}}
-	      
-		onTimeChange = { ({hour, minute}) => {
-		    const replacement = update(shift, {
-		      startHour: {$set: hour},
-		      startMinute: {$set: minute}
-		    })
+		  this.setState({
+		    timePickerOpen: false,
+		  })
+	      }}
+	    
+	      onTimeChange = { ({hour, minute}) => {
+		  const replacement = update(shift, {
+		    startHour: {$set: hour},
+		    startMinute: {$set: minute}
+		  })
 
-		    this.props.updateElement(replacement, 'shifts')
-		}}
-	      
-		withoutIcon
-		focused = { this.state.timePickerOpen === shift.id }
-		trigger = {(
-		    <div
+		  this.props.updateElement(replacement, 'shifts')
+	      }}
+	    
+	      withoutIcon
+	      focused = { this.state.timePickerOpen === shift.id }
+	      trigger = {(
+		  <div
 		    onClick = { e => {
 			this.setState({
 			  timePickerOpen: shift.id,
 			})
 		    }}
 			      className = "clickable"
-		      >
-		      {
-			`${timePad(shift.startHour)}:`
-			+ `${timePad(shift.startMinute)}`
-		      }
-		    </div>
-		)}
-	      />
-	    </td>
-	    
-	    <td>
-	      <EasyEdit
-		type = "number"
+		    >
+		    {
+		      `${timePad(shift.startHour)}:`
+		      + `${timePad(shift.startMinute)}`
+		    }
+		  </div>
+	      )}
+	    />
 
-		value = {
-		  // the component throws an error unless
-		  // supplied with a string
-		  shift.minuteLength.toString()
-		}
+	    <EasyEdit
+	      type = "number"
+
+	      value = {
+		// the component throws an error unless
+		// supplied with a string
+		shift.minuteLength.toString()
+	      }
 
 	      onSave = {
 		value => {
 		  shift.minuteLength = value
 		  this.props.updateElement(shift, 'shifts')
 		}}
-	      
-		onValidate = { value => value > 0 }
-		validationMessage = "Måste vara en siffra > 0"
+	    
+	      onValidate = { value => value > 0 }
+	      validationMessage = "Måste vara en siffra > 0"
 
-		saveButtonLabel = "Spara"
-		cancelButtonLabel = "Avbryt"
-		onHoverCssClass = "clickable"
+	      saveButtonLabel = "Spara"
+	      cancelButtonLabel = "Avbryt"
+	      onHoverCssClass = "clickable"
+	    />
+
+	    <InlineConfirmButton
+	      className = "confirmButton"
+	      textValues = {['', 'Ta bort?', '']}
+	      onClick = { () => this.props.archive(shift, 'shifts') }
+	      showTimer
+	      isExecuting = { false }
+	    >
+	      <img
+		src = { trashcan }
+		alt = "[Delete]"
+		className = "clickable"
+		style = {{ height: '17px' }}
 	      />
-	    </td>
-
-	    <td>
-	      <div className = "optionSidePanel">
-		<InlineConfirmButton
-		  className = "confirmButton"
-		  textValues = {['', 'Ta bort?', '']}
-		  onClick = { () => this.props.archive(shift, 'shifts') }
-		  showTimer
-		  isExecuting = { false }
-		>
-		  <img
-		    src = { trashcan }
-		    alt = "[Delete]"
-		    className = "clickable"
-		  />
-		  
-		</InlineConfirmButton>
-	      </div>
-	    </td>
-	  </tr>
+	      
+	    </InlineConfirmButton>
+	  </React.Fragment>
 	)
+
       })
     )
 
@@ -250,7 +242,8 @@ class ModalMenu extends Component {
       <div
 	style = {{
 	  textAlign: 'center',
-	  marginTop: '5px',
+	  marginTop: '0.5vh',
+	  gridColumn: '1 / span 4',
 	}}
 	onClick = { () => this.props.create(
 	    {
@@ -299,6 +292,7 @@ class ModalMenu extends Component {
     )
   }
 
+  // TODO: make the shift column highlight on mouse over
   render() {   
     return (
       <div style = {{
@@ -320,21 +314,35 @@ class ModalMenu extends Component {
 	<div className = "modalPanel">
 	  <div className = "boxLabel">Pass</div>
 	  <div className = "pickerBox">
-	    <table className = "panelTable">
-	      <thead>
-		<tr>
-		  <th style = {{textAlign: "left" }}>Namn</th>
-		  <th style = {{textAlign: "center" }} >Start</th>
-		  <th>Längd (min)</th>
-		  <th></th>
-		</tr>
-	      </thead>
-	      <tbody>
-		{ this.renderShifts() }
-	      </tbody>
-	    </table>
-	    { this.addShiftRow() }
 
+	    <div
+	      style = {{
+		display: 'grid',
+		gridTemplateColumn: 'max-content min-content min-content 20px',
+		gridColumnGap: '0.5vw',
+	      }}
+	    >
+
+	      <div
+		style = {{textAlign: "left" }}
+		className = 'shiftColumnHeader'
+	      >
+		Namn
+	      </div>
+	      
+	      <div
+		style = {{textAlign: "center" }}
+		className = 'shiftColumnHeader'
+	      >
+		Start
+	      </div>
+	      <div className = 'shiftColumnHeader'>Längd</div>
+	      <div></div>
+
+	      { this.renderShifts() }
+	      { this.addShiftRow() }
+	    </div>
+	    
 	  </div>
 	</div>
 
