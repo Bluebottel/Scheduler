@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import moment from 'moment'
-import Autocomplete from 'react-autocomplete'
+import AutoSuggest from 'react-autosuggest'
 
 import ColorPicker from 'rc-color-picker'
 import 'rc-color-picker/assets/index.css'
@@ -45,6 +45,9 @@ class EditEventModal extends Component {
 	 a start or stop date for the event */
       startChoosing: false,
       endChoosing: false,
+
+      autocompleteValue: '',
+      suggestions: [],
     }
     
   }
@@ -151,6 +154,29 @@ class EditEventModal extends Component {
     )
   }
 
+  resourcePanel = () => {
+    if (!this.props.event.resources
+	|| this.props.event.resources.length === 0)
+      { return '' }
+
+    else return (
+      <div className = 'resourcePanel'>
+	{
+	  this.props.event.resources.map(res => {
+	    return (
+	      <div>
+		{ res.title }
+	      </div>
+	    )
+	  })
+	}
+      </div>
+    )
+
+    
+    
+  }
+  
   optionsTable = () => {
 
     if (this.state.startChoosing || this.state.endChoosing) {
@@ -204,21 +230,45 @@ class EditEventModal extends Component {
 	    gridColumn: 'span 2',
 	  }}
 	>
-	  <Autocomplete
-	    getItemValue = { item => item.title  }
-	    items = { this.props.resources }
-	    value = { this.state.autoCompleteValue }
-	    onChange = { e => this.setState({ autoCompleteValue: e.target.value }) }
-	    onSelect = { value => { this.setState({autoCompleteValue: value })} }
-	    shouldItemRender = { (item, value) => item.title.toLowerCase().includes(value) /* TODO: check for custom event */}
-	    renderItem = { (item, highlighted) => 
-	      <div style = {{ background: '#ddd' }}>
-		{ item.title }
-	      </div>
-	    }
+	  <AutoSuggest
+	    suggestions = { this.state.suggestions }
+	    onSuggestionsFetchRequested = { ({ value }) => {
+		value = value.trim().toLowerCase()
+
+		// includes is generous and doesn't care if the
+		// matching part is in the beginning or not
+		const newSuggestions = this.props.resources.filter(res => {
+		  return res.title.toLowerCase().includes(value)
+		})
+
+		this.setState({
+		  suggestions: newSuggestions,
+		})
+	    }}
+	    onSuggestionsClearRequested = { () => this.setState({
+		suggestions: [],
+	    })}
+	    getSuggestionValue = { resource => resource.title }
+	    renderSuggestion = { resource => {
+		return (
+		  <div className = 'suggestion clickable'>
+		    { resource.title }
+		  </div>
+		)
+	    }}
+	    inputProps = {{
+	      onChange: (value, { newValue }) => {
+		this.setState({ autocompleteValue: newValue })
+	      },
+	      value: this.state.autocompleteValue,
+	      placeholder: 'Välj resurser',
+	    }}
+	    shouldRenderSuggestions = { () => true }
 	  />
 	  
 	</div>
+
+	{ this.resourcePanel() }
 
 	<div>Börjar</div>
 	{
