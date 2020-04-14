@@ -29,7 +29,6 @@ import 'moment/locale/sv'
 moment.locale('sv')
 const localizer = momentLocalizer(moment)
 
-// this one has to be capitalized(?)
 const DragCalendar = withDragAndDrop(Calendar)
 
 class App extends Component {
@@ -190,12 +189,10 @@ class App extends Component {
 	  }}
 	  
 	  onRequestClose = { () => {
+	      
+	      // remove the blur effect
 	      document.getElementById('root').style.filter = ''
-	      this.setState((state, props) => {
-		state.optionsModalOpen = false
-
-		return state
-	      })
+	      this.setState({ optionsModalOpen: false })
 	  }}
 	  
 	  ariaHideApp = { false }
@@ -208,6 +205,7 @@ class App extends Component {
 		this.updateElement(elem, type)
 	    }}
 	    closeModal = { () => {
+		
 		// remove blur
 		document.getElementById('root').style.filter = ''
 		this.setState((state, props) => {
@@ -223,6 +221,7 @@ class App extends Component {
 		})
 	    }}
 	    archive = { (element, type) => {
+		
 		// select another element when the currently selected
 		// one gets removed
 		

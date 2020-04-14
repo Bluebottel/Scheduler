@@ -34,12 +34,16 @@ class EditEventModal extends Component {
       titleValue = title
     }
 
+    const eventResources = !this.props.event.resources ? []
+			 : this.props.event.resources
+
     this.state = {
       eventColor: color,
       start: this.props.event.start,
       end: this.props.event.end,
       customTitle: titleValue,
       previousTitle: title,
+      eventResources: eventResources,
 
       /* start and end choosing: true while the user is picking 
 	 a start or stop date for the event */
@@ -144,7 +148,7 @@ class EditEventModal extends Component {
 	    this.setState({
 	      [target]: newMoment.toDate(),
 	      dateError: undefined,
-	    })  
+	    })
 	}}
 	minStep = { 5 }
 	hourStep = { 1 }
@@ -264,6 +268,16 @@ class EditEventModal extends Component {
 	      placeholder: 'Välj resurser',
 	    }}
 	    shouldRenderSuggestions = { () => true }
+	    onSuggestionSelected = { (event, { suggestion }) => {
+		this.setState((state, props) => {
+
+		  state.autoCompleteValue = ''
+		  state.suggestions = []
+		  state.eventResources.push(suggestion)
+
+		  return state
+		})
+	    }}
 	  />
 	  
 	</div>
