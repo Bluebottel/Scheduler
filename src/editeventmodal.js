@@ -66,10 +66,16 @@ class EditEventModal extends Component {
   }
 
   onTab = event => {
+    
     // fill in the text from the auto complete
     if (event.key === 'Tab') {
       event.preventDefault()
       console.log('pressed tab! ', event)
+    }
+
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      console.log('enter!')
     }
     
   }
@@ -159,16 +165,29 @@ class EditEventModal extends Component {
   }
 
   resourcePanel = () => {
-    if (!this.props.event.resources
-	|| this.props.event.resources.length === 0)
-      { return '' }
+    if (this.state.eventResources.length === 0) return '' 
 
     else return (
       <div className = 'resourcePanel'>
 	{
-	  this.props.event.resources.map(res => {
+	  this.state.eventResources.map(res => {
 	    return (
-	      <div>
+	      <div
+		className = 'resourceTag clickable'
+		style = {{ background: res.color, }}
+		onClick = { () => {
+		    
+		    // remove the resource from the event when the
+		    // tag is clicked on
+		    let newEventResourcesList = this
+		      .state.eventResources.filter(ele => ele.id !== res.id)
+
+		    this.setState({
+		      eventResources: newEventResourcesList,
+		    })
+		    
+		}}
+		>
 		{ res.title }
 	      </div>
 	    )
@@ -176,7 +195,7 @@ class EditEventModal extends Component {
 	}
       </div>
     )
-
+    
     
     
   }
@@ -254,8 +273,13 @@ class EditEventModal extends Component {
 	    })}
 	    getSuggestionValue = { resource => resource.title }
 	    renderSuggestion = { resource => {
+		
+		let highlight = ''
+		if (resource.id === this.state.highlightedSuggestion?.id) {
+		  highlight = ' suggestionHighlight'
+		}
 		return (
-		  <div className = 'suggestion clickable'>
+		  <div className = {`suggestion clickable ${highlight}`}>
 		    { resource.title }
 		  </div>
 		)
@@ -271,11 +295,20 @@ class EditEventModal extends Component {
 	    onSuggestionSelected = { (event, { suggestion }) => {
 		this.setState((state, props) => {
 
-		  state.autoCompleteValue = ''
+		  // clear the searchbox when a tag is added
+		  state.autocompleteValue = ''
 		  state.suggestions = []
 		  state.eventResources.push(suggestion)
 
 		  return state
+		})
+	    }}
+	    onSuggestionHighlighted = { trigger => {
+
+		// keep track of what is highlighted so it can
+		// be styled differently
+		this.setState({
+		  highlightedSuggestion: trigger.suggestion,
 		})
 	    }}
 	  />

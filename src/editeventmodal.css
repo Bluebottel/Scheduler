@@ -61,3 +61,23 @@
 .suggestion:hover {
     background: linear-gradient(to right, #c3bebe 0%,#ffffff 75%);
 }
+
+.resourcePanel {
+    grid-column: span 2;
+    margin-top: -0.6em;
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 14em;
+    gap: 0.2em;
+}
+
+.resourceTag {
+    border-radius: 5px;
+    display: inline;
+    padding: 1px 3px;
+}
+
+.suggestionHighlight {
+    /* Same as the suggestion hover */
+    background: linear-gradient(to right, #c3bebe 0%,#ffffff 75%);
+}
