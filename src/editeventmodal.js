@@ -59,21 +59,15 @@ class EditEventModal extends Component {
 
   componentDidMount() {
     this.titleInput.focus()
-    document.addEventListener("keydown", this.onTab, false);
+    document.addEventListener("keydown", this.onKeypress, false);
   }
 
   componentWillUnmount() {
-    document.removeEventListener("keydown", this.onTab, false);
+    document.removeEventListener("keydown", this.onKeypress, false);
   }
 
-  onTab = event => {
+  onKeypress = event => {
     
-    // fill in the text from the auto complete
-    if (event.key === 'Tab') {
-      event.preventDefault()
-      console.log('pressed tab! ', event)
-    }
-
     if (event.key === 'Enter') {
       event.preventDefault()
       console.log('enter!', this.state.suggestions)
