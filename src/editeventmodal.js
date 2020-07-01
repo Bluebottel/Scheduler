@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import moment from 'moment'
+import update from 'immutability-helper'
+import AutoSuggest from 'react-autosuggest'
 
 import ColorPicker from 'rc-color-picker'
 import 'rc-color-picker/assets/index.css'
@@ -33,20 +35,53 @@ class EditEventModal extends Component {
       titleValue = title
     }
 
+    const eventResources = !this.props.event.resources ? []
+			 : this.props.event.resources
+
     this.state = {
       eventColor: color,
       start: this.props.event.start,
       end: this.props.event.end,
       customTitle: titleValue,
       previousTitle: title,
+      eventResources: eventResources,
+
+      /* start and end choosing: true while the user is picking 
+	 a start or stop date for the event */
       startChoosing: false,
       endChoosing: false,
+
+      autocompleteValue: '',
+      suggestions: [],
     }
     
   }
 
   componentDidMount() {
     this.titleInput.focus()
+    document.addEventListener("keydown", this.onKeypress, false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.onKeypress, false);
+  }
+
+  onKeypress = event => {
+    
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      console.log('enter!', this.state.suggestions)
+
+      if (this.state.suggestions.length === 1) {
+	this.setState({
+	  eventResources: update(this.state.eventResources,
+				 {$push: [ this.state.suggestions[0] ]}),
+	  autocompleteValue: '',
+	  suggestions: [],
+	})
+      }
+    }
+    
   }
 
   randomColor = () => { return "#"+((1<<24)*Math
@@ -123,7 +158,7 @@ class EditEventModal extends Component {
 	    this.setState({
 	      [target]: newMoment.toDate(),
 	      dateError: undefined,
-	    })  
+	    })
 	}}
 	minStep = { 5 }
 	hourStep = { 1 }
@@ -133,6 +168,43 @@ class EditEventModal extends Component {
     )
   }
 
+  resourcePanel = () => {
+    if (this.state.eventResources.length === 0) return '' 
+
+    else return (
+      <div className = 'resourcePanel'>
+	{
+	  this.state.eventResources.map((res, i) => {
+	    return (
+	      <div
+		className = 'resourceTag clickable'
+		style = {{ background: res.color, }}
+		onClick = { () => {
+		    
+		    // remove the resource from the event when the
+		    // tag is clicked on
+		    let newEventResourcesList = this
+		      .state.eventResources.filter(ele => ele.id !== res.id)
+
+		    this.setState({
+		      eventResources: newEventResourcesList,
+		    })
+		    
+		}}
+		key = { i }
+		>
+		{ res.title }
+	      </div>
+	    )
+	  })
+	}
+      </div>
+    )
+    
+    
+    
+  }
+  
   optionsTable = () => {
 
     if (this.state.startChoosing || this.state.endChoosing) {
@@ -180,6 +252,89 @@ class EditEventModal extends Component {
 	      })
 	  }}
 	/>
+
+	<div
+	  style = {{
+	    gridColumn: 'span 2',
+	  }}
+	>
+	  <AutoSuggest
+	    suggestions = { this.state.suggestions }
+	  
+	    onSuggestionsFetchRequested = { ({ value }) => {
+		value = value.trim().toLowerCase()
+
+		// includes is generous and doesn't care if the
+		// matching part is in the beginning or not
+		let newSuggestions = this.props.resources.filter(res => {
+		  return res.title.toLowerCase().includes(value)
+		})
+
+		// remove all the already added resources from the suggestions
+		newSuggestions = newSuggestions.filter(res => {
+		  return !this.state.eventResources.find(ele => ele.id === res.id)
+		})
+
+		this.setState({
+		  suggestions: newSuggestions,
+		})
+	    }}
+	  
+	    onSuggestionsClearRequested = { () => this.setState({
+		suggestions: [],
+	    })}
+	  
+	    getSuggestionValue = { resource => resource.title }
+	  
+	    renderSuggestion = { resource => {
+		
+		let highlight = ''
+		if (resource.id === this.state.highlightedSuggestion?.id) {
+		  highlight = ' suggestionHighlight'
+		}
+		return (
+		  <div className = {`suggestion clickable ${highlight}`}>
+		    { resource.title }
+		  </div>
+		)
+	    }}
+	  
+	    inputProps = {{
+	      onChange: (value, { newValue }) => {
+		this.setState({ autocompleteValue: newValue })
+	      },
+	      value: this.state.autocompleteValue,
+	      placeholder: 'Välj resurser',
+	    }}
+	  
+	    shouldRenderSuggestions = { () => true }
+
+	    onSuggestionSelected = { (event, { suggestion }) => {
+
+		//eventResources.push(suggestion)
+		this.setState({
+
+		  // clear the searchbox when a tag is added
+		  autocompleteValue: '',
+		  suggestions: [],
+		  eventResources: update(this.state.eventResources,
+					 {$push: [ suggestion ]}),
+		})
+	    }}
+	  
+	    onSuggestionHighlighted = { trigger => {
+
+		// keep track of what is highlighted so it can
+		// be styled differently
+		this.setState({
+		  highlightedSuggestion: trigger.suggestion,
+		})
+	    }}
+	  />
+	  
+	</div>
+
+	{ this.resourcePanel() }
 
 	<div>Börjar</div>
 	{
@@ -256,6 +411,7 @@ class EditEventModal extends Component {
 	      return
 	    }
 
+	    // making a new event
 	    if (this.props.event.id !== undefined) {
 	      this.props.editEvent({
 		id: this.props.event.id,
@@ -268,6 +424,8 @@ class EditEventModal extends Component {
 	      })
 	      this.props.closeModal()
 	    }
+
+	    // editing an existing one
 	    else { 
 	      this.props.addEvent({
 		customTitle: this.state.customTitle,
