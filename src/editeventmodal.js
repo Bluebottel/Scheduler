@@ -83,6 +83,7 @@ class EditEventModal extends Component {
 	  eventResources: update(this.state.eventResources,
 				 {$push: [ this.state.suggestions[0] ]}),
 	  autocompleteValue: '',
+	  suggestions: [],
 	})
       }
     }
