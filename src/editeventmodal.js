@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import moment from 'moment'
+import update from 'immutability-helper'
 import AutoSuggest from 'react-autosuggest'
 
 import ColorPicker from 'rc-color-picker'
@@ -75,7 +76,15 @@ class EditEventModal extends Component {
 
     if (event.key === 'Enter') {
       event.preventDefault()
-      console.log('enter!')
+      console.log('enter!', this.state.suggestions)
+
+      if (this.state.suggestions.length === 1) {
+	this.setState({
+	  eventResources: update(this.state.eventResources,
+				 {$push: [ this.state.suggestions[0] ]}),
+	  autocompleteValue: '',
+	})
+      }
     }
     
   }
@@ -170,7 +179,7 @@ class EditEventModal extends Component {
     else return (
       <div className = 'resourcePanel'>
 	{
-	  this.state.eventResources.map(res => {
+	  this.state.eventResources.map((res, i) => {
 	    return (
 	      <div
 		className = 'resourceTag clickable'
@@ -187,6 +196,7 @@ class EditEventModal extends Component {
 		    })
 		    
 		}}
+		key = { i }
 		>
 		{ res.title }
 	      </div>
@@ -255,23 +265,32 @@ class EditEventModal extends Component {
 	>
 	  <AutoSuggest
 	    suggestions = { this.state.suggestions }
+	  
 	    onSuggestionsFetchRequested = { ({ value }) => {
 		value = value.trim().toLowerCase()
 
 		// includes is generous and doesn't care if the
 		// matching part is in the beginning or not
-		const newSuggestions = this.props.resources.filter(res => {
+		let newSuggestions = this.props.resources.filter(res => {
 		  return res.title.toLowerCase().includes(value)
+		})
+
+		// remove all the already added resources from the suggestions
+		newSuggestions = newSuggestions.filter(res => {
+		  return !this.state.eventResources.find(ele => ele.id === res.id)
 		})
 
 		this.setState({
 		  suggestions: newSuggestions,
 		})
 	    }}
+	  
 	    onSuggestionsClearRequested = { () => this.setState({
 		suggestions: [],
 	    })}
+	  
 	    getSuggestionValue = { resource => resource.title }
+	  
 	    renderSuggestion = { resource => {
 		
 		let highlight = ''
@@ -284,6 +303,7 @@ class EditEventModal extends Component {
 		  </div>
 		)
 	    }}
+	  
 	    inputProps = {{
 	      onChange: (value, { newValue }) => {
 		this.setState({ autocompleteValue: newValue })
@@ -291,18 +311,22 @@ class EditEventModal extends Component {
 	      value: this.state.autocompleteValue,
 	      placeholder: 'Välj resurser',
 	    }}
+	  
 	    shouldRenderSuggestions = { () => true }
+
 	    onSuggestionSelected = { (event, { suggestion }) => {
-		this.setState((state, props) => {
+
+		//eventResources.push(suggestion)
+		this.setState({
 
 		  // clear the searchbox when a tag is added
-		  state.autocompleteValue = ''
-		  state.suggestions = []
-		  state.eventResources.push(suggestion)
-
-		  return state
+		  autocompleteValue: '',
+		  suggestions: [],
+		  eventResources: update(this.state.eventResources,
+					 {$push: [ suggestion ]}),
 		})
 	    }}
+	  
 	    onSuggestionHighlighted = { trigger => {
 
 		// keep track of what is highlighted so it can
